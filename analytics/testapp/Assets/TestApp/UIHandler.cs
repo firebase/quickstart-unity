@@ -42,7 +42,7 @@ public class UIHandler : MonoBehaviour {
 
         app = App.Create(ops);
 
-        DebugLog(String.Format("Created the firebase app {0}", app));
+        DebugLog(String.Format("Created the firebase app: {0}", app.Name));
         Analytics.Initialize(app);
         DebugLog("Initialized the firebase analytics API");
 
