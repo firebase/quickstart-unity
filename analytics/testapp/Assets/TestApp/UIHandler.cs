@@ -68,31 +68,31 @@ public class UIHandler : MonoBehaviour {
     }
 
     public void AnalyticsProgress() {
-        // Log an event with no parameters.
+        // Log an event with a float.
         DebugLog ("Logging a progress event.");
         Analytics.LogEvent("progress", "percent", 0.4f);
     }
 
     public void AnalyticsScore() {
-        // Log an event with no parameters.
+        // Log an event with an int parameter.
         DebugLog ("Logging a post-score event.");
         Analytics.LogEvent(Analytics.EventPostScore, Analytics.ParameterScore, 42);
     }
 
     public void AnalyticsGroupJoin() {
-        // Log an event with no parameters.
+        // Log an event with a string parameter.
         DebugLog ("Logging a group join event.");
         Analytics.LogEvent(Analytics.EventJoinGroup, Analytics.ParameterGroupID,
             "spoon_welders");
     }
 
     public void AnalyticsLevelUp() {
-        // Log an event with no parameters.
+        // Log an event with multiple parameters.
         DebugLog ("Logging a level up event.");
-        Parameter[] LevelUpParameters = {
-            new Parameter(Analytics.ParameterLevel, 5),
-            new Parameter(Analytics.ParameterCharacter, "mrspoon"),
-            new Parameter("hit_accuracy", 3.14f)
+        Analytics.Parameter[] LevelUpParameters = {
+            new Analytics.Parameter(Analytics.ParameterLevel, 5),
+            new Analytics.Parameter(Analytics.ParameterCharacter, "mrspoon"),
+            new Analytics.Parameter("hit_accuracy", 3.14f)
         };
         Analytics.LogEvent(Analytics.EventLevelUp, LevelUpParameters);
     }
