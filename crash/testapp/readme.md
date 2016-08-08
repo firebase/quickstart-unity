@@ -23,7 +23,7 @@ The testapp requires version 5.3 of Unity or higher.
     - Create a new app on the [Firebase
       console](https://firebase.google.com/console/), and attach your Android
       app to it.
-      - You can use "com.google.android.crash.testapp" as the Package Name
+      - You can use "com.google.firebase.unity.crash.testapp" as the Package Name
         while you're testing.
       - To [generate a SHA1](https://developers.google.com/android/guides/client-auth)
         run this command on Mac and Linux,
@@ -45,11 +45,11 @@ The testapp requires version 5.3 of Unity or higher.
     - For further details please refer to the [general
       instructions for setting up an Android app with
       Firebase](https://firebase.google.com/docs/android/setup).
-  - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/master.tar.gz)
+  - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
     and unzip it somewhere convenient.
   - Open the testapp project in the Unity editor.
   - Open the scene MainScene
-  - Import the custom package FirebaseUnityEditor.unitypackage from the Firebase
+  - Import the custom package FirebaseApp.unitypackage from the Firebase
     Unity SDK, downloaded previously.  (From the menu, select
     Assets > Import Package > Custom Package)
   - Import the custom package FirebaseCrash.unitypackage in the same way.
@@ -83,22 +83,21 @@ The testapp requires version 5.3 of Unity or higher.
     - Create a new app on the [Firebase
       console](https://firebase.google.com/console/), and attach your Android
       app to it.
-      - You can use "com.google.ios.crash.testapp" as the Package Name
+      - You can use "com.google.firebase.unity.crash.testapp" as the Package Name
         while you're testing.
     - Download a `GoogleService-Info.plist` file from the Firebase console.
       This file identifies your iOS app to the Firebase backend, and will
       need to be included in the testapp later.
     - For further details please refer to the [general instructions for setting
       up an iOS app with Firebase](https://firebase.google.com/docs/ios/setup).
-  - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/master.tar.gz)
+  - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
     and unzip it somewhere convenient.
   - Open the testapp project in the Unity editor.
   - Open the scene MainScene
-  - Import the custom package FirebaseUnityEditor.unitypackage from the Firebase
+  - Import the custom package FirebaseApp.unitypackage from the Firebase
     Unity SDK, downloaded previously.  (From the menu, select
     Assets > Import Package > Custom Package)
   - Import the custom package FirebaseCrash.unitypackage in the same way.
-  - Set the minimum iOS version to 8.0.
   - Build your project for iOS.
   - Navigate to the xcode project that was created by Unity, and create a new
     file called Podfile, with the following contents:

@@ -1,5 +1,5 @@
-Firebase Unity Samples
-======================
+Firebase Unity SDK Samples
+==========================
 
 iOS and Android samples for the
 [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/).
