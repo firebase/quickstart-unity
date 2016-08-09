@@ -76,6 +76,8 @@ using the
     - Select the `File > Build Settings` menu option.
     - Select `iOS` in the `Platform` list.
     - Click `Switch Platform` to select `iOS` as the target platform.
+    - Wait for the spinner (compiling) icon to stop in the bottom right corner
+      of the Unity status bar.
     - Click `Build and Run`.
   - See the *Using the Sample* section below.
 
@@ -86,7 +88,7 @@ using the
     - Create a project in the
       [Firebase console](https://firebase.google.com/console/),
       and attach your Android app to it.
-      - You should use *com.google.firebase.unity.remoteconfig.testapp* as the
+      - You should use `com.google.firebase.unity.remoteconfig.testapp` as the
         package name while you're testing.
         - If you do not use the prescribed package name you will need to update
           the bundle identifier as described in the
@@ -140,7 +142,7 @@ using the
       
       NOTE: `google-services.json` can be placed anywhere in the project.
   - Optional: Update the Project Bundle Identifier
-    - If you did not use *com.google.firebase.unity.remoteconfig.testapp*
+    - If you did not use `com.google.firebase.unity.remoteconfig.testapp`
       as the project package name you will need to update the sample's Bundle
       Identifier.
       - Select the `File > Build Settings` menu option.
@@ -153,6 +155,8 @@ using the
     - Select the `File > Build Settings` menu option.
     - Select `Android` in the `Platform` list.
     - Click `Switch Platform` to select `Android` as the target platform.
+    - Wait for the spinner (compiling) icon to stop in the bottom right corner
+      of the Unity status bar.
     - Click `Build and Run`.
   - See the *Using the Sample* section below.
 
@@ -183,6 +187,12 @@ The sample provides a simple interface with two buttons:
 Using Firebase Remote Config you can update and publish new data through the
 Firebase Console and it will be reflected in your app.
 
+## Known Issues
+
+Calling `Fetch()` with Firebase Remote Config in the Editor can lead to a crash
+when stopping the application. To work around this issue, you can avoid calling
+`Fetch()` when running in the editor, which can be done using directives such
+as `#if UNITY_EDITOR`, as shown in the sample.
 
 ## Support
 

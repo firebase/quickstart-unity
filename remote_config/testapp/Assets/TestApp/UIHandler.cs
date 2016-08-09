@@ -84,9 +84,13 @@ class UIHandler : MonoBehaviour {
   // Start a fetch request.
   public void FetchData() {
     ClearDebugLog();
+#if UNITY_EDITOR
+    DebugLog("Fetching data is not supported in Editor");
+#else
     DebugLog("Fetching data...");
     System.Threading.Tasks.Task fetchTask = Firebase.RemoteConfig.Fetch();
     fetchTask.ContinueWith(FetchComplete);
+#endif
   }
 
   void FetchComplete(Task fetchTask) {

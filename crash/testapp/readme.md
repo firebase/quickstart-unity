@@ -1,30 +1,98 @@
-# Firebase Crash Quickstart
+# Firebase Crash Reporting Quickstart
 
-The Firebase Crash Test Application (testapp) demonstrates logging various
-Firebase Crash events using the Firebase Unity SDK.  The application has a
-basic set of buttons that trigger various events from the Crash API.
-
-
-## Requrements
-
-The testapp requires version 5.3 of Unity or higher.
+The Firebase Crash Reporting Unity Sample demonstrates logging
+[Firebase Crash Reporting](https://firebase.google.com/docs/crash/)
+using the
+[Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz).
 
 
-## Introduction
+## Requirements
 
-[Read more about Firebase Crash](https://firebase.google.com/docs/crash/)
+* [Unity](http://unity3d.com/) 5.3 or higher.
+* [Xcode](https://developer.apple.com/xcode/) 7.3 or higher
+  (when developing for iOS).
+* [Android SDK](https://developer.android.com/studio/index.html#downloads)
+  (when developing for Android).
 
 
-## Building the testapp
+## Building the Sample
+
+### iOS
+
+  - Register your iOS app with Firebase.
+    - Create a project in the
+      [Firebase console](https://firebase.google.com/console/),
+      and associate your iOS application.
+      - You should use `com.google.firebase.unity.crash.testapp` as the
+        package name while you're testing.
+        - If you do not use the prescribed package name you will need to update
+          the bundle identifier as described in the
+          `Optional: Update the Project Bundle Identifier` below.
+    - Download the `GoogleService-Info.plist` file associated with your
+      Firebase project from the console.
+      This file identifies your iOS app to the Firebase backend, and will
+      need to be included in the sample later.
+    - For further details please refer to the
+      [general instructions](https://firebase.google.com/docs/ios/setup)
+      which describes how to configure a Firebase application for iOS.
+  - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
+    and unzip it somewhere convenient.
+  - Open the sample project in the Unity editor.
+    - Select the `File > Open Project` menu item.
+    - Click `Open`.
+    - Navigate to the sample directory `testapp` in the file dialog and click
+      `Open`.
+  - Open the scene `MainScene`.
+    - Navigate to `Assets/TestApp/MainScene` in the `Project` window.
+    - Double click on `MainScene` file to open.
+  - Import the `Firebase App` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseApp.unitypackage` from the
+      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
+  - Import the `Firebase Crash Reporting` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseCrash.unitypackage` from the
+      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
+  - Add the `GoogleService-Info.plist` file to the project.
+    - Navigate to the `Assets\TestApp` folder in the `Project` window.
+    - Drag the `GoogleService-Info.plist` downloaded from the Firebase console
+      into the folder.
+      
+      NOTE: `GoogleService-Info.plist` can be placed anywhere in the project.
+  - Optional: Update the Project Bundle Identifier
+    - If you did not use `com.google.firebase.unity.crash.testapp`
+      as the project package name you will need to update the sample's Bundle
+      Identifier.
+      - Select the `File > Build Settings` menu option.
+      - Select `iOS` in the `Platform` list.
+      - Click `Player Settings`
+      - In the `Player Settings` panel scroll down to `Bundle Identifier`
+        and update the value to the package name you provided when you
+        registered your app with Firebase.
+  - Build for iOS
+    - Select the `File > Build Settings` menu option.
+    - Select `iOS` in the `Platform` list.
+    - Click `Switch Platform` to select `iOS` as the target platform.
+    - Wait for the spinner (compiling) icon to stop in the bottom right corner
+      of the Unity status bar.
+    - Click `Build and Run`.
+  - See the *Using the Sample* section below.
+
 
 ### Android
 
   - Register your Android app with Firebase.
-    - Create a new app on the [Firebase
-      console](https://firebase.google.com/console/), and attach your Android
-      app to it.
-      - You can use "com.google.firebase.unity.crash.testapp" as the Package Name
-        while you're testing.
+    - Create a project in the
+      [Firebase console](https://firebase.google.com/console/),
+      and attach your Android app to it.
+      - You should use `com.google.firebase.unity.crash.testapp` as the
+        package name while you're testing.
+        - If you do not use the prescribed package name you will need to update
+          the bundle identifier as described in the
+          `Optional: Update the Project Bundle Identifier` below.
+
       - To [generate a SHA1](https://developers.google.com/android/guides/client-auth)
         run this command on Mac and Linux,
         ```
@@ -39,104 +107,73 @@ The testapp requires version 5.3 of Unity or higher.
         ```
         keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -dname "CN=Android Debug,O=Android,C=US"
         ```
-    - Download a `google-services.json` file from the Firebase console.
-      This file identifies your Android app to the Firebase backend, and will
-      need to be included in the testapp later.
-    - For further details please refer to the [general
-      instructions for setting up an Android app with
-      Firebase](https://firebase.google.com/docs/android/setup).
+    - Download the `google-services.json` file associated with your
+        Firebase project from the console.
+        This file identifies your Android app to the Firebase backend, and will
+        need to be included in the sample later.
+      - For further details please refer to the
+        [general instructions](https://firebase.google.com/docs/android/setup)
+        which describes how to configure a Firebase application for Android.
   - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
     and unzip it somewhere convenient.
-  - Open the testapp project in the Unity editor.
-  - Open the scene MainScene
-  - Import the custom package FirebaseApp.unitypackage from the Firebase
-    Unity SDK, downloaded previously.  (From the menu, select
-    Assets > Import Package > Custom Package)
-  - Import the custom package FirebaseCrash.unitypackage in the same way.
-  - From the menu, select Assets > Google Play Services > Resolve Client Jars.
-    Note that this option will only appear on the menu if you have both
-    imported the firebase packages, and set the build target to Android.
-  - Take the `google-services.json` that was downloaded earlier, and copy it
-    into your the testapp's `Assets` directory.
-    (Note: This has to be done after the packages are loaded, so that the plugin
-    notices the file and generates the appropriate resource files.)
-  - Double check:  At this point, several files should have been generated by
-    the plugin, and be present in your `Assets` directory:
-     - `Assets/Plugins/Android/Firebase/res/values/google-services.xml`
-     - `Assets/Plugins/Android/firebase-crash-9.0.0.aar`
-     - `Assets/Plugins/Android/firebase-crash-impl-9.0.0.aar`
-     - `Assets/Plugins/Android/firebase-crash-9.0.0.aar`
-     - `Assets/Plugins/Android/firebase-common-9.0.0` (Directory)
-     - `Assets/Plugins/Android/firebase-iid-9.0.0` (Directory)
-     - `Assets/Plugins/Android/play-services-base-9.0.0.aar`
-     - `Assets/Plugins/Android/play-services-basement-9.0.0.aar`
-     - `Assets/Plugins/Android/play-services-tasks-9.0.0.aar`
-  - Build the Unity project and run it on your Android device.
-  - After ~20 minutes, data should be visible in the Firebase Console under the
-    "Crash" tab accessible from
-    [https://firebase.google.com/console/]().
+  - Open the sample project in the Unity editor.
+    - Select the `File > Open Project` menu item.
+    - Click `Open`.
+    - Navigate to the sample directory `testapp` in the file dialog and click
+      `Open`.
+  - Open the scene `MainScene`.
+    - Navigate to `Assets/TestApp/MainScene` in the `Project` window.
+    - Double click on `MainScene` file to open.
+  - Import the `Firebase App` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseApp.unitypackage` from the
+      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
+  - Import the `Firebase Crash Reporting` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseCrash.unitypackage` from the
+      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
+  - Add the `google-services.json` file to the project.
+    - Navigate to the `Assets\TestApp` folder in the `Project` window.
+    - Drag the `google-services.json` downloaded from the Firebase console
+      into the folder.
+      
+      NOTE: `google-services.json` can be placed anywhere in the project.
+  - Optional: Update the Project Bundle Identifier
+    - If you did not use `com.google.firebase.unity.crash.testapp`
+      as the project package name you will need to update the sample's Bundle
+      Identifier.
+      - Select the `File > Build Settings` menu option.
+      - Select `Android` in the `Platform` list.
+      - Click `Player Settings`
+      - In the `Player Settings` panel scroll down to `Bundle Identifier`
+        and update the value to the package name you provided when you
+        registered your app with Firebase.
+  - Build for Android
+    - Select the `File > Build Settings` menu option.
+    - Select `Android` in the `Platform` list.
+    - Click `Switch Platform` to select `Android` as the target platform.
+    - Wait for the spinner (compiling) icon to stop in the bottom right corner
+      of the Unity status bar.
+    - Click `Build and Run`.
+  - See the *Using the Sample* section below.
 
 
-### iOS
+## Using the Sample
 
-  - Register your iOS app with Firebase.
-    - Create a new app on the [Firebase
-      console](https://firebase.google.com/console/), and attach your Android
-      app to it.
-      - You can use "com.google.firebase.unity.crash.testapp" as the Package Name
-        while you're testing.
-    - Download a `GoogleService-Info.plist` file from the Firebase console.
-      This file identifies your iOS app to the Firebase backend, and will
-      need to be included in the testapp later.
-    - For further details please refer to the [general instructions for setting
-      up an iOS app with Firebase](https://firebase.google.com/docs/ios/setup).
-  - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
-    and unzip it somewhere convenient.
-  - Open the testapp project in the Unity editor.
-  - Open the scene MainScene
-  - Import the custom package FirebaseApp.unitypackage from the Firebase
-    Unity SDK, downloaded previously.  (From the menu, select
-    Assets > Import Package > Custom Package)
-  - Import the custom package FirebaseCrash.unitypackage in the same way.
-  - Build your project for iOS.
-  - Navigate to the xcode project that was created by Unity, and create a new
-    file called Podfile, with the following contents:
-    ```
-    source 'https://github.com/CocoaPods/Specs.git'
-    platform :ios, '8.0'
+The sample provides a simple interface with the following buttons that trigger
+Crash Reporting operations:
 
-    target 'Unity-iPhone' do
-      pod 'Firebase/Crash'
-    end
-    ```
-  - From the terminal, navigate to the project directory, and run `pod install`.
-  - From the terminal, run `open Unity-iPhone.xcworkspace` to open xcode.
-    (Important: Launch it from `Unity-iPhone.xcworkspace` and not
-    `Unity-iPhone.xcproject`.  Launching from `Unity-iPhone.xcproject` will
-    cause problems.)
-  - Under 'Build Settings' of the project, add `$(inherited)` to "Other Linker
-    Flags".
-  - Drag the `GoogleServices-Info.plist` file from finder into the root of the
-    project in xcode.
-  - Build the Unity project and run it on your Android device.
-  - After ~20 minutes, data should be visible in the Firebase Console under the
-    "Crash" tab accessible from
-    [https://firebase.google.com/console/]().
-
-
-## Using the testapp
-
-When run, the testapp will provide a simple interface with several buttons,
-which trigger various functions from Crash.
-
- - **Crash Log** will add a log statement to the crash report, via the
-   Crash.Log() function.
- - **Crash Logcat** uses Crash.Logcat(), which is identical to Crash.Log(),
-   except it also logs to the adb logcat.
- - **Crash Report** calls Crash.Report(), to trigger sending a crash report
-   that should be visible in your Firebase Console after ~20 minutes.
- - **Create Uncaught Exception** causes an exception to be thrown and not
-   handled.  This causes Crash Report to fire automatically.
+ - The `Crash Log` button adds a log statement to the crash report.
+ - The `Crash Logcat` button logs to the crash report and the debug console.
+ - The `Crash Report` button sends a crash report that should be visible
+   in the [Firebase console](https://firebase.google.com/console/) under the
+   `Crash` tab after about 20 minutes.  This report will include all messages
+   logged using `Crash Log` and `Crash Logcat` that preceded the report.
+ - The `Create Uncaught Exception` button results in an exception to be thrown
+   and not handled which leads to the Firebase Crash Reporting exception
+   handler to catch the exception and log it using `Crash Report`.
 
 
 ## Support

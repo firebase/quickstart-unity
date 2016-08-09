@@ -1,55 +1,104 @@
 # Firebase Auth Quickstart
 
-The Firebase Auth Test Application (testapp) demonstrates authentication
-and user profile operations with the Firebase Auth Unity SDK. The application
-has buttons allowing you to:
-
- - Create a new firebase login
- - Sign in (and then auto-signout) using an existing login
- - Sign in (and then auto-signout) using email credentials
- - Delete a firebase login
-
-The testapp performs the following:
-  - Creates a firebase::App in a platform-specific way. The App holds
-    platform-specific context that's used by other Firebase APIs.
-  - Gets a pointer to firebase::Auth. The Auth class is the gateway to all
-    Firebase Authentication functionality.
-  - Calls every member function on firebase::Auth. Many of these functions are
-    asynchronous, since they communicate with a server. Asynchronous functions
-    return a firebase::Future class, which we wait on until the call completes.
-    In practice, you will probably want to register a callback on the Future,
-    or poll it periodically instead of waiting for it to complete.
-  - Gets a pointer to firebase::User. The User class allows account manipulation
-    and linking. It's returned by every Auth sign-in operation, and the
-    currently active User is available via Auth::CurrentUser(). Only one User
-    can be active at a time.
-  - Calls every member function on firebase::User.
+The Firebase Auth Unity Sample demonstrates user authentication and
+user profile operations using
+[Firebase Authentication](https://firebase.google.com/docs/auth/)
+with the
+[Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz).
 
 
+## Requirements
 
-  receiving Firebase Authentication using the Firebase Unity SDK.
-
-
-## Requrements
-
-The testapp requires version 5.3 of Unity or higher.
-
-
-## Introduction
-
-[Read more about Firebase Authentication](https://firebase.google.com/docs/auth/)
+* [Unity](http://unity3d.com/) 5.3 or higher.
+* [Xcode](https://developer.apple.com/xcode/) 7.3 or higher
+  (when developing for iOS).
+* [Android SDK](https://developer.android.com/studio/index.html#downloads)
+  (when developing for Android).
 
 
-## Building the testapp
+## Building the Sample
+
+### iOS
+
+  - Register your iOS app with Firebase.
+    - Create a project in the
+      [Firebase console](https://firebase.google.com/console/),
+      and associate your iOS application.
+      - You should use `com.google.firebase.unity.auth.testapp` as the
+        package name while you're testing.
+        - If you do not use the prescribed package name you will need to update
+          the bundle identifier as described in the
+          `Optional: Update the Project Bundle Identifier` below.
+    - Enable Authentication in the project.
+      - Go to the [Firebase console](https://firebase.google.com/console/),
+      - Select the *Auth* tab in the sidebar.
+      - Select the *Sign-In Method* tab
+      - Enable *Email/Password* and *Anonymous* sign-in providers.
+    - Download the `GoogleService-Info.plist` file associated with your
+      Firebase project from the console.
+      This file identifies your iOS app to the Firebase backend, and will
+      need to be included in the sample later.
+    - For further details please refer to the
+      [general instructions](https://firebase.google.com/docs/ios/setup)
+      which describes how to configure a Firebase application for iOS.
+  - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
+    and unzip it somewhere convenient.
+  - Open the sample project in the Unity editor.
+    - Select the `File > Open Project` menu item.
+    - Click `Open`.
+    - Navigate to the sample directory `testapp` in the file dialog and click
+      `Open`.
+  - Open the scene `MainScene`.
+    - Navigate to `Assets/TestApp/MainScene` in the `Project` window.
+    - Double click on `MainScene` file to open.
+  - Import the `Firebase App` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseApp.unitypackage` from the
+      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
+  - Import the `Firebase Auth` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseAuth.unitypackage` from the
+      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
+  - Add the `GoogleService-Info.plist` file to the project.
+    - Navigate to the `Assets\TestApp` folder in the `Project` window.
+    - Drag the `GoogleService-Info.plist` downloaded from the Firebase console
+      into the folder.
+      
+      NOTE: `GoogleService-Info.plist` can be placed anywhere in the project.
+  - Optional: Update the Project Bundle Identifier
+    - If you did not use `com.google.firebase.unity.auth.testapp`
+      as the project package name you will need to update the sample's Bundle
+      Identifier.
+      - Select the `File > Build Settings` menu option.
+      - Select `iOS` in the `Platform` list.
+      - Click `Player Settings`
+      - In the `Player Settings` panel scroll down to `Bundle Identifier`
+        and update the value to the package name you provided when you
+        registered your app with Firebase.
+  - Build for iOS
+    - Select the `File > Build Settings` menu option.
+    - Select `iOS` in the `Platform` list.
+    - Click `Switch Platform` to select `iOS` as the target platform.
+    - Wait for the spinner (compiling) icon to stop in the bottom right corner
+      of the Unity status bar.
+    - Click `Build and Run`.
+  - See the *Using the Sample* section below.
+
 
 ### Android
 
   - Register your Android app with Firebase.
-    - Create a new app on the [Firebase
-      console](https://firebase.google.com/console/), and attach your Android
-      app to it.
-      - You can use "com.google.android.auth.testapp" as the Package Name
-        while you're testing.
+    - Create a project in the
+      [Firebase console](https://firebase.google.com/console/),
+      and attach your Android app to it.
+      - You should use `com.google.firebase.unity.auth.testapp` as the
+        package name while you're testing.
+        - If you do not use the prescribed package name you will need to update
+          the bundle identifier as described in the
+          `Optional: Update the Project Bundle Identifier` below.
+
       - To [generate a SHA1](https://developers.google.com/android/guides/client-auth)
         run this command on Mac and Linux,
         ```
@@ -64,98 +113,91 @@ The testapp requires version 5.3 of Unity or higher.
         ```
         keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -dname "CN=Android Debug,O=Android,C=US"
         ```
-    - In Firebase console, select "Auth", then enable "Email/Password", and also
-      enable "Anonymous". This will allow the testapp to use email accounts and
-      anonymous sign-in.
-    - Download a `google-services.json` file from the Firebase console.
-      This file identifies your Android app to the Firebase backend, and will
-      need to be included in the testapp later.
-    - For further details please refer to the [general
-      instructions for setting up an Android app with
-      Firebase](https://firebase.google.com/docs/android/setup).
+    - Enable Authentication in the project.
+      - Go to the [Firebase console](https://firebase.google.com/console/),
+      - Select the *Auth* tab in the sidebar.
+      - Select the *Sign-In Method* tab
+      - Enable *Email/Password* and *Anonymous* sign-in providers.
+    - Download the `google-services.json` file associated with your
+        Firebase project from the console.
+        This file identifies your Android app to the Firebase backend, and will
+        need to be included in the sample later.
+      - For further details please refer to the
+        [general instructions](https://firebase.google.com/docs/android/setup)
+        which describes how to configure a Firebase application for Android.
   - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
     and unzip it somewhere convenient.
-  - Open the testapp project in the Unity editor.
-  - Open the scene MainScene
-  - Import the custom package FirebaseApp.unitypackage from the Firebase
-    Unity SDK, downloaded previously.  (From the menu, select
-    Assets > Import Package > Custom Package)
-  - Import the custom package FirebaseAuth.unitypackage in the same way.
-  - Take the `google-services.json` that was downloaded earlier, and copy it
-    into your the testapp's `Assets` directory.
-    (Note: This has to be done after the packages are loaded, so that the plugin
-    notices the file and generates the appropriate resource files.)
-  - Double check:  At this point, several files should have been generated by
-    the plugin, and be present in your `Assets` directory:
-     - `Assets/Plugins/Android/Firebase/res/values/google-services.xml`
-     - `Assets/Plugins/Android/firebase-common-9.0.0` (Directory)
-     - `Assets/Plugins/Android/firebase-iid-9.0.0` (Directory)
-     - `Assets/Plugins/Android/firebase-Auth-9.0.0.aar`
-     - `Assets/Plugins/Android/play-services-base-9.0.0.aar`
-     - `Assets/Plugins/Android/play-services-basement-9.0.0.aar`
-     - `Assets/Plugins/Android/play-services-tasks-9.0.0.aar`
-  - Build the Unity project and run it on your Android device.
+  - Open the sample project in the Unity editor.
+    - Select the `File > Open Project` menu item.
+    - Click `Open`.
+    - Navigate to the sample directory `testapp` in the file dialog and click
+      `Open`.
+  - Open the scene `MainScene`.
+    - Navigate to `Assets/TestApp/MainScene` in the `Project` window.
+    - Double click on `MainScene` file to open.
+  - Import the `Firebase App` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseApp.unitypackage` from the
+      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
+  - Import the `Firebase Auth` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseAuth.unitypackage` from the
+      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
+  - Add the `google-services.json` file to the project.
+    - Navigate to the `Assets\TestApp` folder in the `Project` window.
+    - Drag the `google-services.json` downloaded from the Firebase console
+      into the folder.
+      
+      NOTE: `google-services.json` can be placed anywhere in the project.
+  - Optional: Update the Project Bundle Identifier
+    - If you did not use `com.google.firebase.unity.auth.testapp`
+      as the project package name you will need to update the sample's Bundle
+      Identifier.
+      - Select the `File > Build Settings` menu option.
+      - Select `Android` in the `Platform` list.
+      - Click `Player Settings`
+      - In the `Player Settings` panel scroll down to `Bundle Identifier`
+        and update the value to the package name you provided when you
+        registered your app with Firebase.
+  - Build for Android
+    - Select the `File > Build Settings` menu option.
+    - Select `Android` in the `Platform` list.
+    - Click `Switch Platform` to select `Android` as the target platform.
+    - Wait for the spinner (compiling) icon to stop in the bottom right corner
+      of the Unity status bar.
+    - Click `Build and Run`.
+  - See the *Using the Sample* section below.
 
 
-### iOS
+## Using the Sample
 
-  - Register your iOS app with Firebase.
-    - Create a new app on the [Firebase
-      console](https://firebase.google.com/console/), and attach your iOS
-      app to it.
-      - You can use "com.google.ios.Auth.testapp" as the Package Name
-        while you're testing.
-    - Download a `GoogleService-Info.plist` file from the Firebase console.
-      This file identifies your iOS app to the Firebase backend, and will
-      need to be included in the testapp later.
-    - For further details please refer to the [general instructions for setting
-      up an iOS app with Firebase](https://firebase.google.com/docs/ios/setup).
-  - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
-    and unzip it somewhere convenient.
-  - Open the testapp project in the Unity editor.
-  - Open the scene MainScene
-  - Import the custom package FirebaseApp.unitypackage from the Firebase
-    Unity SDK, downloaded previously.  (From the menu, select
-    Assets > Import Package > Custom Package)
-  - Import the custom package FirebaseAuth.unitypackage in the same way.
-  - Build your project for iOS.
-  - Navigate to the xcode project that was created by Unity, and create a new
-    file called Podfile, with the following contents:
-    ```
-    source 'https://github.com/CocoaPods/Specs.git'
-    platform :ios, '8.0'
+You must enable *Email/Password* and *Anonymous* authentication sign-in method
+in your Firebase project in the
+[Firebase console](https://firebase.google.com/console/) and also sign your
+application with the key registered with the Firebase project otherwise
+sign-in operations will fail.
 
-    target 'Unity-iPhone' do
-      pod 'Firebase/Auth'
-    end
-    ```
-  - From the terminal, navigate to the project directory, and run `pod install`.
-  - From the terminal, run `open Unity-iPhone.xcworkspace` to open xcode.
-    (Important: Launch it from `Unity-iPhone.xcworkspace` and not
-    `Unity-iPhone.xcproject`.  Launching from `Unity-iPhone.xcproject` will
-    cause problems.)
-  - Under 'Build Settings' of the project, add `$(inherited)` to "Other Linker
-    Flags".
-  - Drag the `GoogleServices-Info.plist` file from finder into the root of the
-    project in xcode.
-  - In your project's Info tab, under the URL Types section, add a new URL
-    Type with the Identifier `google`, and URL Schemes with the value of the
-    REVERSED_CLIENT_ID string in your GoogleService-Info.plist.
-  - Add an additional URL Type, with both the Identifier and URL Schemes set
-    to your package name, i.e. "com.google.ios.Auth.testapp".
-  - Build the Unity project and run it on your iOS device.
+The app provides email and password text input fields which control the
+user associated with the action performed by each of the following buttons:
 
+  - The `Create User` button attempts to register a user with the specified
+    email and password.  If the user is already present an error will be
+    reported.
+  - The `Sign In With Password` button attempts to sign in the user with the
+    specified email and password.  If the user is already signed in the
+    sign-in process will fail.
+  - The `Sign In With Credentials` button creates an Auth credential from the
+    specified email and password.
+  - The `Delete User` button attempts to delete the user associated with the
+    specified email address.
 
-## Using the testapp
+The user database can be viewed in the
+[Firebase console.](https://firebase.google.com/console/) by:
+  - Selecting the `Auth` sidebar.
+  - Selecting the `Users` tab.
 
-- When you run the app, it will allow you to provide usernames and passwords
-  via text input fields.
-- To create a new firebase user, enter a username and password, and click the
-  "Create User" button.  This will attempt to register the user name provided
-  with your Firebase app.
-- Use the other buttons to test signing in and deleting users.
-- If successful, you can view user creation/deletion in the
-  [Firebase console.](https://firebase.google.com/console/)
 
 ## Support
 

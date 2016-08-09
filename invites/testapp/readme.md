@@ -1,37 +1,99 @@
-# Firebase Invites Quickstart
+# Firebase Dynamic Links and Invites Quickstart
 
-The Firebase Invites Test Application (testapp) demonstrates sending and
-receiving Firebase Invites and Dynamic Links using the Firebase Unity SDK.
-
-
-## Known Issues
-
-Creating an InvitesSender and InvitesReceiver together can cause one of them to
-fail to initialize correctly. To work around this issue, wait to create an
-InvitesSender until after InvitesReceiver.Fetch has completed. This is
-demonstrated in UIHandler.cs.
+The Firebase Dynamic Links and Invites Unity Sample demonstrates sending and
+receiving [Firebase Invites](https://firebase.google.com/docs/invites/) and
+[Firebase Dynamic Links](https://firebase.google.com/docs/dynamic-links/)
+using the
+[Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz).
 
 
-## Requrements
+## Requirements
 
-The testapp requires version 5.3 of Unity or higher.
+* [Unity](http://unity3d.com/) 5.3 or higher.
+* [Xcode](https://developer.apple.com/xcode/) 7.3 or higher
+  (when developing for iOS).
+* [Android SDK](https://developer.android.com/studio/index.html#downloads)
+  (when developing for Android).
 
 
-## Introduction
+## Building the Sample
 
-[Read more about Firebase Invites](https://firebase.google.com/docs/invites/)
+### iOS
 
+  - Register your iOS app with Firebase.
+    - Create a project in the
+      [Firebase console](https://firebase.google.com/console/),
+      and associate your iOS application.
+      - You should use `com.google.firebase.unity.invites.testapp` as the
+        package name while you're testing.
+        - If you do not use the prescribed package name you will need to update
+          the bundle identifier as described in the
+          `Optional: Update the Project Bundle Identifier` below.
+    - Download the `GoogleService-Info.plist` file associated with your
+      Firebase project from the console.
+      This file identifies your iOS app to the Firebase backend, and will
+      need to be included in the sample later.
+    - For further details please refer to the
+      [general instructions](https://firebase.google.com/docs/ios/setup)
+      which describes how to configure a Firebase application for iOS.
+  - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
+    and unzip it somewhere convenient.
+  - Open the sample project in the Unity editor.
+    - Select the `File > Open Project` menu item.
+    - Click `Open`.
+    - Navigate to the sample directory `testapp` in the file dialog and click
+      `Open`.
+  - Open the scene `MainScene`.
+    - Navigate to `Assets/TestApp/MainScene` in the `Project` window.
+    - Double click on `MainScene` file to open.
+  - Import the `Firebase App` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseApp.unitypackage` from the
+      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
+  - Import the `Firebase Invites and Dynamic Links` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseInvites.unitypackage` from the
+      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
+  - Add the `GoogleService-Info.plist` file to the project.
+    - Navigate to the `Assets\TestApp` folder in the `Project` window.
+    - Drag the `GoogleService-Info.plist` downloaded from the Firebase console
+      into the folder.
+      
+      NOTE: `GoogleService-Info.plist` can be placed anywhere in the project.
+  - Optional: Update the Project Bundle Identifier
+    - If you did not use `com.google.firebase.unity.invites.testapp`
+      as the project package name you will need to update the sample's Bundle
+      Identifier.
+      - Select the `File > Build Settings` menu option.
+      - Select `iOS` in the `Platform` list.
+      - Click `Player Settings`
+      - In the `Player Settings` panel scroll down to `Bundle Identifier`
+        and update the value to the package name you provided when you
+        registered your app with Firebase.
+  - Build for iOS
+    - Select the `File > Build Settings` menu option.
+    - Select `iOS` in the `Platform` list.
+    - Click `Switch Platform` to select `iOS` as the target platform.
+    - Wait for the spinner (compiling) icon to stop in the bottom right corner
+      of the Unity status bar.
+    - Click `Build and Run`.
+  - See the *Using the Sample* section below.
 
-## Building the testapp
 
 ### Android
 
   - Register your Android app with Firebase.
-    - Create a new app on the [Firebase
-      console](https://firebase.google.com/console/), and attach your Android
-      app to it.
-      - You can use "com.google.firebase.unity.invites.testapp" as the Package Name
-        while you're testing.
+    - Create a project in the
+      [Firebase console](https://firebase.google.com/console/),
+      and attach your Android app to it.
+      - You should use `com.google.firebase.unity.invites.testapp` as the
+        package name while you're testing.
+        - If you do not use the prescribed package name you will need to update
+          the bundle identifier as described in the
+          `Optional: Update the Project Bundle Identifier` below.
+
       - To [generate a SHA1](https://developers.google.com/android/guides/client-auth)
         run this command on Mac and Linux,
         ```
@@ -46,101 +108,81 @@ The testapp requires version 5.3 of Unity or higher.
         ```
         keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -dname "CN=Android Debug,O=Android,C=US"
         ```
-    - Download a `google-services.json` file from the Firebase console.
-      This file identifies your Android app to the Firebase backend, and will
-      need to be included in the testapp later.
-    - For further details please refer to the [general
-      instructions for setting up an Android app with
-      Firebase](https://firebase.google.com/docs/android/setup).
+    - Download the `google-services.json` file associated with your
+        Firebase project from the console.
+        This file identifies your Android app to the Firebase backend, and will
+        need to be included in the sample later.
+      - For further details please refer to the
+        [general instructions](https://firebase.google.com/docs/android/setup)
+        which describes how to configure a Firebase application for Android.
   - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
     and unzip it somewhere convenient.
-  - Open the testapp project in the Unity editor.
-  - Open the scene MainScene
-  - Import the custom package FirebaseApp.unitypackage from the Firebase
-    Unity SDK, downloaded previously.  (From the menu, select
-    Assets > Import Package > Custom Package)
-  - Import the custom package FirebaseInvites.unitypackage in the same way.
-  - From the menu, select Assets > Google Play Services > Resolve Client Jars.
-    Note that this option will only appear on the menu if you have both
-    imported the firebase packages, and set the build target to Android.
-  - Take the `google-services.json` that was downloaded earlier, and copy it
-    into your the testapp's `Assets` directory.
-    (Note: This has to be done after the packages are loaded, so that the plugin
-    notices the file and generates the appropriate resource files.)
-  - Double check:  At this point, several files should have been generated by
-    the plugin, and be present in your `Assets` directory:
-     - `Assets/Plugins/Android/Firebase/res/values/google-services.xml`
-     - `Assets/Plugins/Android/firebase-common-9.4.0` (Directory)
-     - `Assets/Plugins/Android/firebase-iid-9.4.0` (Directory)
-     - `Assets/Plugins/Android/firebase-invites-9.4.0.aar`
-     - `Assets/Plugins/Android/play-services-base-9.4.0.aar`
-     - `Assets/Plugins/Android/play-services-basement-9.4.0.aar`
-     - `Assets/Plugins/Android/play-services-tasks-9.4.0.aar`
-  - Build the Unity project and run it on your Android device.
+  - Open the sample project in the Unity editor.
+    - Select the `File > Open Project` menu item.
+    - Click `Open`.
+    - Navigate to the sample directory `testapp` in the file dialog and click
+      `Open`.
+  - Open the scene `MainScene`.
+    - Navigate to `Assets/TestApp/MainScene` in the `Project` window.
+    - Double click on `MainScene` file to open.
+  - Import the `Firebase App` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseApp.unitypackage` from the
+      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
+  - Import the `Firebase Invites and Dynamic Links` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseInvites.unitypackage` from the
+      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
+  - Add the `google-services.json` file to the project.
+    - Navigate to the `Assets\TestApp` folder in the `Project` window.
+    - Drag the `google-services.json` downloaded from the Firebase console
+      into the folder.
+      
+      NOTE: `google-services.json` can be placed anywhere in the project.
+  - Optional: Update the Project Bundle Identifier
+    - If you did not use `com.google.firebase.unity.invites.testapp`
+      as the project package name you will need to update the sample's Bundle
+      Identifier.
+      - Select the `File > Build Settings` menu option.
+      - Select `Android` in the `Platform` list.
+      - Click `Player Settings`
+      - In the `Player Settings` panel scroll down to `Bundle Identifier`
+        and update the value to the package name you provided when you
+        registered your app with Firebase.
+  - Build for Android
+    - Select the `File > Build Settings` menu option.
+    - Select `Android` in the `Platform` list.
+    - Click `Switch Platform` to select `Android` as the target platform.
+    - Wait for the spinner (compiling) icon to stop in the bottom right corner
+      of the Unity status bar.
+    - Click `Build and Run`.
+  - See the *Using the Sample* section below.
 
 
-### iOS
+## Using the Sample
 
-  - Register your iOS app with Firebase.
-    - Create a new app on the [Firebase
-      console](https://firebase.google.com/console/), and attach your iOS
-      app to it.
-      - You can use "com.google.firebase.unity.invites.testapp" as the Package Name
-        while you're testing.
-    - Download a `GoogleService-Info.plist` file from the Firebase console.
-      This file identifies your iOS app to the Firebase backend, and will
-      need to be included in the testapp later.
-    - For further details please refer to the [general instructions for setting
-      up an iOS app with Firebase](https://firebase.google.com/docs/ios/setup).
-  - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
-    and unzip it somewhere convenient.
-  - Open the testapp project in the Unity editor.
-  - Open the scene MainScene
-  - Import the custom package FirebaseApp.unitypackage from the Firebase
-    Unity SDK, downloaded previously.  (From the menu, select
-    Assets > Import Package > Custom Package)
-  - Import the custom package FirebaseInvites.unitypackage in the same way.
-  - Build your project for iOS.
-  - Navigate to the xcode project that was created by Unity, and create a new
-    file called Podfile, with the following contents:
-    ```
-    source 'https://github.com/CocoaPods/Specs.git'
-    platform :ios, '8.0'
-
-    target 'Unity-iPhone' do
-      pod 'Firebase/Invites'
-    end
-    ```
-  - From the terminal, navigate to the project directory, and run `pod install`.
-  - From the terminal, run `open Unity-iPhone.xcworkspace` to open xcode.
-    (Important: Launch it from `Unity-iPhone.xcworkspace` and not
-    `Unity-iPhone.xcproject`.  Launching from `Unity-iPhone.xcproject` will
-    cause problems.)
-  - Under 'Build Settings' of the project, add `$(inherited)` to "Other Linker
-    Flags".
-  - Drag the `GoogleServices-Info.plist` file from finder into the root of the
-    project in xcode.
-  - In your project's Info tab, under the URL Types section, add a new URL
-    Type with the Identifier `google`, and URL Schemes with the value of the
-    REVERSED_CLIENT_ID string in your GoogleService-Info.plist.
-  - Add an additional URL Type, with both the Identifier and URL Schemes set
-    to your package name, i.e. "com.google.firebase.unity.invites.testapp".
-  - Build the Unity project and run it on your iOS device.
-
-
-## Using the testapp
-
-- When you first run the app, it will check for an incoming dynamic link or
-  invitation, and report whether it was able to fetch an invite.
-- To send an invite, use the "Send Invite" button on the right side.
-- This will open a screen that allows you to send an invite for the current
-  app via e-mail or SMS.
-- To simulate receiving an invitation from a friend, you can send yourself an
-  invite, uninstall the test app, then click the link in your e-mail.
+  - When you first run the app, it will check for an incoming dynamic link or
+    invitation, and report whether it was able to fetch an invite.
+  - To send an invite, use the `Send Invite` button on the right side of the
+    screen.
+  - This will open a screen that allows you to send an invite for the current
+    app via email or SMS.
+  - To simulate receiving an invitation from a friend, you can send yourself an
+    invite, uninstall the test app, then click the link in your email.
   - This would normally send you to the Play Store or App Store to download the
     app. Because this is a test app, it will link to a nonexistent store page.
-- After clicking the invite link, re-install and run the app on your device or
-  emulator, and see the invitation fetched on the receiving side.
+  - After clicking the invite link, re-install and run the app on your device
+    or emulator, and see the invitation fetched on the receiving side.
+
+
+## Known Issues
+
+Creating an InvitesSender and InvitesReceiver together can cause one of them to
+fail to initialize correctly. To work around this issue, wait to create an
+InvitesSender until after InvitesReceiver.Fetch has completed. This is
+demonstrated in UIHandler.cs.
 
 ## Support
 
