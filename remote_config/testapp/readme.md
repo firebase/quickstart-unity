@@ -1,31 +1,97 @@
 # Firebase Remote Config Quickstart
 
-The Firebase Remote Config Test Application (testapp) demonstrates fetching of
-various types of data through the Firebase Remote Config API.  The application
-has a basic set of buttons that trigger retrieval and display of data through
-Firebase Remote Config.
+The Firebase Remote Config Unity Sample demonstrates retrieval of various
+data types from
+[Firebase Remote Config](https://firebase.google.com/docs/remote-config/)
+using the
+[Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz).
 
 
-## Requrements
+## Requirements
 
-The testapp requires version 5.3 of Unity or higher.
+* [Unity](http://unity3d.com/) 5.3 or higher.
+* [Xcode](https://developer.apple.com/xcode/) 7.3 or higher
+  (when developing for iOS).
+* [Android SDK](https://developer.android.com/studio/index.html#downloads)
+  (when developing for Android).
 
 
-## Introduction
+## Building the Sample
 
-[Read more about Firebase Remote Config](https://firebase.google.com/docs/remote-config/)
+### iOS
 
+  - Register your iOS app with Firebase.
+    - Create a project in the
+      [Firebase console](https://firebase.google.com/console/),
+      and associate your iOS application.
+      - You should use `com.google.firebase.unity.remoteconfig.testapp` as the
+        package name while you're testing.
+        - If you do not use the prescribed package name you will need to update
+          the bundle identifier as described in the
+          `Optional: Update the Project Bundle Identifier` below.
+    - Download the `GoogleService-Info.plist` file associated with your
+      Firebase project from the console.
+      This file identifies your iOS app to the Firebase backend, and will
+      need to be included in the sample later.
+    - For further details please refer to the
+      [general instructions](https://firebase.google.com/docs/ios/setup)
+      which describes how to configure a Firebase application for iOS.
+  - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
+    and unzip it somewhere convenient.
+  - Open the sample project in the Unity editor.
+    - Select the `File > Open Project` menu item.
+    - Click `Open`.
+    - Navigate to the sample directory `testapp` in the file dialog and click
+      `Open`.
+  - Open the scene `MainScene`.
+    - Navigate to `Assets/TestApp/MainScene` in the `Project` window.
+    - Double click on `MainScene` file to open.
+  - Import the `Firebase App` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseApp.unitypackage` from the
+      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
+  - Import the `Firebase Remote Config` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseRemoteConfig.unitypackage` from the
+      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
+  - Add the `GoogleService-Info.plist` file to the project.
+    - Navigate to the `Assets\TestApp` folder in the `Project` window.
+    - Drag the `GoogleService-Info.plist` downloaded from the Firebase console
+      into the folder.
+      
+      NOTE: `GoogleService-Info.plist` can be placed anywhere in the project.
+  - Optional: Update the Project Bundle Identifier
+    - If you did not use `com.google.firebase.unity.remoteconfig.testapp`
+      as the project package name you will need to update the sample's Bundle
+      Identifier.
+      - Select the `File > Build Settings` menu option.
+      - Select `iOS` in the `Platform` list.
+      - Click `Player Settings`
+      - In the `Player Settings` panel scroll down to `Bundle Identifier`
+        and update the value to the package name you provided when you
+        registered your app with Firebase.
+  - Build for iOS
+    - Select the `File > Build Settings` menu option.
+    - Select `iOS` in the `Platform` list.
+    - Click `Switch Platform` to select `iOS` as the target platform.
+    - Click `Build and Run`.
+  - See the *Using the Sample* section below.
 
-## Building the testapp
 
 ### Android
 
   - Register your Android app with Firebase.
-    - Create a new app on the [Firebase
-      console](https://firebase.google.com/console/), and attach your Android
-      app to it.
-      - You can use "com.google.firebase.unity.remoteconfig.testapp" as the Package Name
-        while you're testing.
+    - Create a project in the
+      [Firebase console](https://firebase.google.com/console/),
+      and attach your Android app to it.
+      - You should use *com.google.firebase.unity.remoteconfig.testapp* as the
+        package name while you're testing.
+        - If you do not use the prescribed package name you will need to update
+          the bundle identifier as described in the
+          `Optional: Update the Project Bundle Identifier` below.
+
       - To [generate a SHA1](https://developers.google.com/android/guides/client-auth)
         run this command on Mac and Linux,
         ```
@@ -40,93 +106,82 @@ The testapp requires version 5.3 of Unity or higher.
         ```
         keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -dname "CN=Android Debug,O=Android,C=US"
         ```
-    - Download a `google-services.json` file from the Firebase console.
-      This file identifies your Android app to the Firebase backend, and will
-      need to be included in the testapp later.
-    - For further details please refer to the [general
-      instructions for setting up an Android app with
-      Firebase](https://firebase.google.com/docs/android/setup).
+    - Download the `google-services.json` file associated with your
+        Firebase project from the console.
+        This file identifies your Android app to the Firebase backend, and will
+        need to be included in the sample later.
+      - For further details please refer to the
+        [general instructions](https://firebase.google.com/docs/android/setup)
+        which describes how to configure a Firebase application for Android.
   - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
     and unzip it somewhere convenient.
-  - Open the testapp project in the Unity editor.
-  - Open the scene MainScene
-  - Import the custom package FirebaseApp.unitypackage from the Firebase
-    Unity SDK, downloaded previously.  (From the menu, select
-    Assets > Import Package > Custom Package)
-  - Import the custom package FirebaseRemoteConfig.unitypackage in the same way.
-  - From the menu, select Assets > Google Play Services > Resolve Client Jars.
-    Note that this option will only appear on the menu if you have both
-    imported the firebase packages, and set the build target to Android.
-  - Take the `google-services.json` that was downloaded earlier, and copy it
-    into your the testapp's `Assets` directory.
-    (Note: This has to be done after the packages are loaded, so that the plugin
-    notices the file and generates the appropriate resource files.)
-  - Build the Unity project and run it on your Android device.
+  - Open the sample project in the Unity editor.
+    - Select the `File > Open Project` menu item.
+    - Click `Open`.
+    - Navigate to the sample directory `testapp` in the file dialog and click
+      `Open`.
+  - Open the scene `MainScene`.
+    - Navigate to `Assets/TestApp/MainScene` in the `Project` window.
+    - Double click on `MainScene` file to open.
+  - Import the `Firebase App` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseApp.unitypackage` from the
+      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
+  - Import the `Firebase Remote Config` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseRemoteConfig.unitypackage` from the
+      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
+  - Add the `google-services.json` file to the project.
+    - Navigate to the `Assets\TestApp` folder in the `Project` window.
+    - Drag the `google-services.json` downloaded from the Firebase console
+      into the folder.
+      
+      NOTE: `google-services.json` can be placed anywhere in the project.
+  - Optional: Update the Project Bundle Identifier
+    - If you did not use *com.google.firebase.unity.remoteconfig.testapp*
+      as the project package name you will need to update the sample's Bundle
+      Identifier.
+      - Select the `File > Build Settings` menu option.
+      - Select `Android` in the `Platform` list.
+      - Click `Player Settings`
+      - In the `Player Settings` panel scroll down to `Bundle Identifier`
+        and update the value to the package name you provided when you
+        registered your app with Firebase.
+  - Build for Android
+    - Select the `File > Build Settings` menu option.
+    - Select `Android` in the `Platform` list.
+    - Click `Switch Platform` to select `Android` as the target platform.
+    - Click `Build and Run`.
+  - See the *Using the Sample* section below.
 
 
-### iOS
+## Using the Sample
 
-  - Register your iOS app with Firebase.
-    - Create a new app on the [Firebase
-      console](https://firebase.google.com/console/), and attach your Android
-      app to it.
-      - You can use "com.google.firebase.unity.remoteconfig.testapp" as the Package Name
-        while you're testing.
-    - Download a `GoogleService-Info.plist` file from the Firebase console.
-      This file identifies your iOS app to the Firebase backend, and will
-      need to be included in the testapp later.
-    - For further details please refer to the [general instructions for setting
-      up an iOS app with Firebase](https://firebase.google.com/docs/ios/setup).
-  - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
-    and unzip it somewhere convenient.
-  - Open the testapp project in the Unity editor.
-  - Open the scene MainScene
-  - Import the custom package FirebaseApp.unitypackage from the Firebase
-    Unity SDK, downloaded previously.  (From the menu, select
-    Assets > Import Package > Custom Package)
-  - Import the custom package FirebaseRemoteConfig.unitypackage in the same way.
-  - Build your project for iOS.
-  - Navigate to the xcode project that was created by Unity, and create a new
-    file called Podfile, with the following contents:
-    ```
-    source 'https://github.com/CocoaPods/Specs.git'
-    platform :ios, '8.0'
+Before running, you should add some data to the Firebase Console for the
+sample to fetch.
 
-    target 'Unity-iPhone' do
-      pod 'Firebase/RemoteConfig'
-    end
-    ```
-  - From the terminal, navigate to the project directory, and run `pod install`.
-  - From the terminal, run `open Unity-iPhone.xcworkspace` to open xcode.
-    (Important: Launch it from `Unity-iPhone.xcworkspace` and not
-    `Unity-iPhone.xcproject`.  Launching from `Unity-iPhone.xcproject` will
-    cause problems.)
-  - Under 'Build Settings' of the project, add `$(inherited)` to "Other Linker
-    Flags".
-  - Drag the `GoogleServices-Info.plist` file from finder into the root of the
-    project in xcode.
-  - Build the Unity project and run it on your Android device.
+  - Navigate to the [Firebase Console](https://console.firebase.google.com)
+  - Select your project.
+  - Click on `Remote Config` in the sidebar.
+  - Add the following parameters for the sample to fetch:
+    - A string named `config_test_string`
+    - An integer named `config_test_int`
+    - A floating point value named `config_test_float`
+    - A boolean named `config_test_bool`
+  - Click `Publish` in the upper right corner.
 
+The sample provides a simple interface with two buttons:
+  - The `Fetch Remote Data` button fetches remote configuration data from the
+    server.
+  - The `Display Current Data` button displays the data fetched from the last
+    press of the `Fetch Remote Data` button.  If data hasn't been fetch from
+    the server or the server isn't accessible (e.g the device is offline)
+    the default values set in `UIHandler.cs` will be displayed.
 
-## Using the testapp
-
-Before running, you should add some data for it to fetch.  Navigate to the
-[Firebase Console](https://console.firebase.google.com), select your app, and
-click on "Remote Config" on the sidebar.  Add some new parameters.  (By default
-the testapp will try to fetch a string named "config_test_string", an integer
-named "config_test_int", a floating point value named "config_test_float", and
-a boolean named "config_test_bool")  Add those fields, and give them whatever
-values you want.  Click "Publish" in the upper right corner.
-
-When you run the testapp, it will provide a simple interface with two buttons -
-one button that displays whatever data is currently downloaded (or the defaults,
-if you haven't ever fetched anything yet) and one that fetches data from the
-server.
-
-Pressing the "display data" button should show the defaults.  After pressing
-"fetch data", the "display data" button will instead display the newly
-downloaded data.  You can update and publish new data through the firebase
-console and it will be reflected in your app.
+Using Firebase Remote Config you can update and publish new data through the
+Firebase Console and it will be reflected in your app.
 
 
 ## Support
