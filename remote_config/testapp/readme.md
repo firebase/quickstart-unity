@@ -94,19 +94,15 @@ using the
           the bundle identifier as described in the
           `Optional: Update the Project Bundle Identifier` below.
 
-      - To [generate a SHA1](https://developers.google.com/android/guides/client-auth)
-        run this command on Mac and Linux,
+      - To [generate a SHA1](https://developers.google.com/android/guides/client-auth),
+        first you will need to set the keystore in the Unity project.
+        - Locate the `Publishing Settings` under `Player Settings`.
+        - Select an existing keystore, or create a new keystore using the toggle.
+        - Select an existing key, or create a new key using "Create a new key".
+      - After setting the keystore and key, you can generate a SHA1 by
+        running this command:
         ```
-        keytool -exportcert -list -v -alias androiddebugkey -keystore ~/.android/debug.keystore
-        ```
-        or this command on Windows,
-        ```
-        keytool -exportcert -list -v -alias androiddebugkey -keystore %USERPROFILE%\.android\debug.keystore
-        ```
-      - If keytool reports that you do not have a debug.keystore, you can
-        [create one with](http://developer.android.com/tools/publishing/app-signing.html#signing-manually),
-        ```
-        keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -dname "CN=Android Debug,O=Android,C=US"
+        keytool -exportcert -list -v -alias <key_name> -keystore <path_to_keystore>
         ```
     - Download the `google-services.json` file associated with your
         Firebase project from the console.
