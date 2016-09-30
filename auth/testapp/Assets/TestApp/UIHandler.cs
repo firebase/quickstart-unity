@@ -55,6 +55,12 @@ public class UIHandler : MonoBehaviour {
     auth = Firebase.Auth.GetAuth(app);
   }
 
+  void Update() {
+    if (!Application.isMobilePlatform && Input.GetKey("escape")) {
+      Application.Quit();
+    }
+  }
+
   void DisableUI() {
     login.DeactivateInputField();
     password.DeactivateInputField();
@@ -146,7 +152,7 @@ public class UIHandler : MonoBehaviour {
       DebugLog(authTask.Exception.ToString());
     } else if (authTask.IsCompleted) {
       DisableUI();
-      auth.CurrentUser().Delete().ContinueWith(HandleDeleteResult);
+      auth.CurrentUser.Delete().ContinueWith(HandleDeleteResult);
       DebugLog("Signed in - deleting user.");
     }
   }

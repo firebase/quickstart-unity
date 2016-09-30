@@ -179,16 +179,13 @@ The sample provides a simple interface with two buttons:
     press of the `Fetch Remote Data` button.  If data hasn't been fetch from
     the server or the server isn't accessible (e.g the device is offline)
     the default values set in `UIHandler.cs` will be displayed.
+  - The `Display All Keys` button displays all of the keys associated with
+    config data from the last fetch. It then displays all keys that begin with
+    "config_test_s".
 
 Using Firebase Remote Config you can update and publish new data through the
 Firebase Console and it will be reflected in your app.
 
-## Known Issues
-
-Calling `Fetch()` with Firebase Remote Config in the Editor can lead to a crash
-when stopping the application. To work around this issue, you can avoid calling
-`Fetch()` when running in the editor, which can be done using directives such
-as `#if UNITY_EDITOR`, as shown in the sample.
 
 ## Support
 

@@ -43,44 +43,41 @@ class UIHandler : MonoBehaviour {
     app = Firebase.App.Create(ops);
     DebugLog("Created the firebase app: " + app.Name);
 
-    Firebase.Messaging.Initialize (app, new MessageListener(DebugLog));
+    Firebase.Messaging.MessageReceived += OnMessageReceived;
+    Firebase.Messaging.TokenReceived += OnTokenReceived;
+    Firebase.Messaging.Initialize(app);
     DebugLog("Firebase Messaging initialized!");
   }
 
-  // End our messaging session when the program exits.
-  public void OnDestroy() {
-    DebugLog("On Destroy");
-    Firebase.Messaging.Terminate();
-    app.Destroy();
-  }
-}
-
-internal class MessageListener : Firebase.Messaging.Listener {
-  private Action<string> DebugLogFunc;
-
-  public MessageListener(Action<string> debugLogFunc) {
-    DebugLogFunc = debugLogFunc;
-  }
-
-  private void DebugLog(string text) {
-    if (DebugLogFunc != null) {
-        DebugLogFunc(text);
-      }
-  }
-
-  public override void OnMessage (Firebase.Messaging.Message message) {
+  public void OnMessageReceived(object sender, Firebase.Messaging.MessageReceivedEventArgs e) {
     DebugLog("Received a new message");
-    if (message.from.Length > 0)
-      DebugLog("from: " + message.from);
-    if (message.data.Count > 0) {
+    if (e.Message.From.Length > 0)
+      DebugLog("from: " + e.Message.From);
+    if (e.Message.Data.Count > 0) {
       DebugLog("data:");
-      foreach (System.Collections.Generic.KeyValuePair<string, string> iter in message.data) {
+      foreach (System.Collections.Generic.KeyValuePair<string, string> iter in
+               e.Message.Data) {
         DebugLog("  " + iter.Key + ": " + iter.Value);
       }
     }
   }
 
-  public override void OnTokenReceived (string token) {
-    DebugLog("Received Registration Token: " + token);
+  public void OnTokenReceived(object sender, Firebase.Messaging.TokenReceivedEventArgs token) {
+    DebugLog("Received Registration Token: " + token.Token);
+  }
+
+  void Update() {
+    if (!Application.isMobilePlatform && Input.GetKey("escape")) {
+      Application.Quit();
+    }
+  }
+
+  // End our messaging session when the program exits.
+  public void OnDestroy() {
+    DebugLog("On Destroy");
+    Firebase.Messaging.MessageReceived -= OnMessageReceived;
+    Firebase.Messaging.TokenReceived -= OnTokenReceived;
+    Firebase.Messaging.Terminate();
+    app.Destroy();
   }
 }

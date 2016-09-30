@@ -60,6 +60,12 @@ class UIHandler : MonoBehaviour {
     DebugLog("RemoteConfig configured and ready!");
   }
 
+  void Update() {
+    if (!Application.isMobilePlatform && Input.GetKey("escape")) {
+      Application.Quit();
+    }
+  }
+
   // End our remote config session when the program exits.
   public void OnDestroy() {
     Firebase.RemoteConfig.Terminate();
@@ -81,16 +87,27 @@ class UIHandler : MonoBehaviour {
     DebugLog("config_test_bool: " + Firebase.RemoteConfig.GetBoolean("config_test_bool"));
   }
 
+  public void DisplayAllKeys() {
+    ClearDebugLog ();
+    DebugLog("Current Keys:");
+    System.Collections.Generic.IEnumerable<string> keys =
+        Firebase.RemoteConfig.GetKeys();
+    foreach (string key in keys) {
+      DebugLog("    " + key);
+    }
+    DebugLog("GetKeysByPrefix(\"config_test_s\"):");
+    keys = Firebase.RemoteConfig.GetKeysByPrefix("config_test_s");
+    foreach (string key in keys) {
+      DebugLog("    " + key);
+    }
+  }
+
   // Start a fetch request.
   public void FetchData() {
     ClearDebugLog();
-#if UNITY_EDITOR
-    DebugLog("Fetching data is not supported in Editor");
-#else
     DebugLog("Fetching data...");
     System.Threading.Tasks.Task fetchTask = Firebase.RemoteConfig.Fetch();
     fetchTask.ContinueWith(FetchComplete);
-#endif
   }
 
   void FetchComplete(Task fetchTask) {
@@ -102,18 +119,18 @@ class UIHandler : MonoBehaviour {
       DebugLog("Fetch completed successfully!");
     }
 
-    switch (Firebase.RemoteConfig.GetInfo().last_fetch_status) {
+    switch (Firebase.RemoteConfig.GetInfo().LastFetchStatus) {
     case Firebase.RemoteConfig.LastFetchStatus.Success:
       Firebase.RemoteConfig.ActivateFetched();
       DebugLog("Remote data loaded and ready.");
       break;
     case Firebase.RemoteConfig.LastFetchStatus.Failure:
-      switch (Firebase.RemoteConfig.GetInfo().last_fetch_failure_reason) {
+      switch (Firebase.RemoteConfig.GetInfo().LastFetchFailureReason) {
       case Firebase.RemoteConfig.FetchFailureReason.Error:
         DebugLog("Fetch failed for unknown reason");
         break;
       case Firebase.RemoteConfig.FetchFailureReason.Throttled:
-        DebugLog("Fetch throttled until " + Firebase.RemoteConfig.GetInfo().throttled_end_time);
+        DebugLog("Fetch throttled until " + Firebase.RemoteConfig.GetInfo().ThrottledEndTime);
         break;
       }
       break;

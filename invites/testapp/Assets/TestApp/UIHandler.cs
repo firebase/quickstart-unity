@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -43,18 +44,17 @@ public class UIHandler : MonoBehaviour {
     app = Firebase.App.Create(ops);
     DebugLog(String.Format("Created the firebase app: {0}", app.Name));
 
-    Firebase.InitResult initResult = Firebase.Invites.Initialize(app);
-    if (initResult == Firebase.InitResult.FailedMissingDependency) {
-      DebugLog("Invites failed to initialize because of a missing dependency.");
-#if UNITY_ANDROID
-      DebugLog("Google Play Services may not be available");
-#endif
-      return;
-    }
+    Firebase.Invites.Initialize(app);
     DebugLog("Invites initialized");
     receiver = new Firebase.Invites.InvitesReceiver(app);
     DebugLog("InvitesReceiver created");
     receiver.Fetch().ContinueWith(HandleFetchResult);
+  }
+
+  void Update() {
+    if (!Application.isMobilePlatform && Input.GetKey("escape")) {
+      Application.Quit();
+    }
   }
 
   void HandleFetchResult(Task<Firebase.Invites.InvitesReceiver.FetchResult> fetchTask) {
@@ -66,14 +66,14 @@ public class UIHandler : MonoBehaviour {
     } else if (fetchTask.IsCompleted) {
       DebugLog("Fetch completed successfully!");
       Firebase.Invites.InvitesReceiver.FetchResult result = fetchTask.Result;
-      if (result.invitation_id != "") {
-        DebugLog("Fetch: Get invitation ID: " + result.invitation_id);
-        receiver.ConvertInvitation(result.invitation_id).ContinueWith(HandleConversionResult);
+      if (result.InvitationId != "") {
+        DebugLog("Fetch: Get invitation ID: " + result.InvitationId);
+        receiver.ConvertInvitation(result.InvitationId).ContinueWith(HandleConversionResult);
       }
-      if (result.deep_link != "") {
-        DebugLog("Fetch: Got deep link: " + result.deep_link);
+      if (result.DeepLink != "") {
+        DebugLog("Fetch: Got deep link: " + result.DeepLink);
       }
-      if (result.invitation_id == "" && result.deep_link == "") {
+      if (result.InvitationId == "" && result.DeepLink == "") {
         DebugLog("Fetch: No invitation ID or deep link");
       }
     }
@@ -92,7 +92,7 @@ public class UIHandler : MonoBehaviour {
     } else if (convertTask.IsCompleted) {
       DebugLog("Conversion completed successfully!");
       DebugLog("ConvertInvitation: Successfully converted invitation ID: " +
-        convertTask.Result.invitation_id);
+        convertTask.Result.InvitationId);
     }
   }
 
@@ -117,9 +117,9 @@ public class UIHandler : MonoBehaviour {
       DebugLog("Invitation encountered an error:");
       DebugLog(sendTask.Exception.ToString());
     } else if (sendTask.IsCompleted) {
-      DebugLog("SendInvite: " + sendTask.Result.invitation_ids.Count +
+      DebugLog("SendInvite: " + (new List<string>(sendTask.Result.InvitationIds)).Count +
         " invites sent successfully.");
-      foreach (string id in sendTask.Result.invitation_ids) {
+      foreach (string id in sendTask.Result.InvitationIds) {
         DebugLog("SendInvite: Invite code: " + id);
       }
     }

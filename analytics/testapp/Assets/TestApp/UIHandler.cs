@@ -18,82 +18,92 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Firebase;
+using Firebase.Analytics;
 
 // Handler for UI buttons on the scene.  Also performs some
 // necessary setup (initializing the firebase app, etc) on
 // startup.
 public class UIHandler : MonoBehaviour {
 
-    public Text outputText;
-    App app;
+  public Text outputText;
+  App app;
 
-    public void DebugLog(string s) {
-        print(s);
-        outputText.text += s + "\n";
-    }
+  public void DebugLog(string s) {
+    print(s);
+    outputText.text += s + "\n";
+  }
 
-    // When the app starts, create a firebase app object,
-    // set the user property and id, and enable analytics.
-    void Start() {
-        DebugLog("Setting up firebase...");
-        AppOptions ops = new AppOptions();
+  // When the app starts, create a firebase app object,
+  // set the user property and id, and enable analytics.
+  void Start() {
+    DebugLog("Setting up firebase...");
+    AppOptions ops = new AppOptions();
 
-        DebugLog(String.Format("Created the AppOptions, with appID: {0}", ops.AppID));
+    DebugLog(String.Format(
+        "Created the AppOptions, with appID: {0}",
+        ops.AppID));
 
-        app = App.Create(ops);
+    app = App.Create(ops);
 
-        DebugLog(String.Format("Created the firebase app: {0}", app.Name));
-        Analytics.Initialize(app);
-        DebugLog("Initialized the firebase analytics API");
+    DebugLog(String.Format("Created the firebase app: {0}", app.Name));
+    FirebaseAnalytics.Initialize(app);
+    DebugLog("Initialized the firebase analytics API");
 
-        DebugLog("Enabling data collection.");
-        Analytics.SetAnalyticsCollectionEnabled(true);
+    DebugLog("Enabling data collection.");
+    FirebaseAnalytics.SetAnalyticsCollectionEnabled(true);
 
-        DebugLog("Set user properties.");
-        // Set the user's sign up method.
-        Analytics.SetUserProperty(Analytics.UserPropertySignUpMethod, "Google");
-        // Set the user ID.
-        Analytics.SetUserId("uber_user_510");
-    }
+    DebugLog("Set user properties.");
+    // Set the user's sign up method.
+    FirebaseAnalytics.SetUserProperty(
+      FirebaseAnalytics.UserPropertySignUpMethod,
+      "Google");
+    // Set the user ID.
+    FirebaseAnalytics.SetUserId("uber_user_510");
+  }
 
-    // End our analytics session when the program exits.
-    void OnDestroy() {
-        Analytics.Terminate();
-    }
+  // End our analytics session when the program exits.
+  void OnDestroy() {
+    FirebaseAnalytics.Terminate();
+  }
 
-    public void AnalyticsLogin() {
-        // Log an event with no parameters.
-        DebugLog ("Logging a login event.");
-        Analytics.LogEvent (Analytics.EventLogin);
-    }
+  public void AnalyticsLogin() {
+    // Log an event with no parameters.
+    DebugLog("Logging a login event.");
+    FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventLogin);
+  }
 
-    public void AnalyticsProgress() {
-        // Log an event with a float.
-        DebugLog ("Logging a progress event.");
-        Analytics.LogEvent("progress", "percent", 0.4f);
-    }
+  public void AnalyticsProgress() {
+    // Log an event with a float.
+    DebugLog("Logging a progress event.");
+    FirebaseAnalytics.LogEvent("progress", "percent", 0.4f);
+  }
 
-    public void AnalyticsScore() {
-        // Log an event with an int parameter.
-        DebugLog ("Logging a post-score event.");
-        Analytics.LogEvent(Analytics.EventPostScore, Analytics.ParameterScore, 42);
-    }
+  public void AnalyticsScore() {
+    // Log an event with an int parameter.
+    DebugLog("Logging a post-score event.");
+    FirebaseAnalytics.LogEvent(
+      FirebaseAnalytics.EventPostScore,
+      FirebaseAnalytics.ParameterScore,
+      42);
+  }
 
-    public void AnalyticsGroupJoin() {
-        // Log an event with a string parameter.
-        DebugLog ("Logging a group join event.");
-        Analytics.LogEvent(Analytics.EventJoinGroup, Analytics.ParameterGroupID,
-            "spoon_welders");
-    }
+  public void AnalyticsGroupJoin() {
+    // Log an event with a string parameter.
+    DebugLog("Logging a group join event.");
+    FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventJoinGroup, FirebaseAnalytics.ParameterGroupID,
+      "spoon_welders");
+  }
 
-    public void AnalyticsLevelUp() {
-        // Log an event with multiple parameters.
-        DebugLog ("Logging a level up event.");
-        Analytics.Parameter[] LevelUpParameters = {
-            new Analytics.Parameter(Analytics.ParameterLevel, 5),
-            new Analytics.Parameter(Analytics.ParameterCharacter, "mrspoon"),
-            new Analytics.Parameter("hit_accuracy", 3.14f)
-        };
-        Analytics.LogEvent(Analytics.EventLevelUp, LevelUpParameters);
-    }
+  public void AnalyticsLevelUp() {
+    // Log an event with multiple parameters.
+    DebugLog("Logging a level up event.");
+    Parameter[] LevelUpParameters = {
+      new Parameter(FirebaseAnalytics.ParameterLevel, 5),
+      new Parameter(FirebaseAnalytics.ParameterCharacter, "mrspoon"),
+      new Parameter("hit_accuracy", 3.14f)
+    };
+    FirebaseAnalytics.LogEvent(
+      FirebaseAnalytics.EventLevelUp,
+      LevelUpParameters);
+  }
 }
