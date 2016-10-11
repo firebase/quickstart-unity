@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: 6897884ab20cd4932bf9a8cd975f883f
+timeCreated: 1474929024
+licenseType: Pro
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - login: {instanceID: 0}
+  - password: {instanceID: 0}
+  - createUserButton: {instanceID: 0}
+  - loginButton: {instanceID: 0}
+  - loginWithCredButton: {instanceID: 0}
+  - deleteUserButton: {instanceID: 0}
+  - outputText: {instanceID: 0}
+  - fb_GUISkin: {fileID: 11400000, guid: bb46be4b43b4f491e962c48b1530bde6, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
