@@ -24,31 +24,29 @@ using UnityEngine.UI;
 // startup.
 public class UIHandler : MonoBehaviour {
 
-  public Text outputText;
-  Firebase.App app;
+  Firebase.FirebaseApp app;
   Firebase.Invites.InvitesSender sender;
   Firebase.Invites.InvitesReceiver receiver;
 
-  public void DebugLog(string s) {
-    print(s);
-    outputText.text += s + "\n";
-  }
+  public GUISkin fb_GUISkin;
+  private Vector2 scrollViewVector = Vector2.zero;
+  bool UIEnabled = true;
+  private string logText = "";
+  const int kMaxLogSize = 16382;
+
 
   // When the app starts, create a firebase app object,
   // Initialize the Sender and Receiver objects
   void Start() {
     DebugLog("Setting up firebase...");
-    Firebase.AppOptions ops = new Firebase.AppOptions();
-    DebugLog(String.Format("Created the AppOptions, with appID: {0}", ops.AppID));
-    DebugLog("About to Create App");
-    app = Firebase.App.Create(ops);
+    app = Firebase.FirebaseApp.Create();
     DebugLog(String.Format("Created the firebase app: {0}", app.Name));
-
-    Firebase.Invites.Initialize(app);
     DebugLog("Invites initialized");
+    sender = new Firebase.Invites.InvitesSender(app);
+    DebugLog("InvitesSender created");
     receiver = new Firebase.Invites.InvitesReceiver(app);
     DebugLog("InvitesReceiver created");
-    receiver.Fetch().ContinueWith(HandleFetchResult);
+    receiver.FetchAsync().ContinueWith(HandleFetchResult);
   }
 
   void Update() {
@@ -57,7 +55,13 @@ public class UIHandler : MonoBehaviour {
     }
   }
 
-  void HandleFetchResult(Task<Firebase.Invites.InvitesReceiver.FetchResult> fetchTask) {
+  void OnDestroy() {
+    app = null;
+    sender = null;
+    receiver = null;
+  }
+
+  void HandleFetchResult(Task<Firebase.Invites.FetchResult> fetchTask) {
     if (fetchTask.IsCanceled) {
       DebugLog("Fetch canceled.");
     } else if (fetchTask.IsFaulted) {
@@ -65,25 +69,24 @@ public class UIHandler : MonoBehaviour {
       DebugLog(fetchTask.Exception.ToString());
     } else if (fetchTask.IsCompleted) {
       DebugLog("Fetch completed successfully!");
-      Firebase.Invites.InvitesReceiver.FetchResult result = fetchTask.Result;
-      if (result.InvitationId != "") {
-        DebugLog("Fetch: Get invitation ID: " + result.InvitationId);
-        receiver.ConvertInvitation(result.InvitationId).ContinueWith(HandleConversionResult);
+      Firebase.Invites.FetchResult result = fetchTask.Result;
+      if (result.InvitationID != "") {
+        DebugLog("Fetch: Get invitation ID: " + result.InvitationID);
+        receiver.ConvertInvitationAsync(result.InvitationID)
+            .ContinueWith(HandleConversionResult);
       }
-      if (result.DeepLink != "") {
+      if (result.DeepLink.ToString() != "") {
         DebugLog("Fetch: Got deep link: " + result.DeepLink);
       }
-      if (result.InvitationId == "" && result.DeepLink == "") {
+      if (result.InvitationID.ToString() == ""
+        && result.DeepLink.ToString() == "") {
         DebugLog("Fetch: No invitation ID or deep link");
       }
     }
-
-    // Now that Fetching is complete, initialize the Sender.
-    sender = new Firebase.Invites.InvitesSender(app);
-    DebugLog("InvitesSender created");
   }
 
-  void HandleConversionResult(Task<Firebase.Invites.InvitesReceiver.ConvertInvitationResult> convertTask) {
+  void HandleConversionResult(
+      Task<Firebase.Invites.ConvertInvitationResult> convertTask) {
     if (convertTask.IsCanceled) {
       DebugLog("Conversion canceled.");
     } else if (convertTask.IsFaulted) {
@@ -92,7 +95,7 @@ public class UIHandler : MonoBehaviour {
     } else if (convertTask.IsCompleted) {
       DebugLog("Conversion completed successfully!");
       DebugLog("ConvertInvitation: Successfully converted invitation ID: " +
-        convertTask.Result.InvitationId);
+        convertTask.Result.InvitationID);
     }
   }
 
@@ -107,21 +110,89 @@ public class UIHandler : MonoBehaviour {
     sender.SetMessageText("Please try my app! It's awesome.");
     sender.SetCallToActionText("Download it for FREE");
     sender.SetDeepLinkUrl("http://google.com/abc");
-    sender.SendInvite().ContinueWith(HandleSentInvite);
+    sender.SendInviteAsync().ContinueWith(HandleSentInvite);
   }
 
-  void HandleSentInvite(Task<Firebase.Invites.InvitesSender.SendInviteResult> sendTask) {
+  void HandleSentInvite(Task<Firebase.Invites.SendInviteResult> sendTask) {
     if (sendTask.IsCanceled) {
       DebugLog("Invitation canceled.");
     } else if (sendTask.IsFaulted) {
       DebugLog("Invitation encountered an error:");
       DebugLog(sendTask.Exception.ToString());
     } else if (sendTask.IsCompleted) {
-      DebugLog("SendInvite: " + (new List<string>(sendTask.Result.InvitationIds)).Count +
+      DebugLog("SendInvite: " + (new List<string>(sendTask.Result.InvitationIDs)).Count +
         " invites sent successfully.");
-      foreach (string id in sendTask.Result.InvitationIds) {
+      foreach (string id in sendTask.Result.InvitationIDs) {
         DebugLog("SendInvite: Invite code: " + id);
       }
     }
+  }
+
+
+
+
+  // Output text to the debug log text field, as well as the console.
+  public void DebugLog(string s) {
+    print(s);
+    logText += s + "\n";
+
+    while (logText.Length > kMaxLogSize) {
+      int index = logText.IndexOf("\n");
+      logText = logText.Substring(index + 1);
+    }
+
+    scrollViewVector.y = int.MaxValue;
+  }
+
+  void DisableUI() {
+    UIEnabled = false;
+  }
+
+  void EnableUI() {
+    UIEnabled = true;
+  }
+
+  // Render the log output in a scroll view.
+  void GUIDisplayLog() {
+    scrollViewVector = GUILayout.BeginScrollView (scrollViewVector);
+    GUILayout.Label(logText);
+    GUILayout.EndScrollView();
+  }
+
+  // Render the buttons and other controls.
+  void GUIDisplayControls(){
+    if (UIEnabled || true) {
+      GUILayout.BeginVertical();
+
+      if (GUILayout.Button("Send Invite")) {
+        SendInvite();
+      }
+
+      GUILayout.EndVertical();
+    }
+  }
+
+  // Render the GUI:
+  void OnGUI() {
+    GUI.skin = fb_GUISkin;
+    Rect logArea, controlArea;
+
+    if (Screen.width < Screen.height) {
+      // Portrait mode
+      controlArea = new Rect(0.0f, 0.0f, Screen.width, Screen.height * 0.5f);
+      logArea = new Rect(0.0f, Screen.height * 0.5f, Screen.width, Screen.height * 0.5f);
+    } else {
+      // Landscape mode
+      controlArea = new Rect(0.0f, 0.0f, Screen.width * 0.5f, Screen.height);
+      logArea = new Rect(Screen.width * 0.5f, 0.0f, Screen.width * 0.5f, Screen.height);
+    }
+
+    GUILayout.BeginArea(logArea);
+    GUIDisplayLog();
+    GUILayout.EndArea();
+
+    GUILayout.BeginArea(controlArea);
+    GUIDisplayControls();
+    GUILayout.EndArea();
   }
 }

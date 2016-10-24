@@ -25,30 +25,15 @@ using Firebase.Analytics;
 // startup.
 public class UIHandler : MonoBehaviour {
 
-  public Text outputText;
-  App app;
-
-  public void DebugLog(string s) {
-    print(s);
-    outputText.text += s + "\n";
-  }
+  public GUISkin fb_GUISkin;
+  private Vector2 scrollViewVector = Vector2.zero;
+  bool UIEnabled = true;
+  private string logText = "";
+  const int kMaxLogSize = 16382;
 
   // When the app starts, create a firebase app object,
   // set the user property and id, and enable analytics.
   void Start() {
-    DebugLog("Setting up firebase...");
-    AppOptions ops = new AppOptions();
-
-    DebugLog(String.Format(
-        "Created the AppOptions, with appID: {0}",
-        ops.AppID));
-
-    app = App.Create(ops);
-
-    DebugLog(String.Format("Created the firebase app: {0}", app.Name));
-    FirebaseAnalytics.Initialize(app);
-    DebugLog("Initialized the firebase analytics API");
-
     DebugLog("Enabling data collection.");
     FirebaseAnalytics.SetAnalyticsCollectionEnabled(true);
 
@@ -58,13 +43,11 @@ public class UIHandler : MonoBehaviour {
       FirebaseAnalytics.UserPropertySignUpMethod,
       "Google");
     // Set the user ID.
-    FirebaseAnalytics.SetUserId("uber_user_510");
+    FirebaseAnalytics.SetUserID("uber_user_510");
   }
 
   // End our analytics session when the program exits.
-  void OnDestroy() {
-    FirebaseAnalytics.Terminate();
-  }
+  void OnDestroy() { }
 
   public void AnalyticsLogin() {
     // Log an event with no parameters.
@@ -105,5 +88,83 @@ public class UIHandler : MonoBehaviour {
     FirebaseAnalytics.LogEvent(
       FirebaseAnalytics.EventLevelUp,
       LevelUpParameters);
+  }
+
+
+
+  // Output text to the debug log text field, as well as the console.
+  public void DebugLog(string s) {
+    print(s);
+    logText += s + "\n";
+
+    while (logText.Length > kMaxLogSize) {
+      int index = logText.IndexOf("\n");
+      logText = logText.Substring(index + 1);
+    }
+
+    scrollViewVector.y = int.MaxValue;
+  }
+
+  void DisableUI() {
+    UIEnabled = false;
+  }
+
+  void EnableUI() {
+    UIEnabled = true;
+  }
+
+  // Render the log output in a scroll view.
+  void GUIDisplayLog() {
+    scrollViewVector = GUILayout.BeginScrollView (scrollViewVector);
+    GUILayout.Label(logText);
+    GUILayout.EndScrollView();
+  }
+
+  // Render the buttons and other controls.
+  void GUIDisplayControls(){
+    if (UIEnabled || true) {
+      GUILayout.BeginVertical();
+
+      if (GUILayout.Button("Log Login")) {
+        AnalyticsLogin();
+      }
+      if (GUILayout.Button("Log Progress")) {
+        AnalyticsProgress();
+      }
+      if (GUILayout.Button("Log Score")) {
+        AnalyticsScore();
+      }
+      if (GUILayout.Button("Log Group Join")) {
+        AnalyticsGroupJoin();
+      }
+      if (GUILayout.Button("Log Level Up")) {
+        AnalyticsLevelUp();
+      }
+      GUILayout.EndVertical();
+    }
+  }
+
+  // Render the GUI:
+  void OnGUI() {
+    GUI.skin = fb_GUISkin;
+    Rect logArea, controlArea;
+
+    if (Screen.width < Screen.height) {
+      // Portrait mode
+      controlArea = new Rect(0.0f, 0.0f, Screen.width, Screen.height * 0.5f);
+      logArea = new Rect(0.0f, Screen.height * 0.5f, Screen.width, Screen.height * 0.5f);
+    } else {
+      // Landscape mode
+      controlArea = new Rect(0.0f, 0.0f, Screen.width * 0.5f, Screen.height);
+      logArea = new Rect(Screen.width * 0.5f, 0.0f, Screen.width * 0.5f, Screen.height);
+    }
+
+    GUILayout.BeginArea(logArea);
+    GUIDisplayLog();
+    GUILayout.EndArea();
+
+    GUILayout.BeginArea(controlArea);
+    GUIDisplayControls();
+    GUILayout.EndArea();
   }
 }

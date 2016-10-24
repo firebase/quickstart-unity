@@ -22,31 +22,18 @@ using UnityEngine.UI;
 // startup.
 public
 class UIHandler : MonoBehaviour {
-  public Text outputText;
-  private Firebase.App app;
-
-  // Write text to the Unity and onscreen logs.
-  private void DebugLog(string s) {
-    print(s);
-    outputText.text += s + "\n";
-  }
-
-  // Clears the onscreen log.
-  private void ClearDebugLog() { outputText.text = ""; }
+  public GUISkin fb_GUISkin;
+  private Vector2 scrollViewVector = Vector2.zero;
+  private string logText = "";
+  const int kMaxLogSize = 16382;
 
   // When the app starts, create a firebase app object,
   // and initialize messaging.
   public void Start() {
-    DebugLog("Setting up firebase...");
-    Firebase.AppOptions ops = new Firebase.AppOptions();
-    DebugLog("appID: " + ops.AppID);
-    app = Firebase.App.Create(ops);
-    DebugLog("Created the firebase app: " + app.Name);
-
-    Firebase.Messaging.MessageReceived += OnMessageReceived;
-    Firebase.Messaging.TokenReceived += OnTokenReceived;
-    Firebase.Messaging.Initialize(app);
-    DebugLog("Firebase Messaging initialized!");
+    // Setup message event handlers before initializing Firebase.
+    Firebase.Messaging.FirebaseMessaging.MessageReceived += OnMessageReceived;
+    Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
+    DebugLog("Firebase Messaging Initialized");
   }
 
   public void OnMessageReceived(object sender, Firebase.Messaging.MessageReceivedEventArgs e) {
@@ -74,10 +61,40 @@ class UIHandler : MonoBehaviour {
 
   // End our messaging session when the program exits.
   public void OnDestroy() {
-    DebugLog("On Destroy");
-    Firebase.Messaging.MessageReceived -= OnMessageReceived;
-    Firebase.Messaging.TokenReceived -= OnTokenReceived;
-    Firebase.Messaging.Terminate();
-    app.Destroy();
+    Firebase.Messaging.FirebaseMessaging.MessageReceived -= OnMessageReceived;
+    Firebase.Messaging.FirebaseMessaging.TokenReceived -= OnTokenReceived;
+  }
+
+  // Output text to the debug log text field, as well as the console.
+  public void DebugLog(string s) {
+    print(s);
+    logText += s + "\n";
+
+    while (logText.Length > kMaxLogSize) {
+      int index = logText.IndexOf("\n");
+      logText = logText.Substring(index + 1);
+    }
+
+    scrollViewVector.y = int.MaxValue;
+  }
+
+  // Render the log output in a scroll view.
+  void GUIDisplayLog() {
+    scrollViewVector = GUILayout.BeginScrollView (scrollViewVector);
+    GUILayout.Label(logText);
+    GUILayout.EndScrollView();
+  }
+
+  // Render the GUI:
+  void OnGUI() {
+    GUI.skin = fb_GUISkin;
+
+    GUILayout.BeginArea(new Rect(0.0f, 0.0f, Screen.width, Screen.height));
+
+    scrollViewVector = GUILayout.BeginScrollView (scrollViewVector);
+    GUILayout.Label(logText);
+    GUILayout.EndScrollView();
+
+    GUILayout.EndArea();
   }
 }

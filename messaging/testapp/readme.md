@@ -56,11 +56,6 @@ using the
   - Open the scene `MainScene`.
     - Navigate to `Assets/TestApp/MainScene` in the `Project` window.
     - Double click on `MainScene` file to open.
-  - Import the `Firebase App` plugin.
-    - Select the `Assets > Import Package > Custom Package` menu item.
-    - Import `FirebaseApp.unitypackage` from the
-      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
-    - Click the `Import` when the `Import Unity Package` window appears.
   - Import the `Firebase Messaging` plugin.
     - Select the `Assets > Import Package > Custom Package` menu item.
     - Import `FirebaseMessaging.unitypackage` from the
@@ -88,7 +83,17 @@ using the
     - Click `Switch Platform` to select `iOS` as the target platform.
     - Wait for the spinner (compiling) icon to stop in the bottom right corner
       of the Unity status bar.
-    - Click `Build and Run`.
+    - Click `Build and run`, when Xcode opens stop the build.
+      - *NOTE* If you click `Build and run` and let the sample run, it will
+        not be able to receive messages.
+    - Configure the Xcode project for push messaging.
+      - Select the `Unity-iPhone` project from the `Navigator area`.
+      - Select the `Unity-iPhone` target from the `Editor area`.
+      - Select `Capabilities` from the `Editor area`.
+      - Switch `Push Notifications` to `On`.
+      - Scroll down to `Background Modes` and switch it to `On`.
+      - Tick the `Remote notifications` box under `Background Modes`.
+    - Build the Xcode project by selecting `Project->Run` from the menu.
   - See the *Using the Sample* section below.
 
 
@@ -131,11 +136,6 @@ using the
   - Open the scene `MainScene`.
     - Navigate to `Assets/TestApp/MainScene` in the `Project` window.
     - Double click on `MainScene` file to open.
-  - Import the `Firebase App` plugin.
-    - Select the `Assets > Import Package > Custom Package` menu item.
-    - Import `FirebaseApp.unitypackage` from the
-      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
-    - Click the `Import` when the `Import Unity Package` window appears.
   - Import the `Firebase Messaging` plugin.
     - Select the `Assets > Import Package > Custom Package` menu item.
     - Import `FirebaseMessaging.unitypackage` from the

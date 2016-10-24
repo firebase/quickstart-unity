@@ -23,36 +23,34 @@ using UnityEngine.UI;
 // necessary setup (initializing the firebase app, etc) on
 // startup.
 public class UIHandler : MonoBehaviour {
-  public UnityEngine.UI.InputField login;
-  public UnityEngine.UI.InputField password;
-  public UnityEngine.UI.Button createUserButton;
-  public UnityEngine.UI.Button loginButton;
-  public UnityEngine.UI.Button loginWithCredButton;
-  public UnityEngine.UI.Button deleteUserButton;
 
-  public Text outputText;
-  Firebase.App app;
-  Firebase.Auth auth;
+  Firebase.Auth.FirebaseAuth auth;
+  
+  public GUISkin fb_GUISkin;
+  private string logText = "";
+  private string email = "";
+  private string password = "";
+  private Vector2 scrollViewVector = Vector2.zero;
+  bool UIEnabled = true;
 
+  const int kMaxLogSize = 16382;
+
+  // Output text to the debug log text field, as well as the console.
   public void DebugLog(string s) {
-    print(s);
-    outputText.text += s + "\n";
-  }
+    Debug.Log(s);
+    logText += s + "\n";
 
-  public void ClearDebugLog() {
-    outputText.text = "";
+    while (logText.Length > kMaxLogSize) {
+      int index = logText.IndexOf("\n");
+      logText = logText.Substring(index + 1);
+    }
+    scrollViewVector.y = int.MaxValue;
   }
 
   // When the app starts, create a firebase app object,
-  // Initialize the Sender and Receiver objects
   void Start() {
-    DebugLog("Setting up firebase...");
-    Firebase.AppOptions ops = new Firebase.AppOptions();
-    DebugLog(String.Format("Created the AppOptions, with appID: {0}", ops.AppID));
-    DebugLog("About to Create App");
-    app = Firebase.App.Create(ops);
-    DebugLog(String.Format("Created the firebase app: {0}", app.Name));
-    auth = Firebase.Auth.GetAuth(app);
+    DebugLog("Setting up Firebase Auth");
+    auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
   }
 
   void Update() {
@@ -61,30 +59,23 @@ public class UIHandler : MonoBehaviour {
     }
   }
 
+  void OnDestroy() {
+    auth = null;
+  }
+
   void DisableUI() {
-    login.DeactivateInputField();
-    password.DeactivateInputField();
-    createUserButton.interactable = false;
-    loginButton.interactable = false;
-    loginWithCredButton.interactable = false;
-    deleteUserButton.interactable = false;
+    UIEnabled = false;
   }
 
   void EnableUI() {
-    login.ActivateInputField();
-    password.ActivateInputField();
-    createUserButton.interactable = true;
-    loginButton.interactable = true;
-    loginWithCredButton.interactable = true;
-    deleteUserButton.interactable = true;
+    UIEnabled = true;
   }
 
   public void CreateUser() {
-    ClearDebugLog();
-    DebugLog(String.Format("Attempting to create user {0}...", login.text));
+    DebugLog(String.Format("Attempting to create user {0}...", email));
     DisableUI();
 
-    auth.CreateUserWithEmailAndPassword(login.text, password.text)
+    auth.CreateUserWithEmailAndPasswordAsync(email, password)
       .ContinueWith(HandleCreateResult);
   }
 
@@ -97,16 +88,18 @@ public class UIHandler : MonoBehaviour {
       DebugLog(authTask.Exception.ToString());
     } else if (authTask.IsCompleted) {
       DebugLog("User Creation completed.");
+      if (auth.CurrentUser != null) {
+        DebugLog ("User Info: " + auth.CurrentUser.Email + "   " + auth.CurrentUser.ProviderID);
+      }
       DebugLog("Signing out.");
       auth.SignOut();
     }
   }
 
   public void Signin() {
-    ClearDebugLog();
-    DebugLog(String.Format("Attempting to sign in as {0}...", login.text));
+    DebugLog(String.Format("Attempting to sign in as {0}...", email));
     DisableUI();
-    auth.SignInWithEmailAndPassword(login.text, password.text)
+    auth.SignInWithEmailAndPasswordAsync(email, password)
       .ContinueWith(HandleSigninResult);
   }
 
@@ -114,11 +107,17 @@ public class UIHandler : MonoBehaviour {
   // illustrates the use of Credentials, which can be aquired from many
   // different sources of authentication.
   public void SigninWithCredential() {
-    ClearDebugLog();
-    DebugLog(String.Format("Attempting to sign in as {0}...", login.text));
+    DebugLog(String.Format("Attempting to sign in as {0}...", email));
     DisableUI();
-    Firebase.Auth.Credential cred = Firebase.Auth.EmailAuthProvider.GetCredential(login.text, password.text);
-    auth.SignInWithCredential(cred).ContinueWith(HandleSigninResult);
+    Firebase.Auth.Credential cred = Firebase.Auth.EmailAuthProvider.GetCredential(email, password);
+    auth.SignInWithCredentialAsync(cred).ContinueWith(HandleSigninResult);
+  }
+
+  // Attempt to sign in anonymously.
+  public void SigninAnonymously() {
+    DebugLog("Attempting to sign anonymously...");
+    DisableUI();
+    auth.SignInAnonymouslyAsync().ContinueWith(HandleSigninResult);
   }
 
   void HandleSigninResult(Task<Firebase.Auth.User> authTask) {
@@ -136,10 +135,9 @@ public class UIHandler : MonoBehaviour {
   }
 
   public void DeleteUser() {
-    ClearDebugLog();
-    DebugLog(String.Format("Attempting to delete user {0}...", login.text));
+    DebugLog(String.Format("Attempting to delete user {0}...", email));
     DisableUI();
-    auth.SignInWithEmailAndPassword(login.text, password.text)
+    auth.SignInWithEmailAndPasswordAsync(email, password)
       .ContinueWith(HandleDeleteSigninResult);
   }
 
@@ -152,7 +150,7 @@ public class UIHandler : MonoBehaviour {
       DebugLog(authTask.Exception.ToString());
     } else if (authTask.IsCompleted) {
       DisableUI();
-      auth.CurrentUser.Delete().ContinueWith(HandleDeleteResult);
+      auth.CurrentUser.DeleteAsync().ContinueWith(HandleDeleteResult);
       DebugLog("Signed in - deleting user.");
     }
   }
@@ -167,5 +165,73 @@ public class UIHandler : MonoBehaviour {
     } else if (authTask.IsCompleted) {
       DebugLog("Delete completed.");
     }
+  }
+
+  // Render the log output in a scroll view.
+  void GUIDisplayLog() {
+    scrollViewVector = GUILayout.BeginScrollView (scrollViewVector);
+    GUILayout.Label(logText);
+    GUILayout.EndScrollView();
+  }
+
+  // Render the buttons and other controls.
+  void GUIDisplayControls(){
+    if (UIEnabled) {
+      GUILayout.BeginVertical();
+      GUILayout.BeginHorizontal();
+      GUILayout.Label("Email:", GUILayout.Width(Screen.width * 0.20f));
+      email = GUILayout.TextField(email);
+      GUILayout.EndHorizontal();
+
+      GUILayout.Space(20);
+
+      GUILayout.BeginHorizontal();
+      GUILayout.Label("Password:", GUILayout.Width(Screen.width * 0.20f));
+      password = GUILayout.PasswordField(password, '*');
+      GUILayout.EndHorizontal();
+
+      GUILayout.Space(20);
+
+      if (GUILayout.Button("Create User")) {
+        CreateUser();
+      }
+      if (GUILayout.Button("Sign In Anonymously")) {
+        SigninAnonymously();
+      }
+      if (GUILayout.Button("Sign In With Email")) {
+        Signin();
+      }
+      if (GUILayout.Button("Sign In With Credentials")) {
+        SigninWithCredential();
+      }
+      if (GUILayout.Button("Delete User")) {
+        DeleteUser();
+      }
+      GUILayout.EndVertical();
+    }
+  }
+
+  // Render the GUI:
+  void OnGUI() {
+    GUI.skin = fb_GUISkin;
+    Rect logArea, controlArea;
+
+    if (Screen.width < Screen.height) {
+      // Portrait mode
+      controlArea = new Rect(0.0f, 0.0f, Screen.width, Screen.height * 0.5f);
+      logArea = new Rect(0.0f, Screen.height * 0.5f, Screen.width, Screen.height * 0.5f);
+    } else {
+      // Landscape mode
+      controlArea = new Rect(0.0f, 0.0f, Screen.width * 0.5f, Screen.height);
+      logArea = new Rect(Screen.width * 0.5f, 0.0f, Screen.width * 0.5f, Screen.height);
+    }
+
+    GUILayout.BeginArea(logArea);
+    GUIDisplayLog();
+    GUILayout.EndArea();
+
+    GUILayout.BeginArea(controlArea);
+    GUIDisplayControls();
+    GUILayout.EndArea();
   }
 }

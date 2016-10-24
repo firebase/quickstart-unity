@@ -13,8 +13,8 @@
 // limitations under the License.
 
 using Firebase;
-using Firebase.Database.Unity.Editor;
 using Firebase.Database;
+using Firebase.Unity.Editor;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -100,9 +100,11 @@ public class UIHandler : MonoBehaviour {
   TransactionResult AddScoreTransaction(MutableData mutableData) {
     List<object> leaders = mutableData.Value as List<object>;
 
+    if (leaders == null) {
+      leaders = new List<object>();
+    } else if (mutableData.ChildrenCount >= MaxScores) {
     // If the current list of scores is greater or equal to our maximum allowed number,
     // we see if the new score should be added and remove the lowest existing score.
-    if (mutableData.ChildrenCount >= MaxScores) {
       long minScore = long.MaxValue;
       object minVal = null;
       foreach (var child in leaders) {

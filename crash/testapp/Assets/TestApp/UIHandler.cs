@@ -23,25 +23,21 @@ using Firebase;
 // necessary setup (initializing the firebase app, etc) on
 // startup.
 public class UIHandler : MonoBehaviour {
+
   public Text outputText;
-  App app;
+  FirebaseApp app;
 
   public void DebugLog(string s) {
-      print(s);
-      outputText.text += s + "\n";
+    print(s);
+    outputText.text += s + "\n";
   }
 
   // When the app starts, create a firebase app object,
   // set the user property and id, and enable analytics.
   void Start() {
-      DebugLog("Setting up firebase...");
-      AppOptions ops = new AppOptions();
-      DebugLog(String.Format("Created the AppOptions, with appID: {0}", ops.AppID));
-      app = App.Create(ops);
-      DebugLog(String.Format("Created the firebase app: {0}", app.Name));
-
-      Crash.Initialize(app);
-      DebugLog("Initialized Crash");
+    DebugLog("Setting up firebase...");
+    app = FirebaseApp.Create();
+    DebugLog(String.Format("Created the firebase app: {0}", app.Name));
   }
 
   void Update() {
@@ -50,32 +46,31 @@ public class UIHandler : MonoBehaviour {
     }
   }
 
-  // End our analytics session when the program exits.
   void OnDestroy() {
-      Crash.Terminate();
+    app = null;
   }
 
   public void CrashLog() {
-      // Log a crash log using Crash.log
-      DebugLog("Logging a crash message.");
-      Crash.Log("This message logged via Crash.Log()");
+    // Log a crash log using Crash.log
+    DebugLog("Logging a crash message.");
+    Firebase.Crash.FirebaseCrash.Log("This message logged via Crash.Log()");
   }
 
   public void CrashLogcat() {
-      // Log a crash log using Crash.logcat
-      DebugLog("Logging a crash message with logcat out.");
-      Crash.Logcat(LogLevel.Debug, "Firebase", "This message logged via Crash.Logcat()");
+    // Log a crash log using Crash.logcat
+    DebugLog("Logging a crash message with logcat out.");
+    Firebase.Crash.FirebaseCrash.Logcat(LogLevel.Debug, "Firebase", "This message logged via Crash.Logcat()");
   }
 
   public void CrashReport() {
-      // Report the logged crash events to Firebase
-      DebugLog("Calling Crash.Report()");
-      Crash.Report ("Unity Crash");
+    // Report the logged crash events to Firebase
+    DebugLog("Calling Crash.Report()");
+    Firebase.Crash.FirebaseCrash.Report("Unity Crash");
   }
 
   public void CreateUncaughtException() {
-      // Trigger an uncaught exception, for testing Firebase Crash
-      DebugLog("Triggering an uncaught exception.");
-      throw new Exception("Test exception for verifying Firebase Crash");
+    // Trigger an uncaught exception, for testing Firebase Crash
+    DebugLog("Triggering an uncaught exception.");
+    throw new Exception("Test exception for verifying Firebase Crash");
   }
 }
