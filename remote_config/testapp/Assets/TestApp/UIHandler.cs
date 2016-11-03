@@ -28,11 +28,32 @@ class UIHandler : MonoBehaviour {
   bool UIEnabled = true;
   private string logText = "";
   const int kMaxLogSize = 16382;
+  Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
 
+  // When the app starts, check to make sure that we have
+  // the required dependencies to use Firebase, and if not,
+  // add them if possible.
+  void Start() {
+    dependencyStatus = Firebase.FirebaseApp.CheckDependencies();
+    if (dependencyStatus != Firebase.DependencyStatus.Available) {
+      Firebase.FirebaseApp.FixDependenciesAsync().ContinueWith(task => {
+        dependencyStatus = Firebase.FirebaseApp.CheckDependencies();
+        if (dependencyStatus == Firebase.DependencyStatus.Available) {
+          InitializeFirebase();
+        } else {
+          // This should never happen if we're only using Firebase Analytics.
+          // It does not rely on any external dependencies.
+          Debug.LogError(
+              "Could not resolve all Firebase dependencies: " + dependencyStatus);
+        }
+      });
+    } else {
+      InitializeFirebase();
+    }
+  }
 
-  // When the app starts, create a firebase app object,
-  // initialize remote config, and set the default values.
-  public void Start() {
+  // Initialize remote config, and set the default values.
+  void InitializeFirebase() {
     System.Collections.Generic.Dictionary<string, object> defaults =
       new System.Collections.Generic.Dictionary<string, object>();
 
@@ -48,11 +69,13 @@ class UIHandler : MonoBehaviour {
     DebugLog("RemoteConfig configured and ready!");
   }
 
+  // Exit if escape (or back, on mobile) is pressed.
   void Update() {
-    if (!Application.isMobilePlatform && Input.GetKey("escape")) {
+    if (Input.GetKeyDown(KeyCode.Escape)) {
       Application.Quit();
     }
   }
+
 
   // Display the currently loaded data.  If fetch has been called, this will be
   // the data fetched from the server.  Otherwise, it will be the defaults.
@@ -62,13 +85,13 @@ class UIHandler : MonoBehaviour {
   public void DisplayData() {
     DebugLog("Current Data:");
     DebugLog("config_test_string: " +
-             Firebase.RemoteConfig.FirebaseRemoteConfig.GetValue("config_test_string").AsString());
+             Firebase.RemoteConfig.FirebaseRemoteConfig.GetValue("config_test_string").StringValue);
     DebugLog("config_test_int: " +
-             Firebase.RemoteConfig.FirebaseRemoteConfig.GetValue("config_test_int").AsLong());
+             Firebase.RemoteConfig.FirebaseRemoteConfig.GetValue("config_test_int").LongValue);
     DebugLog("config_test_float: " +
-             Firebase.RemoteConfig.FirebaseRemoteConfig.GetValue("config_test_float").AsDouble());
+             Firebase.RemoteConfig.FirebaseRemoteConfig.GetValue("config_test_float").DoubleValue);
     DebugLog("config_test_bool: " +
-             Firebase.RemoteConfig.FirebaseRemoteConfig.GetValue("config_test_bool").AsBoolean());
+             Firebase.RemoteConfig.FirebaseRemoteConfig.GetValue("config_test_bool").BooleanValue);
   }
 
   public void DisplayAllKeys() {
@@ -155,7 +178,7 @@ class UIHandler : MonoBehaviour {
 
   // Render the buttons and other controls.
   void GUIDisplayControls(){
-    if (UIEnabled || true) {
+    if (UIEnabled) {
       GUILayout.BeginVertical();
       if (GUILayout.Button("Display Current Data")) {
         DisplayData();
@@ -173,6 +196,11 @@ class UIHandler : MonoBehaviour {
   // Render the GUI:
   void OnGUI() {
     GUI.skin = fb_GUISkin;
+    if (dependencyStatus != Firebase.DependencyStatus.Available) {
+      GUILayout.Label("One or more Firebase dependencies are not present.");
+      GUILayout.Label("Current dependency status: " + dependencyStatus.ToString());
+      return;
+    }
     Rect logArea, controlArea;
 
     if (Screen.width < Screen.height) {

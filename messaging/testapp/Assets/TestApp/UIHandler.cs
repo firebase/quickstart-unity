@@ -26,11 +26,32 @@ class UIHandler : MonoBehaviour {
   private Vector2 scrollViewVector = Vector2.zero;
   private string logText = "";
   const int kMaxLogSize = 16382;
+  Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
 
-  // When the app starts, create a firebase app object,
-  // and initialize messaging.
-  public void Start() {
-    // Setup message event handlers before initializing Firebase.
+  // When the app starts, check to make sure that we have
+  // the required dependencies to use Firebase, and if not,
+  // add them if possible.
+  void Start() {
+    dependencyStatus = Firebase.FirebaseApp.CheckDependencies();
+    if (dependencyStatus != Firebase.DependencyStatus.Available) {
+      Firebase.FirebaseApp.FixDependenciesAsync().ContinueWith(task => {
+        dependencyStatus = Firebase.FirebaseApp.CheckDependencies();
+        if (dependencyStatus == Firebase.DependencyStatus.Available) {
+          InitializeFirebase();
+        } else {
+          // This should never happen if we're only using Firebase Analytics.
+          // It does not rely on any external dependencies.
+          Debug.LogError(
+              "Could not resolve all Firebase dependencies: " + dependencyStatus);
+        }
+      });
+    } else {
+      InitializeFirebase();
+    }
+  }
+
+  // Setup message event handlers.
+  void InitializeFirebase() {
     Firebase.Messaging.FirebaseMessaging.MessageReceived += OnMessageReceived;
     Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
     DebugLog("Firebase Messaging Initialized");
@@ -53,8 +74,9 @@ class UIHandler : MonoBehaviour {
     DebugLog("Received Registration Token: " + token.Token);
   }
 
+  // Exit if escape (or back, on mobile) is pressed.
   void Update() {
-    if (!Application.isMobilePlatform && Input.GetKey("escape")) {
+    if (Input.GetKeyDown(KeyCode.Escape)) {
       Application.Quit();
     }
   }
@@ -88,6 +110,11 @@ class UIHandler : MonoBehaviour {
   // Render the GUI:
   void OnGUI() {
     GUI.skin = fb_GUISkin;
+    if (dependencyStatus != Firebase.DependencyStatus.Available) {
+      GUILayout.Label("One or more Firebase dependencies are not present.");
+      GUILayout.Label("Current dependency status: " + dependencyStatus.ToString());
+      return;
+    }
 
     GUILayout.BeginArea(new Rect(0.0f, 0.0f, Screen.width, Screen.height));
 

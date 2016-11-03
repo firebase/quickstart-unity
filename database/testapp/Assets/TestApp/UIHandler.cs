@@ -39,32 +39,34 @@ public class UIHandler : MonoBehaviour {
   private Vector2 scrollViewVector = Vector2.zero;
   bool UIEnabled = true;
 
-
   const int kMaxLogSize = 16382;
+  DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
 
-  // Output text to the debug log text field, as well as the console.
-  public void DebugLog(string s) {
-    Debug.Log(s);
-    logText += s + "\n";
-
-    while (logText.Length > kMaxLogSize) {
-      int index = logText.IndexOf("\n");
-      logText = logText.Substring(index + 1);
+  // When the app starts, check to make sure that we have
+  // the required dependencies to use Firebase, and if not,
+  // add them if possible.
+  void Start() {
+    dependencyStatus = FirebaseApp.CheckDependencies();
+    if (dependencyStatus != DependencyStatus.Available) {
+      FirebaseApp.FixDependenciesAsync().ContinueWith(task => {
+        dependencyStatus = FirebaseApp.CheckDependencies();
+        if (dependencyStatus == DependencyStatus.Available) {
+          InitializeFirebase();
+        } else {
+          // This should never happen if we're only using Firebase Analytics.
+          // It does not rely on any external dependencies.
+          Debug.LogError(
+              "Could not resolve all Firebase dependencies: " + dependencyStatus);
+        }
+      });
+    } else {
+      InitializeFirebase();
     }
-
-    scrollViewVector.y = int.MaxValue;
   }
 
-  // When the app starts, create a firebase app object,
-  // Initialize the Sender and Receiver objects
-  void Start() {
-    DebugLog("Setting up firebase...");
-    AppOptions ops = new AppOptions();
-    DebugLog(String.Format("Created the AppOptions, with appID: {0}", ops.AppID));
-    DebugLog("About to Create App");
-    FirebaseApp app = FirebaseApp.Create(ops);
-    DebugLog(String.Format("Created the firebase app: {0}", app.Name));
-
+  // Initialize the Firebase database:
+  void InitializeFirebase() {
+    FirebaseApp app = FirebaseApp.DefaultInstance;
     app.SetEditorDatabaseUrl("https://YOUR-FIREBASE-APP.firebaseio.com/");
 
     leaderBoard = new ArrayList();
@@ -88,10 +90,24 @@ public class UIHandler : MonoBehaviour {
     };
   }
 
+  // Exit if escape (or back, on mobile) is pressed.
   void Update() {
-    if (!Application.isMobilePlatform && Input.GetKey("escape")) {
+    if (Input.GetKeyDown(KeyCode.Escape)) {
       Application.Quit();
     }
+  }
+
+  // Output text to the debug log text field, as well as the console.
+  public void DebugLog(string s) {
+    Debug.Log(s);
+    logText += s + "\n";
+
+    while (logText.Length > kMaxLogSize) {
+      int index = logText.IndexOf("\n");
+      logText = logText.Substring(index + 1);
+    }
+
+    scrollViewVector.y = int.MaxValue;
   }
 
   // A realtime database transaction receives MutableData which can be modified
@@ -206,6 +222,11 @@ public class UIHandler : MonoBehaviour {
   // Render the GUI:
   void OnGUI() {
     GUI.skin = fb_GUISkin;
+    if (dependencyStatus != DependencyStatus.Available) {
+      GUILayout.Label("One or more Firebase dependencies are not present.");
+      GUILayout.Label("Current dependency status: " + dependencyStatus.ToString());
+      return;
+    }
     Rect logArea, controlArea, leaderBoardArea;
 
     if (Screen.width < Screen.height) {

@@ -30,10 +30,39 @@ public class UIHandler : MonoBehaviour {
   bool UIEnabled = true;
   private string logText = "";
   const int kMaxLogSize = 16382;
+  DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
 
-  // When the app starts, create a firebase app object,
-  // set the user property and id, and enable analytics.
+  // When the app starts, check to make sure that we have
+  // the required dependencies to use Firebase, and if not,
+  // add them if possible.
   void Start() {
+    dependencyStatus = FirebaseApp.CheckDependencies();
+    if (dependencyStatus != DependencyStatus.Available) {
+      FirebaseApp.FixDependenciesAsync().ContinueWith(task => {
+        dependencyStatus = FirebaseApp.CheckDependencies();
+        if (dependencyStatus == DependencyStatus.Available) {
+          InitializeFirebase();
+        } else {
+          // This should never happen if we're only using Firebase Analytics.
+          // It does not rely on any external dependencies.
+          Debug.LogError(
+              "Could not resolve all Firebase dependencies: " + dependencyStatus);
+        }
+      });
+    } else {
+      InitializeFirebase();
+    }
+  }
+
+  // Exit if escape (or back, on mobile) is pressed.
+  void Update() {
+    if (Input.GetKeyDown(KeyCode.Escape)) {
+      Application.Quit();
+    }
+  }
+
+  // Handle initialization of the necessary firebase modules:
+  void InitializeFirebase() {
     DebugLog("Enabling data collection.");
     FirebaseAnalytics.SetAnalyticsCollectionEnabled(true);
 
@@ -43,7 +72,7 @@ public class UIHandler : MonoBehaviour {
       FirebaseAnalytics.UserPropertySignUpMethod,
       "Google");
     // Set the user ID.
-    FirebaseAnalytics.SetUserID("uber_user_510");
+    FirebaseAnalytics.SetUserId("uber_user_510");
   }
 
   // End our analytics session when the program exits.
@@ -73,21 +102,18 @@ public class UIHandler : MonoBehaviour {
   public void AnalyticsGroupJoin() {
     // Log an event with a string parameter.
     DebugLog("Logging a group join event.");
-    FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventJoinGroup, FirebaseAnalytics.ParameterGroupID,
+    FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventJoinGroup, FirebaseAnalytics.ParameterGroupId,
       "spoon_welders");
   }
 
   public void AnalyticsLevelUp() {
     // Log an event with multiple parameters.
     DebugLog("Logging a level up event.");
-    Parameter[] LevelUpParameters = {
-      new Parameter(FirebaseAnalytics.ParameterLevel, 5),
-      new Parameter(FirebaseAnalytics.ParameterCharacter, "mrspoon"),
-      new Parameter("hit_accuracy", 3.14f)
-    };
     FirebaseAnalytics.LogEvent(
       FirebaseAnalytics.EventLevelUp,
-      LevelUpParameters);
+      new Parameter(FirebaseAnalytics.ParameterLevel, 5),
+      new Parameter(FirebaseAnalytics.ParameterCharacter, "mrspoon"),
+      new Parameter("hit_accuracy", 3.14f));
   }
 
 
@@ -122,7 +148,7 @@ public class UIHandler : MonoBehaviour {
 
   // Render the buttons and other controls.
   void GUIDisplayControls(){
-    if (UIEnabled || true) {
+    if (UIEnabled) {
       GUILayout.BeginVertical();
 
       if (GUILayout.Button("Log Login")) {
@@ -147,6 +173,11 @@ public class UIHandler : MonoBehaviour {
   // Render the GUI:
   void OnGUI() {
     GUI.skin = fb_GUISkin;
+    if (dependencyStatus != DependencyStatus.Available) {
+      GUILayout.Label("One or more Firebase dependencies are not present.");
+      GUILayout.Label("Current dependency status: " + dependencyStatus.ToString());
+      return;
+    }
     Rect logArea, controlArea;
 
     if (Screen.width < Screen.height) {

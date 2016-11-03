@@ -2,7 +2,7 @@ Firebase Unity SDK Samples
 ==========================
 
 iOS and Android samples for the
-[Firebase Unity SDK](https://firebase.google.com/preview/unity).
+[Firebase Unity SDK](https://firebase.google.com/docs/unity/setup).
 
 For more information, see [firebase.google.com](https://firebase.google.com).
 

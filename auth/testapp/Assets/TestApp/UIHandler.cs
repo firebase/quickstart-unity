@@ -25,7 +25,8 @@ using UnityEngine.UI;
 public class UIHandler : MonoBehaviour {
 
   Firebase.Auth.FirebaseAuth auth;
-  
+  Firebase.Auth.FirebaseUser user;
+
   public GUISkin fb_GUISkin;
   private string logText = "";
   private string email = "";
@@ -34,6 +35,56 @@ public class UIHandler : MonoBehaviour {
   bool UIEnabled = true;
 
   const int kMaxLogSize = 16382;
+  Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
+
+  // When the app starts, check to make sure that we have
+  // the required dependencies to use Firebase, and if not,
+  // add them if possible.
+  void Start() {
+    dependencyStatus = Firebase.FirebaseApp.CheckDependencies();
+    if (dependencyStatus != Firebase.DependencyStatus.Available) {
+      Firebase.FirebaseApp.FixDependenciesAsync().ContinueWith(task => {
+        dependencyStatus = Firebase.FirebaseApp.CheckDependencies();
+        if (dependencyStatus == Firebase.DependencyStatus.Available) {
+          InitializeFirebase();
+        } else {
+          // This should never happen if we're only using Firebase Analytics.
+          // It does not rely on any external dependencies.
+          Debug.LogError(
+              "Could not resolve all Firebase dependencies: " + dependencyStatus);
+        }
+      });
+    } else {
+      InitializeFirebase();
+    }
+  }
+
+  // Handle initialization of the necessary firebase modules:
+  void InitializeFirebase() {
+    DebugLog("Setting up Firebase Auth");
+    auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+    auth.StateChanged += AuthStateChanged;
+  }
+
+  // Exit if escape (or back, on mobile) is pressed.
+  void Update() {
+    if (Input.GetKeyDown(KeyCode.Escape)) {
+      Application.Quit();
+    }
+  }
+
+  void OnDestroy() {
+    auth.StateChanged -= AuthStateChanged;
+    auth = null;
+  }
+
+  void DisableUI() {
+    UIEnabled = false;
+  }
+
+  void EnableUI() {
+    UIEnabled = true;
+  }
 
   // Output text to the debug log text field, as well as the console.
   public void DebugLog(string s) {
@@ -47,28 +98,16 @@ public class UIHandler : MonoBehaviour {
     scrollViewVector.y = int.MaxValue;
   }
 
-  // When the app starts, create a firebase app object,
-  void Start() {
-    DebugLog("Setting up Firebase Auth");
-    auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-  }
-
-  void Update() {
-    if (!Application.isMobilePlatform && Input.GetKey("escape")) {
-      Application.Quit();
+  // Track state changes of the auth object.
+  void AuthStateChanged(object sender, System.EventArgs eventArgs) {
+    if (auth.CurrentUser != user) {
+      if (user == null && auth.CurrentUser != null) {
+        DebugLog("Signed in " + auth.CurrentUser.DisplayName);
+      } else if (user != null && auth.CurrentUser == null) {
+        DebugLog("Signed out " + user.DisplayName);
+      }
+      user = auth.CurrentUser;
     }
-  }
-
-  void OnDestroy() {
-    auth = null;
-  }
-
-  void DisableUI() {
-    UIEnabled = false;
-  }
-
-  void EnableUI() {
-    UIEnabled = true;
   }
 
   public void CreateUser() {
@@ -79,7 +118,7 @@ public class UIHandler : MonoBehaviour {
       .ContinueWith(HandleCreateResult);
   }
 
-  void HandleCreateResult(Task<Firebase.Auth.User> authTask) {
+  void HandleCreateResult(Task<Firebase.Auth.FirebaseUser> authTask) {
     EnableUI();
     if (authTask.IsCanceled) {
       DebugLog("User Creation canceled.");
@@ -89,7 +128,7 @@ public class UIHandler : MonoBehaviour {
     } else if (authTask.IsCompleted) {
       DebugLog("User Creation completed.");
       if (auth.CurrentUser != null) {
-        DebugLog ("User Info: " + auth.CurrentUser.Email + "   " + auth.CurrentUser.ProviderID);
+        DebugLog("User Info: " + auth.CurrentUser.Email + "   " + auth.CurrentUser.ProviderId);
       }
       DebugLog("Signing out.");
       auth.SignOut();
@@ -120,7 +159,7 @@ public class UIHandler : MonoBehaviour {
     auth.SignInAnonymouslyAsync().ContinueWith(HandleSigninResult);
   }
 
-  void HandleSigninResult(Task<Firebase.Auth.User> authTask) {
+  void HandleSigninResult(Task<Firebase.Auth.FirebaseUser> authTask) {
     EnableUI();
     if (authTask.IsCanceled) {
       DebugLog("SignIn canceled.");
@@ -141,7 +180,7 @@ public class UIHandler : MonoBehaviour {
       .ContinueWith(HandleDeleteSigninResult);
   }
 
-  void HandleDeleteSigninResult(Task<Firebase.Auth.User> authTask) {
+  void HandleDeleteSigninResult(Task<Firebase.Auth.FirebaseUser> authTask) {
     EnableUI();
     if (authTask.IsCanceled) {
       DebugLog("Delete signin canceled.");
@@ -214,6 +253,11 @@ public class UIHandler : MonoBehaviour {
   // Render the GUI:
   void OnGUI() {
     GUI.skin = fb_GUISkin;
+    if (dependencyStatus != Firebase.DependencyStatus.Available) {
+      GUILayout.Label("One or more Firebase dependencies are not present.");
+      GUILayout.Label("Current dependency status: " + dependencyStatus.ToString());
+      return;
+    }
     Rect logArea, controlArea;
 
     if (Screen.width < Screen.height) {
