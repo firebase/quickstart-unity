@@ -31,6 +31,10 @@ public class UIHandler : MonoBehaviour {
   private string logText = "";
   private string email = "";
   private string password = "";
+  // Enable / disable password input box.
+  // NOTE: In some versions of Unity the password input box does not work in
+  // iOS simulators.
+  public bool usePasswordInput = false;
   private Vector2 scrollViewVector = Vector2.zero;
   bool UIEnabled = true;
 
@@ -226,7 +230,8 @@ public class UIHandler : MonoBehaviour {
 
       GUILayout.BeginHorizontal();
       GUILayout.Label("Password:", GUILayout.Width(Screen.width * 0.20f));
-      password = GUILayout.PasswordField(password, '*');
+      password = usePasswordInput ? GUILayout.PasswordField(password, '*') :
+          GUILayout.TextField(password);
       GUILayout.EndHorizontal();
 
       GUILayout.Space(20);
