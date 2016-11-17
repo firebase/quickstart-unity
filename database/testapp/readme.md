@@ -3,7 +3,7 @@
 The Firebase Database Unity Sample demonstrates
 [Firebase Realtime Database](https://firebase.google.com/docs/database/)
 with the
-[Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
+[Firebase Unity SDK](https://firebase.google.com/docs/unity/setup)
 inside the Unity Editor.
 
 ## Requirements
@@ -12,7 +12,8 @@ inside the Unity Editor.
 
 ## Running the Sample inside the Editor
 
-  - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
+  - Download the
+    [Firebase Unity SDK](https://firebase.google.com/download/unity)
     and unzip it somewhere convenient.
   - Open the sample project in the Unity editor.
     - Select the `File > Open Project` menu item.
@@ -25,12 +26,14 @@ inside the Unity Editor.
   - Import the `Firebase Auth` plugin.
     - Select the `Assets > Import Package > Custom Package` menu item.
     - Import `FirebaseAuth.unitypackage` from the
-      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+      [Firebase Unity SDK](https://firebase.google.com/download/unity),
+      downloaded previously.
     - Click the `Import` when the `Import Unity Package` window appears.
   - Import the `Firebase Database` plugin.
     - Select the `Assets > Import Package > Custom Package` menu item.
     - Import `FirebaseDatabase.unitypackage` from the
-      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+      [Firebase Unity SDK](https://firebase.google.com/download/unity),
+      downloaded previously.
     - Click the `Import` when the `Import Unity Package` window appears.
   - Turn off secure access.  [Configure your rules for public access.](https://firebase.google.com/docs/database/security/quickstart#sample-rules)
   - Change the line `SetEditorDatabaseUrl("https://YOUR-FIREBASE-APP.firebaseio.com/");`

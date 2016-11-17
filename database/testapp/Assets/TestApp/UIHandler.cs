@@ -29,6 +29,7 @@ public class UIHandler : MonoBehaviour {
 
   ArrayList leaderBoard;
   Vector2 scrollPosition = Vector2.zero;
+  private Vector2 controlsScrollViewVector = Vector2.zero;
 
   public GUISkin fb_GUISkin;
 
@@ -184,6 +185,8 @@ public class UIHandler : MonoBehaviour {
   // Render the buttons and other controls.
   void GUIDisplayControls() {
     if (UIEnabled) {
+      controlsScrollViewVector =
+          GUILayout.BeginScrollView(controlsScrollViewVector);
       GUILayout.BeginVertical();
       GUILayout.BeginHorizontal();
       GUILayout.Label("Email:", GUILayout.Width(Screen.width * 0.20f));
@@ -203,6 +206,7 @@ public class UIHandler : MonoBehaviour {
         AddScore();
       }
       GUILayout.EndVertical();
+      GUILayout.EndScrollView();
     }
   }
 

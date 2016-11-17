@@ -24,6 +24,7 @@ using UnityEngine.UI;
 public
 class UIHandler : MonoBehaviour {
   public GUISkin fb_GUISkin;
+  private Vector2 controlsScrollViewVector = Vector2.zero;
   private Vector2 scrollViewVector = Vector2.zero;
   bool UIEnabled = true;
   private string logText = "";
@@ -179,6 +180,8 @@ class UIHandler : MonoBehaviour {
   // Render the buttons and other controls.
   void GUIDisplayControls(){
     if (UIEnabled) {
+      controlsScrollViewVector =
+          GUILayout.BeginScrollView(controlsScrollViewVector);
       GUILayout.BeginVertical();
       if (GUILayout.Button("Display Current Data")) {
         DisplayData();
@@ -190,6 +193,7 @@ class UIHandler : MonoBehaviour {
         FetchData();
       }
       GUILayout.EndVertical();
+      GUILayout.EndScrollView();
     }
   }
 

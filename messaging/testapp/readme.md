@@ -4,7 +4,7 @@ The Firebase Messaging Unity Sample demonstrates receiving messages from
 from
 [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/)
 using the
-[Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz).
+[Firebase Unity SDK](https://firebase.google.com/docs/unity/setup).
 
 
 ## Requirements
@@ -46,7 +46,7 @@ using the
     - For further details please refer to the
       [general instructions](https://firebase.google.com/docs/ios/setup)
       which describes how to configure a Firebase application for iOS.
-  - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
+  - Download the [Firebase Unity SDK](https://firebase.google.com/download/unity)
     and unzip it somewhere convenient.
   - Open the sample project in the Unity editor.
     - Select the `File > Open Project` menu item.
@@ -59,7 +59,8 @@ using the
   - Import the `Firebase Messaging` plugin.
     - Select the `Assets > Import Package > Custom Package` menu item.
     - Import `FirebaseMessaging.unitypackage` from the
-      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+      [Firebase Unity SDK](https://firebase.google.com/download/unity),
+      downloaded previously.
     - Click the `Import` when the `Import Unity Package` window appears.
   - Add the `GoogleService-Info.plist` file to the project.
     - Navigate to the `Assets\TestApp` folder in the `Project` window.
@@ -126,7 +127,8 @@ using the
       - For further details please refer to the
         [general instructions](https://firebase.google.com/docs/android/setup)
         which describes how to configure a Firebase application for Android.
-  - Download the [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz)
+  - Download the
+    [Firebase Unity SDK](https://firebase.google.com/download/unity)
     and unzip it somewhere convenient.
   - Open the sample project in the Unity editor.
     - Select the `File > Open Project` menu item.
@@ -139,7 +141,8 @@ using the
   - Import the `Firebase Messaging` plugin.
     - Select the `Assets > Import Package > Custom Package` menu item.
     - Import `FirebaseMessaging.unitypackage` from the
-      [Firebase Unity SDK](https://dev-partners.googlesource.com/unity-firebase/+archive/zip.tar.gz), downloaded previously.
+      [Firebase Unity SDK](https://firebase.google.com/download/unity),
+      downloaded previously.
     - Click the `Import` when the `Import Unity Package` window appears.
   - Add the `google-services.json` file to the project.
     - Navigate to the `Assets\TestApp` folder in the `Project` window.

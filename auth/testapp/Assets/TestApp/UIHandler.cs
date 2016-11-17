@@ -35,6 +35,7 @@ public class UIHandler : MonoBehaviour {
   // NOTE: In some versions of Unity the password input box does not work in
   // iOS simulators.
   public bool usePasswordInput = false;
+  private Vector2 controlsScrollViewVector = Vector2.zero;
   private Vector2 scrollViewVector = Vector2.zero;
   bool UIEnabled = true;
 
@@ -212,7 +213,7 @@ public class UIHandler : MonoBehaviour {
 
   // Render the log output in a scroll view.
   void GUIDisplayLog() {
-    scrollViewVector = GUILayout.BeginScrollView (scrollViewVector);
+    scrollViewVector = GUILayout.BeginScrollView(scrollViewVector);
     GUILayout.Label(logText);
     GUILayout.EndScrollView();
   }
@@ -220,6 +221,8 @@ public class UIHandler : MonoBehaviour {
   // Render the buttons and other controls.
   void GUIDisplayControls(){
     if (UIEnabled) {
+      controlsScrollViewVector =
+          GUILayout.BeginScrollView(controlsScrollViewVector);
       GUILayout.BeginVertical();
       GUILayout.BeginHorizontal();
       GUILayout.Label("Email:", GUILayout.Width(Screen.width * 0.20f));
@@ -252,6 +255,7 @@ public class UIHandler : MonoBehaviour {
         DeleteUser();
       }
       GUILayout.EndVertical();
+      GUILayout.EndScrollView();
     }
   }
 
