@@ -23,10 +23,13 @@ using UnityEngine.UI;
 public
 class UIHandler : MonoBehaviour {
   public GUISkin fb_GUISkin;
+  private Vector2 controlsScrollViewVector = Vector2.zero;
   private Vector2 scrollViewVector = Vector2.zero;
   private string logText = "";
   const int kMaxLogSize = 16382;
   Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
+  private string topic = "TestTopic";
+  private bool UIEnabled = true;
 
   // When the app starts, check to make sure that we have
   // the required dependencies to use Firebase, and if not,
@@ -54,11 +57,17 @@ class UIHandler : MonoBehaviour {
   void InitializeFirebase() {
     Firebase.Messaging.FirebaseMessaging.MessageReceived += OnMessageReceived;
     Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
+    Firebase.Messaging.FirebaseMessaging.Subscribe(topic);
     DebugLog("Firebase Messaging Initialized");
   }
 
   public void OnMessageReceived(object sender, Firebase.Messaging.MessageReceivedEventArgs e) {
     DebugLog("Received a new message");
+    var notification = e.Message.Notification;
+    if (notification != null) {
+        DebugLog("title: " + notification.Title);
+        DebugLog("body: " + notification.Body);
+    }
     if (e.Message.From.Length > 0)
       DebugLog("from: " + e.Message.From);
     if (e.Message.Data.Count > 0) {
@@ -107,6 +116,31 @@ class UIHandler : MonoBehaviour {
     GUILayout.EndScrollView();
   }
 
+  // Render the buttons and other controls.
+  void GUIDisplayControls(){
+    if (UIEnabled) {
+      controlsScrollViewVector =
+          GUILayout.BeginScrollView(controlsScrollViewVector);
+      GUILayout.BeginVertical();
+
+      GUILayout.BeginHorizontal();
+      GUILayout.Label("Topic:", GUILayout.Width(Screen.width * 0.20f));
+      topic = GUILayout.TextField(topic);
+      GUILayout.EndHorizontal();
+
+      if (GUILayout.Button("Subscribe")) {
+        Firebase.Messaging.FirebaseMessaging.Subscribe(topic);
+        DebugLog("Subscribed to " + topic);
+      }
+      if (GUILayout.Button("Unsubscribe")) {
+        Firebase.Messaging.FirebaseMessaging.Unsubscribe(topic);
+        DebugLog("Unsubscribed from " + topic);
+      }
+      GUILayout.EndVertical();
+      GUILayout.EndScrollView();
+    }
+  }
+
   // Render the GUI:
   void OnGUI() {
     GUI.skin = fb_GUISkin;
@@ -116,11 +150,28 @@ class UIHandler : MonoBehaviour {
       return;
     }
 
+    Rect logArea;
+    Rect controlArea;
+
+    if (Screen.width < Screen.height) {
+      // Portrait mode
+      controlArea = new Rect(0.0f, 0.0f, Screen.width, Screen.height * 0.5f);
+      logArea = new Rect(0.0f, Screen.height * 0.5f, Screen.width, Screen.height * 0.5f);
+    } else {
+      // Landscape mode
+      controlArea = new Rect(0.0f, 0.0f, Screen.width * 0.5f, Screen.height);
+      logArea = new Rect(Screen.width * 0.5f, 0.0f, Screen.width * 0.5f, Screen.height);
+    }
+
     GUILayout.BeginArea(new Rect(0.0f, 0.0f, Screen.width, Screen.height));
 
-    scrollViewVector = GUILayout.BeginScrollView (scrollViewVector);
-    GUILayout.Label(logText);
-    GUILayout.EndScrollView();
+    GUILayout.BeginArea(logArea);
+    GUIDisplayLog();
+    GUILayout.EndArea();
+
+    GUILayout.BeginArea(controlArea);
+    GUIDisplayControls();
+    GUILayout.EndArea();
 
     GUILayout.EndArea();
   }

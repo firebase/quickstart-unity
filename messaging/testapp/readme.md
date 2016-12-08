@@ -188,16 +188,53 @@ if you haven't already, then associate it with your sample project in the
 Failure to associate the sample with an APNs certificate will result in the
 iOS application being unable to receive messages.
 
-  - When you run the app, it will print: `Received Registration Token: <code>`.
-    - When running the app on iOS, the token can be accessed via Xcode's
+  - When you run the app, it will print:
+    `Received Registration Token: <registration_token>`
+    this token can be used to send a notification to a single device.
+    - When running the app on **iOS**, the token can be accessed via Xcode's
       console output.
-    - When running the app on Android, the token can be accessed using the
+    - When running the app on **Android**, the token can be accessed using the
       ADB command line with the `adb logcat` command.
 
-  - You can [send a notification](https://firebase.google.com/docs/cloud-messaging/android/first-message)
-    with the [Firebase Console](https://firebase.google.com/console/) with this
-    token.
-- Received notifications are logged by the app.
+  - To send messages from your own server or the command line you will need the
+     `Server Key`.
+    - Open your project in the
+      [Firebase Console](https://firebase.google.com/console/)
+    - Click the gear icon then `Project settings` in the menu on the left
+    - Select the `Cloud Messaging` tab.
+    - Copy the `Server Key`
+
+  - You can [send a notification to a single device](https://firebase.google.com/docs/cloud-messaging/unity/device-group)
+    or group of devices with this token.
+    - Using the [Firebase Console](https://firebase.google.com/console/):
+      - Open the [Firebase Console](https://firebase.google.com/console/).
+      - Select `Notifications` in the left menu.
+      - Change `Target` to `Single Device` and paste in the
+        `Registration Token` from the device.
+      - Fill out the rest of the field and press `Send Message` to send a
+        notification.
+    - Using the command line:
+      - Replace `<Server Key>` and `<Registration Token>` in this command and
+        run it from the command line.
+```
+curl --header "Authorization: key=<Server Key>" --header "Content-Type: application/json" https://android.googleapis.com/gcm/send -d '{"notification":{"title":"Hi","body":"Hello from the Cloud"},"data":{"score":"lots"},"to":"<Registration Token>"}'
+```
+
+  - You can [send a notification to a topic](https://firebase.google.com/docs/cloud-messaging/unity/topic-messaging)
+    (e.g "TestTopic") which notifies all devices subscribed to the topic.
+    - Using the [Firebase Console](https://firebase.google.com/console/):
+      - Open the [Firebase Console](https://firebase.google.com/console/).
+      - Select `Notifications` in the left menu.
+      - Change `Target` to `Topic` and select the topic (this can take a few
+        hours to appear after devices have subscribed).
+      - Fill out the rest of the field and press `Send Message` to send a
+        notification.
+    - Using the command line:
+      - Replace `<Server Key>` and `<Topic>` in this command and
+        run it from the command line.
+```
+curl --header "Authorization: key=<Server Key>" --header "Content-Type: application/json" https://android.googleapis.com/gcm/send -d '{"notification":{"title":"Hi","body":"Hello from the Cloud"},"data":{"score":"lots"},"to":"/topics/<Topic>"}'
+```
 
 ## Support
 
