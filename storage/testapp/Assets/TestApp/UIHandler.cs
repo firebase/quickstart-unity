@@ -26,7 +26,7 @@ using UnityEngine.UI;
 // necessary setup (initializing the firebase app, etc) on
 // startup.
 public class UIHandler : MonoBehaviour {
-  private const string MyStorageBucket = "gs://YOUR-FIREBASE-BUCKET/";
+  private string MyStorageBucket = "gs://YOUR-FIREBASE-BUCKET/";
   private const int kMaxLogSize = 16382;
 
   public GUISkin fb_GUISkin;
@@ -53,6 +53,11 @@ public class UIHandler : MonoBehaviour {
               "Could not resolve all Firebase dependencies: " + dependencyStatus);
         }
       });
+    }
+
+    var appBucket = FirebaseApp.DefaultInstance.Options.StorageBucket;
+    if (!String.IsNullOrEmpty(appBucket)) {
+        MyStorageBucket = String.Format("gs://{0}/", appBucket);
     }
   }
 
