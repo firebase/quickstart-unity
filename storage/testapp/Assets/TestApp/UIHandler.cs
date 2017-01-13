@@ -116,6 +116,49 @@ public class UIHandler : MonoBehaviour {
     }
   }
 
+  IEnumerator DownloadFromFirebaseStorageWithStream() {
+    StorageReference reference = FirebaseStorage.DefaultInstance
+      .GetReferenceFromUrl(firebaseStorageLocation);
+    // Used to buffer data from the downloaded stream.
+    var memoryStream = new System.IO.MemoryStream();
+    // Limit the amount of data to render in the text view.
+    const int bytesToStoreInMemoryStream = 64 * 1024;
+
+    // Download the file using a stream.
+    var task = reference.GetStreamAsync((stream) => {
+        var buffer = new byte[1024];
+        int remaining = bytesToStoreInMemoryStream;
+        int read;
+        // Read data to render in the text view.
+        while (remaining > 0 &&
+               (read = stream.Read(buffer, 0,
+                                   System.Math.Min(buffer.Length, remaining))) > 0) {
+          memoryStream.Write(buffer, 0, read);
+          remaining -= read;
+        }
+        // Read remaining data from the stream to simulate the complete download.
+        while ((read = stream.Read(buffer, 0, buffer.Length)) > 0) {
+        }
+      },
+      // Report as the stream download progresses.
+      new StorageProgress<DownloadState>(
+        state => {
+          DebugLog(String.Format("Progress: {0} out of {1}", state.BytesTransferred,
+                    state.TotalByteCount));
+        }),
+      System.Threading.CancellationToken.None);
+
+     yield return new WaitUntil(() => task.IsCompleted);
+     if (task.IsFaulted) {
+        DebugLog(task.Exception.ToString());
+     } else {
+        memoryStream.Position = 0;
+        fileContents = (new System.IO.StreamReader(memoryStream)).ReadToEnd();
+        DebugLog("Finished downloading...");
+        DebugLog("Contents=" + fileContents);
+     }
+  }
+
   // Render the buttons and other controls.
   void GUIDisplayControls() {
     if (UIEnabled) {
@@ -146,15 +189,18 @@ public class UIHandler : MonoBehaviour {
 
       GUILayout.Space(10);
 
-      GUILayout.BeginHorizontal();
+      GUILayout.BeginVertical();
       if (GUILayout.Button("Upload")) {
         StartCoroutine(UploadToFirebaseStorage());
       }
 
-      if (GUILayout.Button("Download")) {
+      if (GUILayout.Button("Download Bytes")) {
         StartCoroutine(DownloadFromFirebaseStorage());
       }
-      GUILayout.EndHorizontal();
+      if (GUILayout.Button("Download Stream")) {
+        StartCoroutine(DownloadFromFirebaseStorageWithStream());
+      }
+      GUILayout.EndVertical();
 
       GUILayout.EndVertical();
       GUILayout.EndScrollView();
@@ -165,6 +211,13 @@ public class UIHandler : MonoBehaviour {
   void OnGUI() {
     GUI.skin = fb_GUISkin;
     GUI.skin.textArea.fontSize = GUI.skin.textField.fontSize;
+    // Reduce the text size on the desktop.
+    if (UnityEngine.Application.platform != RuntimePlatform.Android &&
+        UnityEngine.Application.platform != RuntimePlatform.IPhonePlayer) {
+      GUI.skin.textArea.fontSize /= 4;
+      GUI.skin.button.fontSize = GUI.skin.textArea.fontSize;
+      GUI.skin.label.fontSize = GUI.skin.textArea.fontSize;
+    }
     if (dependencyStatus != Firebase.DependencyStatus.Available) {
       GUILayout.Label("One or more Firebase dependencies are not present.");
       GUILayout.Label("Current dependency status: " + dependencyStatus.ToString());

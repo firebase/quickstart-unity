@@ -205,6 +205,19 @@ public class UIHandler : MonoBehaviour {
       if (!String.IsNullOrEmpty(email) && GUILayout.Button("Enter Score")) {
         AddScore();
       }
+
+      GUILayout.Space(20);
+
+      if (GUILayout.Button("Go Offline")) {
+        FirebaseDatabase.DefaultInstance.GoOffline();
+      }
+
+      GUILayout.Space(20);
+
+      if (GUILayout.Button("Go Online")) {
+        FirebaseDatabase.DefaultInstance.GoOnline();
+      }
+
       GUILayout.EndVertical();
       GUILayout.EndScrollView();
     }

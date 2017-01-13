@@ -112,7 +112,13 @@ class UIHandler : MonoBehaviour {
   // Start a fetch request.
   public void FetchData() {
     DebugLog("Fetching data...");
-    System.Threading.Tasks.Task fetchTask = Firebase.RemoteConfig.FirebaseRemoteConfig.FetchAsync();
+    // FetchAsync only fetches new data if the current data is older than the provided
+    // timespan.  Otherwise it assumes the data is "recent enough", and does nothing.
+    // By default the timespan is 12 hours, and for production apps, this is a good
+    // number.  For this example though, it's set to a timespan of zero, so that
+    // changes in the console will always show up immediately.
+    System.Threading.Tasks.Task fetchTask = Firebase.RemoteConfig.FirebaseRemoteConfig.FetchAsync(
+        TimeSpan.Zero);
     fetchTask.ContinueWith(FetchComplete);
   }
 

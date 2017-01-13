@@ -8,7 +8,7 @@ inside the Unity Editor.
 
 ## Requirements
 
-* [Unity](http://unity3d.com/) 5.4 or higher.
+* [Unity](http://unity3d.com/) 5.3 or higher.
 
 ## Running the Sample inside the Editor
 
