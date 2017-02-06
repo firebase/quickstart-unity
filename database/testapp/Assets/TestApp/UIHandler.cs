@@ -54,8 +54,6 @@ public class UIHandler : MonoBehaviour {
         if (dependencyStatus == DependencyStatus.Available) {
           InitializeFirebase();
         } else {
-          // This should never happen if we're only using Firebase Analytics.
-          // It does not rely on any external dependencies.
           Debug.LogError(
               "Could not resolve all Firebase dependencies: " + dependencyStatus);
         }

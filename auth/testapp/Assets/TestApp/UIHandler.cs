@@ -55,8 +55,6 @@ public class UIHandler : MonoBehaviour {
         if (dependencyStatus == Firebase.DependencyStatus.Available) {
           InitializeFirebase();
         } else {
-          // This should never happen if we're only using Firebase Analytics.
-          // It does not rely on any external dependencies.
           Debug.LogError(
               "Could not resolve all Firebase dependencies: " + dependencyStatus);
         }
@@ -274,19 +272,14 @@ public class UIHandler : MonoBehaviour {
     auth.SignOut();
   }
 
-  public void DeleteUser() {
-    DebugLog(String.Format("Attempting to delete user {0}...", email));
-    DisableUI();
-    auth.SignInWithEmailAndPasswordAsync(email, password)
-      .ContinueWith(HandleDeleteSigninResult);
-  }
 
-  void HandleDeleteSigninResult(Task<Firebase.Auth.FirebaseUser> authTask) {
-    EnableUI();
-    if (LogTaskCompletion(authTask, "Sign-in to delete user")) {
+  public void DeleteUser() {
+    if (auth.CurrentUser != null) {
+      DebugLog(String.Format("Attempting to delete user {0}...", auth.CurrentUser.UserId));
       DisableUI();
-      DebugLog("Signed in - deleting user.");
       auth.CurrentUser.DeleteAsync().ContinueWith(HandleDeleteResult);
+    } else {
+      DebugLog("Sign-in before deleting user.");
     }
   }
 
