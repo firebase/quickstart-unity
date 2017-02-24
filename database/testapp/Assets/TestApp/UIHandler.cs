@@ -82,8 +82,14 @@ public class UIHandler : MonoBehaviour {
       leaderBoard.Add(title);
       if (e2.Snapshot != null && e2.Snapshot.ChildrenCount > 0) {
         foreach (var childSnapshot in e2.Snapshot.Children) {
-          leaderBoard.Insert(1, childSnapshot.Child("score").Value.ToString()
-          + "  " + childSnapshot.Child("email").Value.ToString());
+          if (childSnapshot.Child("score") == null
+            || childSnapshot.Child("score").Value == null) {
+            Debug.LogError("Bad data in sample.  Did you forget to call SetEditorDatabaseUrl with your project id?");
+            break;
+          } else {
+            leaderBoard.Insert(1, childSnapshot.Child("score").Value.ToString()
+              + "  " + childSnapshot.Child("email").Value.ToString());
+          }
         }
       }
     };
