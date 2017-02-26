@@ -89,7 +89,12 @@ public class UIHandler : MonoBehaviour {
   IEnumerator UploadToFirebaseStorage() {
     StorageReference reference = FirebaseStorage.DefaultInstance
       .GetReferenceFromUrl(firebaseStorageLocation);
+#if UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_5_3 || UNITY_5_4
+    var task = reference.PutBytesAsync(Encoding.UTF8.GetBytes(fileContents), null, null,
+                                       default(System.Threading.CancellationToken), null);
+#else
     var task = reference.PutBytesAsync(Encoding.UTF8.GetBytes(fileContents));
+#endif
     yield return new WaitUntil(() => task.IsCompleted);
     if (task.IsFaulted) {
       DebugLog(task.Exception.ToString());
