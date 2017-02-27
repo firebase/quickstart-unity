@@ -67,6 +67,7 @@ public class UIHandler : MonoBehaviour {
   void InitializeFirebase() {
     FirebaseApp app = FirebaseApp.DefaultInstance;
     app.SetEditorDatabaseUrl("https://YOUR-FIREBASE-APP.firebaseio.com/");
+    if (app.Options.DatabaseUrl != null) app.SetEditorDatabaseUrl(app.Options.DatabaseUrl);
 
     leaderBoard = new ArrayList();
     leaderBoard.Add("Firebase Top " + MaxScores.ToString() + " Scores");
