@@ -129,19 +129,20 @@ class UIHandler : MonoBehaviour {
       DebugLog("Fetch completed successfully!");
     }
 
-    switch (Firebase.RemoteConfig.FirebaseRemoteConfig.Info.LastFetchStatus) {
+    var info = Firebase.RemoteConfig.FirebaseRemoteConfig.Info;
+    switch (info.LastFetchStatus) {
     case Firebase.RemoteConfig.LastFetchStatus.Success:
       Firebase.RemoteConfig.FirebaseRemoteConfig.ActivateFetched();
-      DebugLog("Remote data loaded and ready.");
+      DebugLog(String.Format("Remote data loaded and ready (last fetch time {0}).",
+                             info.FetchTime));
       break;
     case Firebase.RemoteConfig.LastFetchStatus.Failure:
-      switch (Firebase.RemoteConfig.FirebaseRemoteConfig.Info.LastFetchFailureReason) {
+      switch (info.LastFetchFailureReason) {
       case Firebase.RemoteConfig.FetchFailureReason.Error:
         DebugLog("Fetch failed for unknown reason");
         break;
       case Firebase.RemoteConfig.FetchFailureReason.Throttled:
-        DebugLog("Fetch throttled until " +
-                 Firebase.RemoteConfig.FirebaseRemoteConfig.Info.ThrottledEndTime);
+        DebugLog("Fetch throttled until " + info.ThrottledEndTime);
         break;
       }
       break;

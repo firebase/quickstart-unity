@@ -101,7 +101,7 @@ public class UIHandler : MonoBehaviour {
     } else {
       fileContents = "";
       DebugLog("Finished uploading... Download Url: " + task.Result.DownloadUrl.ToString());
-      DebugLog("Press the Download button to download text from Firebase Storage");
+      DebugLog("Press the Download button to download text from Cloud Storage");
     }
   }
 

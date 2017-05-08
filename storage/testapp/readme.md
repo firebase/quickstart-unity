@@ -1,7 +1,7 @@
-# Firebase Storage Quickstart
+# Cloud Storage for Firebase Quickstart
 
-The Firebase Storage Unity Sample demonstrates
-[Firebase Storage](https://firebase.google.com/docs/storage/)
+The Cloud Storage for Firebase Unity Sample demonstrates the
+[Firebase SDK for Cloud Storage](https://firebase.google.com/docs/storage/)
 with the
 [Firebase Unity SDK](https://firebase.google.com/docs/unity/setup)
 inside the Unity Editor.
@@ -38,7 +38,7 @@ inside the Unity Editor.
     firebase console under the Storage tab.
 
 Once you have done this, you can run the Unity Editor and test the application.
-You will be able to enter text to upload to Firebase Storage and afterwards
+You will be able to enter text to upload to Cloud Storage and afterwards
 download that same text.
 
 ## Building the Sample for Devices
