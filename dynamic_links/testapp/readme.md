@@ -1,7 +1,7 @@
-# Firebase Dynamic Links and Invites Quickstart
+# Firebase Dynamic Links Quickstart
 
-The Firebase Dynamic Links and Invites Unity Sample demonstrates sending and
-receiving [Firebase Invites](https://firebase.google.com/docs/invites/) and
+The Firebase Dynamic Links Unity Sample demonstrates sending and
+receiving
 [Firebase Dynamic Links](https://firebase.google.com/docs/dynamic-links/)
 using the
 [Firebase Unity SDK](https://firebase.google.com/docs/unity/setup).
@@ -24,7 +24,7 @@ using the
     - Create a project in the
       [Firebase console](https://firebase.google.com/console/),
       and associate your iOS application.
-      - You should use `com.google.firebase.unity.invites.testapp` as the
+      - You should use `com.google.firebase.unity.dynamiclinks.testapp` as the
         package name while you're testing.
         - If you do not use the prescribed package name you will need to update
           the bundle identifier as described in the
@@ -47,9 +47,9 @@ using the
   - Open the scene `MainScene`.
     - Navigate to `Assets/TestApp/MainScene` in the `Project` window.
     - Double click on `MainScene` file to open.
-  - Import the `Firebase Invites and Dynamic Links` plugin.
+  - Import the `Firebase Dynamic Links` plugin.
     - Select the `Assets > Import Package > Custom Package` menu item.
-    - Import `FirebaseInvites.unitypackage` from the
+    - Import `FirebaseDynamicLinks.unitypackage` from the
       [Firebase Unity SDK](https://firebase.google.com/download/unity),
       downloaded previously.
     - Click the `Import` when the `Import Unity Package` window appears.
@@ -60,7 +60,7 @@ using the
       
       NOTE: `GoogleService-Info.plist` can be placed anywhere in the project.
   - Optional: Update the Project Bundle Identifier
-    - If you did not use `com.google.firebase.unity.invites.testapp`
+    - If you did not use `com.google.firebase.unity.dynamiclinks.testapp`
       as the project package name you will need to update the sample's Bundle
       Identifier.
       - Select the `File > Build Settings` menu option.
@@ -96,7 +96,7 @@ using the
     - Create a project in the
       [Firebase console](https://firebase.google.com/console/),
       and attach your Android app to it.
-      - You should use `com.google.firebase.unity.invites.testapp` as the
+      - You should use `com.google.firebase.unity.dynamiclinks.testapp` as the
         package name while you're testing.
         - If you do not use the prescribed package name you will need to update
           the bundle identifier as described in the
@@ -130,9 +130,9 @@ using the
   - Open the scene `MainScene`.
     - Navigate to `Assets/TestApp/MainScene` in the `Project` window.
     - Double click on `MainScene` file to open.
-  - Import the `Firebase Invites and Dynamic Links` plugin.
+  - Import the `Firebase Dynamic Links` plugin.
     - Select the `Assets > Import Package > Custom Package` menu item.
-    - Import `FirebaseInvites.unitypackage` from the
+    - Import `FirebaseDynamicLinks.unitypackage` from the
       [Firebase Unity SDK](https://firebase.google.com/download/unity),
       downloaded previously.
     - Click the `Import` when the `Import Unity Package` window appears.
@@ -143,7 +143,7 @@ using the
       
       NOTE: `google-services.json` can be placed anywhere in the project.
   - Optional: Update the Project Bundle Identifier
-    - If you did not use `com.google.firebase.unity.invites.testapp`
+    - If you did not use `com.google.firebase.unity.dynamiclinks.testapp`
       as the project package name you will need to update the sample's Bundle
       Identifier.
       - Select the `File > Build Settings` menu option.
@@ -164,19 +164,24 @@ using the
 
 ## Using the Sample
 
-  - When you first run the app, it will check for an incoming dynamic link or
-    invitation, and report whether it was able to fetch an invite.
-  - To send an invite, use the `Send Invite` button on the right side of the
-    screen.
-  - This will open a screen that allows you to send an invite for the current
-    app via email or SMS.
-  - To simulate receiving an invitation from a friend, you can send yourself an
-    invite, uninstall the test app, then click the link in your email.
-  - This would normally send you to the Play Store or App Store to download the
-    app. Because this is a test app, it will link to a nonexistent store page.
-  - After clicking the invite link, re-install and run the app on your device
-    or emulator, and see the invitation fetched on the receiving side.
-
+  - Receiving a link
+    - When you first run the app, it will check for an incoming dynamic link
+      and report whether it was able to fetch a link.
+    - To simulate receiving a dynamic link, you can send yourself an email,
+      uninstall the test app, then click the link in your email.
+    - This would normally send you to the Play Store or App Store to download
+      the app. Because this is a test app, it will link to a nonexistent store
+      page.
+    - After clicking the dynamic link, re-install and run the app on your
+      device or emulator, and see the dynamic link fetched on the receiving
+      side.
+  - Creating a link
+    - Clicking the Display Long Link button creates and displays a long
+      dynamic link.
+    - Clicking the Create Short Link button creates and displays a short link by
+      contacting the link shortening service.
+    - Clicking the Create Unguessable Short Link button creates and displays an
+      unguessable short link.
 
 ## Support
 

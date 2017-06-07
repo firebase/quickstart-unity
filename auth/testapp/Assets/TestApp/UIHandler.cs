@@ -25,7 +25,7 @@ using UnityEngine.UI;
 // startup.
 public class UIHandler : MonoBehaviour {
 
-  Firebase.Auth.FirebaseAuth auth;
+  protected Firebase.Auth.FirebaseAuth auth;
   Firebase.Auth.FirebaseUser user;
 
   public GUISkin fb_GUISkin;
@@ -33,6 +33,11 @@ public class UIHandler : MonoBehaviour {
   private string email = "";
   private string password = "";
   private string displayName = "";
+  private string phoneNumber = "";
+  private string receivedCode = "";
+  // Flag set when a token is being fetched.  This is used to avoid printing the token
+  // in IdTokenChanged() when the user presses the get token button.
+  private bool fetchingToken = false;
   // Enable / disable password input box.
   // NOTE: In some versions of Unity the password input box does not work in
   // iOS simulators.
@@ -41,13 +46,18 @@ public class UIHandler : MonoBehaviour {
   private Vector2 scrollViewVector = Vector2.zero;
   bool UIEnabled = true;
 
+  // Set the phone authentication timeout to a minute.
+  private uint phoneAuthTimeoutMs = 60 * 1000;
+  // The verification id needed along with the sent code for phone authentication.
+  private string phoneAuthVerificationId;
+
   const int kMaxLogSize = 16382;
   Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
 
   // When the app starts, check to make sure that we have
   // the required dependencies to use Firebase, and if not,
   // add them if possible.
-  void Start() {
+  public virtual void Start() {
     dependencyStatus = Firebase.FirebaseApp.CheckDependencies();
     if (dependencyStatus != Firebase.DependencyStatus.Available) {
       Firebase.FirebaseApp.FixDependenciesAsync().ContinueWith(task => {
@@ -69,6 +79,7 @@ public class UIHandler : MonoBehaviour {
     DebugLog("Setting up Firebase Auth");
     auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
     auth.StateChanged += AuthStateChanged;
+    auth.IdTokenChanged += IdTokenChanged;
     AuthStateChanged(this, null);
   }
 
@@ -81,6 +92,7 @@ public class UIHandler : MonoBehaviour {
 
   void OnDestroy() {
     auth.StateChanged -= AuthStateChanged;
+    auth.IdTokenChanged -= IdTokenChanged;
     auth = null;
   }
 
@@ -143,6 +155,14 @@ public class UIHandler : MonoBehaviour {
           }
         }
       }
+    }
+  }
+
+  // Track ID token changes.
+  void IdTokenChanged(object sender, System.EventArgs eventArgs) {
+    if (auth.CurrentUser != null && !fetchingToken) {
+      auth.CurrentUser.TokenAsync(false).ContinueWith(
+        task => DebugLog(String.Format("Token[0:8] = {0}", task.Result.Substring(0, 8))));
     }
   }
 
@@ -258,10 +278,12 @@ public class UIHandler : MonoBehaviour {
       return;
     }
     DebugLog("Fetching user token");
+    fetchingToken = true;
     user.TokenAsync(false).ContinueWith(HandleGetUserToken);
   }
 
   void HandleGetUserToken(Task<string> authTask) {
+    fetchingToken = false;
     if (LogTaskCompletion(authTask, "User token fetch")) {
       DebugLog("Token = " + authTask.Result);
     }
@@ -309,6 +331,34 @@ public class UIHandler : MonoBehaviour {
       });
   }
 
+  // Begin authentication with the phone number.
+  public void VerifyPhoneNumber() {
+    var phoneAuthProvider = Firebase.Auth.PhoneAuthProvider.GetInstance(auth);
+    phoneAuthProvider.VerifyPhoneNumber(phoneNumber, phoneAuthTimeoutMs, null,
+      verificationCompleted: (cred) => {
+          DebugLog("Phone Auth, auto-verification completed");
+          auth.SignInWithCredentialAsync(cred).ContinueWith(HandleSigninResult);
+      },
+      verificationFailed: (error) => {
+          DebugLog("Phone Auth, verification failed: " + error);
+      },
+      codeSent: (id, token) => {
+          phoneAuthVerificationId = id;
+          DebugLog("Phone Auth, code sent");
+      },
+      codeAutoRetrievalTimeOut: (id) => {
+          DebugLog("Phone Auth, auto-verification timed out");
+      });
+  }
+
+  // Sign in using phone number authentication using code input by the user.
+  public void VerifyReceivedPhoneCode() {
+    var phoneAuthProvider = Firebase.Auth.PhoneAuthProvider.GetInstance(auth);
+    // receivedCode should have been input by the user.
+    var cred = phoneAuthProvider.GetCredential(phoneAuthVerificationId, receivedCode);
+    auth.SignInWithCredentialAsync(cred).ContinueWith(HandleSigninResult);
+  }
+
   // Render the log output in a scroll view.
   void GUIDisplayLog() {
     scrollViewVector = GUILayout.BeginScrollView(scrollViewVector);
@@ -344,6 +394,20 @@ public class UIHandler : MonoBehaviour {
 
       GUILayout.Space(20);
 
+      GUILayout.BeginHorizontal();
+      GUILayout.Label("Phone Number:", GUILayout.Width(Screen.width * 0.20f));
+      phoneNumber = GUILayout.TextField(phoneNumber);
+      GUILayout.EndHorizontal();
+
+      GUILayout.Space(20);
+
+      GUILayout.BeginHorizontal();
+      GUILayout.Label("Phone Auth Received Code:", GUILayout.Width(Screen.width * 0.20f));
+      receivedCode = GUILayout.TextField(receivedCode);
+      GUILayout.EndHorizontal();
+
+      GUILayout.Space(20);
+
       if (GUILayout.Button("Create User")) {
         CreateUser();
       }
@@ -374,10 +438,20 @@ public class UIHandler : MonoBehaviour {
       if (GUILayout.Button("Password Reset Email")) {
         SendPasswordResetEmail();
       }
+      if (GUILayout.Button("Authenicate Phone Number")) {
+        VerifyPhoneNumber();
+      }
+      if (GUILayout.Button("Verify Received Phone Code")) {
+        VerifyReceivedPhoneCode();
+      }
+      GUIDisplayCustomControls();
       GUILayout.EndVertical();
       GUILayout.EndScrollView();
     }
   }
+
+  // Overridable function to allow additional controls to be added.
+  protected virtual void GUIDisplayCustomControls() { }
 
   // Render the GUI:
   void OnGUI() {
