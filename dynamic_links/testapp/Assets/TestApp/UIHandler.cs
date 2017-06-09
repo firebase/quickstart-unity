@@ -32,6 +32,18 @@ public class UIHandler : MonoBehaviour {
   private string logText = "";
   const int kMaxLogSize = 16382;
   DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
+  const string kInvalidDynamicLinksDomain = "THIS_IS_AN_INVALID_DOMAIN";
+  const string kDynamicLinksDomainInvalidError =
+    "kDynamicLinksDomain is not valid, link shortening will fail.\n" +
+    "To resolve this:\n" +
+    "* Goto the Firebase console https://firebase.google.com/console/\n" +
+    "* Click on the Dynamic Links tab\n" +
+    "* Copy the domain e.g x20yz.app.goo.gl\n" +
+    "* Replace the value of kDynamicLinksDomain with the copied domain.\n";
+
+  // IMPORTANT: You need to set this to a valid domain from the Firebase
+  // console (see kDynamicLinksDomainInvalidError for the details).
+  public string kDynamicLinksDomain = kInvalidDynamicLinksDomain;
 
   // When the app starts, check to make sure that we have
   // the required dependencies to use Firebase, and if not,
@@ -109,7 +121,7 @@ public class UIHandler : MonoBehaviour {
       // The base Link.
       new System.Uri("https://google.com/abc"),
       // The dynamic link domain.
-      "xyz.app.goo.gl") {
+      kDynamicLinksDomain) {
       GoogleAnalyticsParameters = new Firebase.DynamicLinks.GoogleAnalyticsParameters() {
         Source = "mysource",
         Medium = "mymedium",
@@ -148,6 +160,10 @@ public class UIHandler : MonoBehaviour {
   }
 
   void CreateAndDisplayShortLink(DynamicLinkOptions options) {
+    if (kDynamicLinksDomain == kInvalidDynamicLinksDomain) {
+      DebugLog(kDynamicLinksDomainInvalidError);
+      return;
+    }
     var components = CreateDynamicLinkComponents();
     DynamicLinks.GetShortLinkAsync(components, options).ContinueWith((task) => {
         if (task.IsCanceled) {

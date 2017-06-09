@@ -69,6 +69,10 @@ using the
       - In the `Player Settings` panel scroll down to `Bundle Identifier`
         and update the value to the package name you provided when you
         registered your app with Firebase.
+  - Copy the dynamic links domain for your project under the Dynamic Links
+    tab of the [Firebase console](https://firebase.google.com/console/)
+    e.g xyz.app.goo.gl and assign to the string kDynamicLinksDomain in
+    src/common_main.cc .
   - Build for iOS
     - Select the `File > Build Settings` menu option.
     - Select `iOS` in the `Platform` list.
@@ -152,6 +156,10 @@ using the
       - In the `Player Settings` panel scroll down to `Bundle Identifier`
         and update the value to the package name you provided when you
         registered your app with Firebase.
+  - Copy the dynamic links domain for your project under the Dynamic Links
+    tab of the [Firebase console](https://firebase.google.com/console/)
+    e.g xyz.app.goo.gl and assign to the string kDynamicLinksDomain in
+    src/common_main.cc .
   - Build for Android
     - Select the `File > Build Settings` menu option.
     - Select `Android` in the `Platform` list.
