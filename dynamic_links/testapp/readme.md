@@ -71,8 +71,8 @@ using the
         registered your app with Firebase.
   - Copy the dynamic links domain for your project under the Dynamic Links
     tab of the [Firebase console](https://firebase.google.com/console/)
-    e.g xyz.app.goo.gl and assign to the string kDynamicLinksDomain in
-    src/common_main.cc .
+    e.g xyz.app.goo.gl and assign it to the string DynamicLinksDomain on
+    the UIHandler object in the MainScene.
   - Build for iOS
     - Select the `File > Build Settings` menu option.
     - Select `iOS` in the `Platform` list.
@@ -158,8 +158,8 @@ using the
         registered your app with Firebase.
   - Copy the dynamic links domain for your project under the Dynamic Links
     tab of the [Firebase console](https://firebase.google.com/console/)
-    e.g xyz.app.goo.gl and assign to the string kDynamicLinksDomain in
-    src/common_main.cc .
+    e.g xyz.app.goo.gl and assign it to the string DynamicLinksDomain on
+    the UIHandler object in the MainScene.
   - Build for Android
     - Select the `File > Build Settings` menu option.
     - Select `Android` in the `Platform` list.

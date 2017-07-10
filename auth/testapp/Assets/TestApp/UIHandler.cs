@@ -26,7 +26,9 @@ using UnityEngine.UI;
 public class UIHandler : MonoBehaviour {
 
   protected Firebase.Auth.FirebaseAuth auth;
-  Firebase.Auth.FirebaseUser user;
+  private Firebase.Auth.FirebaseAuth otherAuth;
+  protected Dictionary<string, Firebase.Auth.FirebaseUser> userByAuth =
+    new Dictionary<string, Firebase.Auth.FirebaseUser>();
 
   public GUISkin fb_GUISkin;
   private string logText = "";
@@ -50,6 +52,11 @@ public class UIHandler : MonoBehaviour {
   private uint phoneAuthTimeoutMs = 60 * 1000;
   // The verification id needed along with the sent code for phone authentication.
   private string phoneAuthVerificationId;
+
+  // Options used to setup secondary authentication object.
+  // Created in InitializeFirebase, because of a bug where creating an
+  // AppOptions at declaration is causing a crash.
+  private Firebase.AppOptions otherAuthOptions;
 
   const int kMaxLogSize = 16382;
   Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
@@ -80,6 +87,25 @@ public class UIHandler : MonoBehaviour {
     auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
     auth.StateChanged += AuthStateChanged;
     auth.IdTokenChanged += IdTokenChanged;
+    // Specify valid options to construct a secondary authentication object.
+    otherAuthOptions = new Firebase.AppOptions {
+      ApiKey = "",
+      AppId = "",
+      ProjectId = ""
+    };
+    if (otherAuthOptions != null &&
+        !(String.IsNullOrEmpty(otherAuthOptions.ApiKey) ||
+          String.IsNullOrEmpty(otherAuthOptions.AppId) ||
+          String.IsNullOrEmpty(otherAuthOptions.ProjectId))) {
+      try {
+        otherAuth = Firebase.Auth.FirebaseAuth.GetAuth(Firebase.FirebaseApp.Create(
+          otherAuthOptions, "Secondary"));
+        otherAuth.StateChanged += AuthStateChanged;
+        otherAuth.IdTokenChanged += IdTokenChanged;
+      } catch (Exception) {
+        DebugLog("ERROR: Failed to initialize secondary authentication object.");
+      }
+    }
     AuthStateChanged(this, null);
   }
 
@@ -94,6 +120,11 @@ public class UIHandler : MonoBehaviour {
     auth.StateChanged -= AuthStateChanged;
     auth.IdTokenChanged -= IdTokenChanged;
     auth = null;
+    if (otherAuth != null) {
+      otherAuth.StateChanged -= AuthStateChanged;
+      otherAuth.IdTokenChanged -= IdTokenChanged;
+      otherAuth = null;
+    }
   }
 
   void DisableUI() {
@@ -135,12 +166,16 @@ public class UIHandler : MonoBehaviour {
 
   // Track state changes of the auth object.
   void AuthStateChanged(object sender, System.EventArgs eventArgs) {
-    if (auth.CurrentUser != user) {
-      bool signedIn = user != auth.CurrentUser && auth.CurrentUser != null;
+    Firebase.Auth.FirebaseAuth senderAuth = sender as Firebase.Auth.FirebaseAuth;
+    Firebase.Auth.FirebaseUser user = null;
+    if (senderAuth != null) userByAuth.TryGetValue(senderAuth.App.Name, out user);
+    if (senderAuth == auth && senderAuth.CurrentUser != user) {
+      bool signedIn = user != senderAuth.CurrentUser && senderAuth.CurrentUser != null;
       if (!signedIn && user != null) {
         DebugLog("Signed out " + user.UserId);
       }
-      user = auth.CurrentUser;
+      user = senderAuth.CurrentUser;
+      userByAuth[senderAuth.App.Name] = user;
       if (signedIn) {
         DebugLog("Signed in " + user.UserId);
         displayName = user.DisplayName ?? "";
@@ -160,8 +195,9 @@ public class UIHandler : MonoBehaviour {
 
   // Track ID token changes.
   void IdTokenChanged(object sender, System.EventArgs eventArgs) {
-    if (auth.CurrentUser != null && !fetchingToken) {
-      auth.CurrentUser.TokenAsync(false).ContinueWith(
+    Firebase.Auth.FirebaseAuth senderAuth = sender as Firebase.Auth.FirebaseAuth;
+    if (senderAuth == auth && senderAuth.CurrentUser != null && !fetchingToken) {
+      senderAuth.CurrentUser.TokenAsync(false).ContinueWith(
         task => DebugLog(String.Format("Token[0:8] = {0}", task.Result.Substring(0, 8))));
     }
   }
@@ -208,23 +244,23 @@ public class UIHandler : MonoBehaviour {
 
   // Update the user's display name with the currently selected display name.
   public void UpdateUserProfile(string newDisplayName = null) {
-    if (user == null) {
+    if (auth.CurrentUser == null) {
       DebugLog("Not signed in, unable to update user profile");
       return;
     }
     displayName = newDisplayName ?? displayName;
     DebugLog("Updating user profile");
     DisableUI();
-    user.UpdateUserProfileAsync(new Firebase.Auth.UserProfile {
+    auth.CurrentUser.UpdateUserProfileAsync(new Firebase.Auth.UserProfile {
         DisplayName = displayName,
-        PhotoUrl = user.PhotoUrl,
+        PhotoUrl = auth.CurrentUser.PhotoUrl,
       }).ContinueWith(HandleUpdateUserProfile);
   }
 
   void HandleUpdateUserProfile(Task authTask) {
     EnableUI();
     if (LogTaskCompletion(authTask, "User profile")) {
-      DisplayUserInfo(user, 1);
+      DisplayUserInfo(auth.CurrentUser, 1);
     }
   }
 
@@ -258,28 +294,28 @@ public class UIHandler : MonoBehaviour {
   }
 
   public void ReloadUser() {
-    if (user == null) {
+    if (auth.CurrentUser == null) {
       DebugLog("Not signed in, unable to reload user.");
       return;
     }
     DebugLog("Reload User Data");
-    user.ReloadAsync().ContinueWith(HandleReloadUser);
+    auth.CurrentUser.ReloadAsync().ContinueWith(HandleReloadUser);
   }
 
   void HandleReloadUser(Task authTask) {
     if (LogTaskCompletion(authTask, "Reload")) {
-      DisplayUserInfo(user, 1);
+      DisplayUserInfo(auth.CurrentUser, 1);
     }
   }
 
   public void GetUserToken() {
-    if (user == null) {
+    if (auth.CurrentUser == null) {
       DebugLog("Not signed in, unable to get token.");
       return;
     }
     DebugLog("Fetching user token");
     fetchingToken = true;
-    user.TokenAsync(false).ContinueWith(HandleGetUserToken);
+    auth.CurrentUser.TokenAsync(false).ContinueWith(HandleGetUserToken);
   }
 
   void HandleGetUserToken(Task<string> authTask) {
@@ -357,6 +393,19 @@ public class UIHandler : MonoBehaviour {
     // receivedCode should have been input by the user.
     var cred = phoneAuthProvider.GetCredential(phoneAuthVerificationId, receivedCode);
     auth.SignInWithCredentialAsync(cred).ContinueWith(HandleSigninResult);
+  }
+
+  // Determines whether another authentication object is available to focus.
+  public bool HasOtherAuth { get { return auth != otherAuth && otherAuth != null; } }
+
+  // Swap the authentication object currently being controlled by the application.
+  public void SwapAuthFocus() {
+    if (!HasOtherAuth) return;
+    var swapAuth = otherAuth;
+    otherAuth = auth;
+    auth = swapAuth;
+    DebugLog(String.Format("Changed auth from {0} to {1}",
+                           otherAuth.App.Name, auth.App.Name));
   }
 
   // Render the log output in a scroll view.
@@ -443,6 +492,10 @@ public class UIHandler : MonoBehaviour {
       }
       if (GUILayout.Button("Verify Received Phone Code")) {
         VerifyReceivedPhoneCode();
+      }
+      if (HasOtherAuth && GUILayout.Button(String.Format("Switch to auth object {0}",
+                                                         otherAuth.App.Name))) {
+        SwapAuthFocus();
       }
       GUIDisplayCustomControls();
       GUILayout.EndVertical();
