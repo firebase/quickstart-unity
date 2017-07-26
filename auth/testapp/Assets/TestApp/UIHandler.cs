@@ -164,6 +164,20 @@ public class UIHandler : MonoBehaviour {
     }
   }
 
+  // Display a more detailed view of a FirebaseUser.
+  void DisplayDetailedUserInfo(Firebase.Auth.FirebaseUser user, int indentLevel) {
+    DisplayUserInfo(user, indentLevel);
+    DebugLog("  Anonymous: " + user.IsAnonymous);
+    DebugLog("  Email Verified: " + user.IsEmailVerified);
+    var providerDataList = new List<Firebase.Auth.IUserInfo>(user.ProviderData);
+    if (providerDataList.Count > 0) {
+      DebugLog("  Provider Data:");
+      foreach (var providerData in user.ProviderData) {
+        DisplayUserInfo(providerData, indentLevel + 1);
+      }
+    }
+  }
+
   // Track state changes of the auth object.
   void AuthStateChanged(object sender, System.EventArgs eventArgs) {
     Firebase.Auth.FirebaseAuth senderAuth = sender as Firebase.Auth.FirebaseAuth;
@@ -179,16 +193,7 @@ public class UIHandler : MonoBehaviour {
       if (signedIn) {
         DebugLog("Signed in " + user.UserId);
         displayName = user.DisplayName ?? "";
-        DisplayUserInfo(user, 1);
-        DebugLog("  Anonymous: " + user.IsAnonymous);
-        DebugLog("  Email Verified: " + user.IsEmailVerified);
-        var providerDataList = new List<Firebase.Auth.IUserInfo>(user.ProviderData);
-        if (providerDataList.Count > 0) {
-          DebugLog("  Provider Data:");
-          foreach (var providerData in user.ProviderData) {
-            DisplayUserInfo(providerData, 2);
-          }
-        }
+        DisplayDetailedUserInfo(user, 1);
       }
     }
   }
@@ -260,7 +265,7 @@ public class UIHandler : MonoBehaviour {
   void HandleUpdateUserProfile(Task authTask) {
     EnableUI();
     if (LogTaskCompletion(authTask, "User profile")) {
-      DisplayUserInfo(auth.CurrentUser, 1);
+      DisplayDetailedUserInfo(auth.CurrentUser, 1);
     }
   }
 
@@ -293,6 +298,22 @@ public class UIHandler : MonoBehaviour {
     LogTaskCompletion(authTask, "Sign-in");
   }
 
+  void LinkWithCredential() {
+    if (auth.CurrentUser == null) {
+      DebugLog("Not signed in, unable to link credential to user.");
+      return;
+    }
+    DebugLog("Attempting to link credential to user...");
+    Firebase.Auth.Credential cred = Firebase.Auth.EmailAuthProvider.GetCredential(email, password);
+    auth.CurrentUser.LinkWithCredentialAsync(cred).ContinueWith(HandleLinkCredential);
+  }
+
+  void HandleLinkCredential(Task authTask) {
+    if (LogTaskCompletion(authTask, "Link Credential")) {
+      DisplayDetailedUserInfo(auth.CurrentUser, 1);
+    }
+  }
+
   public void ReloadUser() {
     if (auth.CurrentUser == null) {
       DebugLog("Not signed in, unable to reload user.");
@@ -304,7 +325,7 @@ public class UIHandler : MonoBehaviour {
 
   void HandleReloadUser(Task authTask) {
     if (LogTaskCompletion(authTask, "Reload")) {
-      DisplayUserInfo(auth.CurrentUser, 1);
+      DisplayDetailedUserInfo(auth.CurrentUser, 1);
     }
   }
 
@@ -322,6 +343,15 @@ public class UIHandler : MonoBehaviour {
     fetchingToken = false;
     if (LogTaskCompletion(authTask, "User token fetch")) {
       DebugLog("Token = " + authTask.Result);
+    }
+  }
+
+  void GetUserInfo() {
+    if (auth.CurrentUser == null) {
+      DebugLog("Not signed in, unable to get info.");
+    } else {
+      DebugLog("Current user info:");
+      DisplayDetailedUserInfo(auth.CurrentUser, 1);
     }
   }
 
@@ -347,7 +377,7 @@ public class UIHandler : MonoBehaviour {
   }
 
   // Show the providers for the current email address.
-  public void DisplayProviders() {
+  public void DisplayProvidersForEmail() {
     auth.FetchProvidersForEmailAsync(email).ContinueWith((authTask) => {
         if (LogTaskCompletion(authTask, "Fetch Providers")) {
           DebugLog(String.Format("Email Providers for '{0}':", email));
@@ -469,11 +499,17 @@ public class UIHandler : MonoBehaviour {
       if (GUILayout.Button("Sign In With Credentials")) {
         SigninWithCredential();
       }
+      if (GUILayout.Button("Link With Credential")) {
+        LinkWithCredential();
+      }
       if (GUILayout.Button("Reload User")) {
         ReloadUser();
       }
       if (GUILayout.Button("Get User Token")) {
         GetUserToken();
+      }
+      if (GUILayout.Button("Get User Info")) {
+        GetUserInfo();
       }
       if (GUILayout.Button("Sign Out")) {
         SignOut();
@@ -481,8 +517,8 @@ public class UIHandler : MonoBehaviour {
       if (GUILayout.Button("Delete User")) {
         DeleteUser();
       }
-      if (GUILayout.Button("Show Providers")) {
-        DisplayProviders();
+      if (GUILayout.Button("Show Providers For Email")) {
+        DisplayProvidersForEmail();
       }
       if (GUILayout.Button("Password Reset Email")) {
         SendPasswordResetEmail();
