@@ -32,11 +32,11 @@ public class UIHandler : MonoBehaviour {
 
   public GUISkin fb_GUISkin;
   private string logText = "";
-  private string email = "";
-  private string password = "";
-  private string displayName = "";
-  private string phoneNumber = "";
-  private string receivedCode = "";
+  protected string email = "";
+  protected string password = "";
+  protected string displayName = "";
+  protected string phoneNumber = "";
+  protected string receivedCode = "";
   // Flag set when a token is being fetched.  This is used to avoid printing the token
   // in IdTokenChanged() when the user presses the get token button.
   private bool fetchingToken = false;
@@ -54,9 +54,11 @@ public class UIHandler : MonoBehaviour {
   private string phoneAuthVerificationId;
 
   // Options used to setup secondary authentication object.
-  // Created in InitializeFirebase, because of a bug where creating an
-  // AppOptions at declaration is causing a crash.
-  private Firebase.AppOptions otherAuthOptions;
+  private Firebase.AppOptions otherAuthOptions = new Firebase.AppOptions {
+    ApiKey = "",
+    AppId = "",
+    ProjectId = ""
+  };
 
   const int kMaxLogSize = 16382;
   Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
@@ -88,11 +90,6 @@ public class UIHandler : MonoBehaviour {
     auth.StateChanged += AuthStateChanged;
     auth.IdTokenChanged += IdTokenChanged;
     // Specify valid options to construct a secondary authentication object.
-    otherAuthOptions = new Firebase.AppOptions {
-      ApiKey = "",
-      AppId = "",
-      ProjectId = ""
-    };
     if (otherAuthOptions != null &&
         !(String.IsNullOrEmpty(otherAuthOptions.ApiKey) ||
           String.IsNullOrEmpty(otherAuthOptions.AppId) ||
@@ -110,7 +107,7 @@ public class UIHandler : MonoBehaviour {
   }
 
   // Exit if escape (or back, on mobile) is pressed.
-  void Update() {
+  protected virtual void Update() {
     if (Input.GetKeyDown(KeyCode.Escape)) {
       Application.Quit();
     }
@@ -223,40 +220,44 @@ public class UIHandler : MonoBehaviour {
     return complete;
   }
 
-  public void CreateUser() {
+  public Task CreateUserAsync() {
     DebugLog(String.Format("Attempting to create user {0}...", email));
     DisableUI();
 
-    // This passes the current displayName through to HandleCreateResult
+    // This passes the current displayName through to HandleCreateUserAsync
     // so that it can be passed to UpdateUserProfile().  displayName will be
     // reset by AuthStateChanged() when the new user is created and signed in.
     string newDisplayName = displayName;
-    auth.CreateUserWithEmailAndPasswordAsync(email, password)
-      .ContinueWith((task) => HandleCreateResult(task, newDisplayName: newDisplayName));
+    return auth.CreateUserWithEmailAndPasswordAsync(email, password)
+      .ContinueWith((task) => {
+        return HandleCreateUserAsync(task, newDisplayName: newDisplayName);
+      }).Unwrap();
   }
 
-  void HandleCreateResult(Task<Firebase.Auth.FirebaseUser> authTask,
-                          string newDisplayName = null) {
+  Task HandleCreateUserAsync(Task<Firebase.Auth.FirebaseUser> authTask,
+                             string newDisplayName = null) {
     EnableUI();
     if (LogTaskCompletion(authTask, "User Creation")) {
       if (auth.CurrentUser != null) {
         DebugLog(String.Format("User Info: {0}  {1}", auth.CurrentUser.Email,
                                auth.CurrentUser.ProviderId));
-        UpdateUserProfile(newDisplayName: newDisplayName);
+        return UpdateUserProfileAsync(newDisplayName: newDisplayName);
       }
     }
+    // Nothing to update, so just return a completed Task.
+    return Task.FromResult(0);
   }
 
   // Update the user's display name with the currently selected display name.
-  public void UpdateUserProfile(string newDisplayName = null) {
+  public Task UpdateUserProfileAsync(string newDisplayName = null) {
     if (auth.CurrentUser == null) {
       DebugLog("Not signed in, unable to update user profile");
-      return;
+      return Task.FromResult(0);
     }
     displayName = newDisplayName ?? displayName;
     DebugLog("Updating user profile");
     DisableUI();
-    auth.CurrentUser.UpdateUserProfileAsync(new Firebase.Auth.UserProfile {
+    return auth.CurrentUser.UpdateUserProfileAsync(new Firebase.Auth.UserProfile {
         DisplayName = displayName,
         PhotoUrl = auth.CurrentUser.PhotoUrl,
       }).ContinueWith(HandleUpdateUserProfile);
@@ -269,28 +270,28 @@ public class UIHandler : MonoBehaviour {
     }
   }
 
-  public void Signin() {
+  public Task SigninAsync() {
     DebugLog(String.Format("Attempting to sign in as {0}...", email));
     DisableUI();
-    auth.SignInWithEmailAndPasswordAsync(email, password)
+    return auth.SignInWithEmailAndPasswordAsync(email, password)
       .ContinueWith(HandleSigninResult);
   }
 
   // This is functionally equivalent to the Signin() function.  However, it
   // illustrates the use of Credentials, which can be aquired from many
   // different sources of authentication.
-  public void SigninWithCredential() {
+  public Task SigninWithCredentialAsync() {
     DebugLog(String.Format("Attempting to sign in as {0}...", email));
     DisableUI();
     Firebase.Auth.Credential cred = Firebase.Auth.EmailAuthProvider.GetCredential(email, password);
-    auth.SignInWithCredentialAsync(cred).ContinueWith(HandleSigninResult);
+    return auth.SignInWithCredentialAsync(cred).ContinueWith(HandleSigninResult);
   }
 
   // Attempt to sign in anonymously.
-  public void SigninAnonymously() {
+  public Task SigninAnonymouslyAsync() {
     DebugLog("Attempting to sign anonymously...");
     DisableUI();
-    auth.SignInAnonymouslyAsync().ContinueWith(HandleSigninResult);
+    return auth.SignInAnonymouslyAsync().ContinueWith(HandleSigninResult);
   }
 
   void HandleSigninResult(Task<Firebase.Auth.FirebaseUser> authTask) {
@@ -361,13 +362,15 @@ public class UIHandler : MonoBehaviour {
   }
 
 
-  public void DeleteUser() {
+  public Task DeleteUserAsync() {
     if (auth.CurrentUser != null) {
       DebugLog(String.Format("Attempting to delete user {0}...", auth.CurrentUser.UserId));
       DisableUI();
-      auth.CurrentUser.DeleteAsync().ContinueWith(HandleDeleteResult);
+      return auth.CurrentUser.DeleteAsync().ContinueWith(HandleDeleteResult);
     } else {
       DebugLog("Sign-in before deleting user.");
+      // Return a finished task.
+      return Task.FromResult(0);
     }
   }
 
@@ -488,16 +491,16 @@ public class UIHandler : MonoBehaviour {
       GUILayout.Space(20);
 
       if (GUILayout.Button("Create User")) {
-        CreateUser();
+        CreateUserAsync();
       }
       if (GUILayout.Button("Sign In Anonymously")) {
-        SigninAnonymously();
+        SigninAnonymouslyAsync();
       }
       if (GUILayout.Button("Sign In With Email")) {
-        Signin();
+        SigninAsync();
       }
       if (GUILayout.Button("Sign In With Credentials")) {
-        SigninWithCredential();
+        SigninWithCredentialAsync();
       }
       if (GUILayout.Button("Link With Credential")) {
         LinkWithCredential();
@@ -515,7 +518,7 @@ public class UIHandler : MonoBehaviour {
         SignOut();
       }
       if (GUILayout.Button("Delete User")) {
-        DeleteUser();
+        DeleteUserAsync();
       }
       if (GUILayout.Button("Show Providers For Email")) {
         DisplayProvidersForEmail();

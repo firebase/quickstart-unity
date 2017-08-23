@@ -66,7 +66,9 @@ public class UIHandler : MonoBehaviour {
   // Initialize the Firebase database:
   void InitializeFirebase() {
     FirebaseApp app = FirebaseApp.DefaultInstance;
-    app.SetEditorDatabaseUrl("https://YOUR-FIREBASE-APP.firebaseio.com/");
+    // NOTE: You'll need to replace this url with your Firebase App's database
+    // path in order for the database connection to work correctly in editor.
+    app.SetEditorDatabaseUrl("https://replace-with-your-project.firebaseio.com/");
     if (app.Options.DatabaseUrl != null) app.SetEditorDatabaseUrl(app.Options.DatabaseUrl);
 
     leaderBoard = new ArrayList();

@@ -36,8 +36,8 @@ inside the Unity Editor.
       downloaded previously.
     - Click the `Import` when the `Import Unity Package` window appears.
   - Turn off secure access.  [Configure your rules for public access.](https://firebase.google.com/docs/database/security/quickstart#sample-rules)
-  - Change the line `SetEditorDatabaseUrl("https://YOUR-FIREBASE-APP.firebaseio.com/");`
-    to replace YOUR-FIREBASE-APP with the project id found in the
+  - Change the line `SetEditorDatabaseUrl("https://replace-with-your-project.firebaseio.com/");`
+    to replace `replace-with-your-project` with the project id found in the
     firebase console.
 
 Once you have done this, you can run the Unity Editor and test the application.

@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -66,7 +67,7 @@ public class UIHandler : MonoBehaviour {
   }
 
   // Exit if escape (or back, on mobile) is pressed.
-  void Update() {
+  public void Update() {
     if (Input.GetKeyDown(KeyCode.Escape)) {
       Application.Quit();
     }
@@ -101,11 +102,11 @@ public class UIHandler : MonoBehaviour {
     scrollViewVector.y = int.MaxValue;
   }
 
-  void DisableUI() {
+  public void DisableUI() {
     UIEnabled = false;
   }
 
-  void EnableUI() {
+  public void EnableUI() {
     UIEnabled = true;
   }
 
@@ -142,7 +143,7 @@ public class UIHandler : MonoBehaviour {
           CampaignToken = "hijklmno",
           ProviderToken = "pq-rstuv"
       },
-      AndroidParameters = new Firebase.DynamicLinks.AndroidParameters("PackageName") {
+      AndroidParameters = new Firebase.DynamicLinks.AndroidParameters(Application.bundleIdentifier) {
         FallbackUrl = new System.Uri("https://mysite/fallback"),
         MinimumVersion = 12
       },
@@ -154,18 +155,33 @@ public class UIHandler : MonoBehaviour {
     };
   }
 
-  void CreateAndDisplayLongLink() {
-    var components = CreateDynamicLinkComponents();
-    DebugLog(String.Format("Long dynamic link {0}", components.LongDynamicLink));
+  public Uri CreateAndDisplayLongLink() {
+    var longLink = CreateDynamicLinkComponents().LongDynamicLink;
+    DebugLog(String.Format("Long dynamic link {0}", longLink));
+    return longLink;
   }
 
-  void CreateAndDisplayShortLink(DynamicLinkOptions options) {
+  public Task<ShortDynamicLink> CreateAndDisplayShortLinkAsync() {
+    return CreateAndDisplayShortLinkAsync(new DynamicLinkOptions());
+  }
+
+  public Task<ShortDynamicLink> CreateAndDisplayUnguessableShortLinkAsync() {
+    return CreateAndDisplayShortLinkAsync(new DynamicLinkOptions {
+      PathLength = DynamicLinkPathLength.Unguessable
+    });
+  }
+
+  private Task<ShortDynamicLink> CreateAndDisplayShortLinkAsync(DynamicLinkOptions options) {
     if (kDynamicLinksDomain == kInvalidDynamicLinksDomain) {
       DebugLog(kDynamicLinksDomainInvalidError);
-      return;
+      var source = new TaskCompletionSource<ShortDynamicLink>();
+      source.TrySetException(new Exception(kDynamicLinksDomainInvalidError));
+      return source.Task;
     }
+
     var components = CreateDynamicLinkComponents();
-    DynamicLinks.GetShortLinkAsync(components, options).ContinueWith((task) => {
+    return DynamicLinks.GetShortLinkAsync(components, options)
+      .ContinueWith<ShortDynamicLink>((task) => {
         if (task.IsCanceled) {
           DebugLog("Short link creation canceled");
         } else if (task.IsFaulted) {
@@ -181,6 +197,7 @@ public class UIHandler : MonoBehaviour {
             }
           }
         }
+        return task.Result;
       });
   }
 
@@ -196,14 +213,13 @@ public class UIHandler : MonoBehaviour {
       }
 
       if (GUILayout.Button("Create Short Link")) {
-        CreateAndDisplayShortLink(new DynamicLinkOptions());
+        CreateAndDisplayShortLinkAsync();
       }
 
       if (GUILayout.Button("Create Unguessable Short Link")) {
-        CreateAndDisplayShortLink(new DynamicLinkOptions {
-            PathLength = DynamicLinkPathLength.Unguessable
-          });
+        CreateAndDisplayUnguessableShortLinkAsync();
       }
+
       GUILayout.EndVertical();
       GUILayout.EndScrollView();
     }

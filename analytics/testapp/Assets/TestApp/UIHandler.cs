@@ -36,7 +36,7 @@ public class UIHandler : MonoBehaviour {
   // When the app starts, check to make sure that we have
   // the required dependencies to use Firebase, and if not,
   // add them if possible.
-  void Start() {
+  public virtual void Start() {
     dependencyStatus = FirebaseApp.CheckDependencies();
     if (dependencyStatus != DependencyStatus.Available) {
       FirebaseApp.FixDependenciesAsync().ContinueWith(task => {
@@ -54,7 +54,7 @@ public class UIHandler : MonoBehaviour {
   }
 
   // Exit if escape (or back, on mobile) is pressed.
-  void Update() {
+  public virtual void Update() {
     if (Input.GetKeyDown(KeyCode.Escape)) {
       Application.Quit();
     }
@@ -114,8 +114,6 @@ public class UIHandler : MonoBehaviour {
       new Parameter(FirebaseAnalytics.ParameterCharacter, "mrspoon"),
       new Parameter("hit_accuracy", 3.14f));
   }
-
-
 
   // Output text to the debug log text field, as well as the console.
   public void DebugLog(string s) {
