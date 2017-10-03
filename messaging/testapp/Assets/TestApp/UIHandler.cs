@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using System;
-using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,21 +34,16 @@ class UIHandler : MonoBehaviour {
   // When the app starts, check to make sure that we have
   // the required dependencies to use Firebase, and if not,
   // add them if possible.
-  void Start() {
-    dependencyStatus = Firebase.FirebaseApp.CheckDependencies();
-    if (dependencyStatus != Firebase.DependencyStatus.Available) {
-      Firebase.FirebaseApp.FixDependenciesAsync().ContinueWith(task => {
-        dependencyStatus = Firebase.FirebaseApp.CheckDependencies();
-        if (dependencyStatus == Firebase.DependencyStatus.Available) {
-          InitializeFirebase();
-        } else {
-          Debug.LogError(
-              "Could not resolve all Firebase dependencies: " + dependencyStatus);
-        }
-      });
-    } else {
-      InitializeFirebase();
-    }
+  protected virtual void Start() {
+    Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      dependencyStatus = task.Result;
+      if (dependencyStatus == Firebase.DependencyStatus.Available) {
+        InitializeFirebase();
+      } else {
+        Debug.LogError(
+          "Could not resolve all Firebase dependencies: " + dependencyStatus);
+      }
+    });
   }
 
   // Setup message event handlers.
@@ -59,7 +54,7 @@ class UIHandler : MonoBehaviour {
     DebugLog("Firebase Messaging Initialized");
   }
 
-  public void OnMessageReceived(object sender, Firebase.Messaging.MessageReceivedEventArgs e) {
+  public virtual void OnMessageReceived(object sender, Firebase.Messaging.MessageReceivedEventArgs e) {
     DebugLog("Received a new message");
     var notification = e.Message.Notification;
     if (notification != null) {
@@ -68,6 +63,9 @@ class UIHandler : MonoBehaviour {
     }
     if (e.Message.From.Length > 0)
       DebugLog("from: " + e.Message.From);
+    if (e.Message.Link != null) {
+        DebugLog("link: " + e.Message.Link.ToString());
+    }
     if (e.Message.Data.Count > 0) {
       DebugLog("data:");
       foreach (System.Collections.Generic.KeyValuePair<string, string> iter in
@@ -77,12 +75,12 @@ class UIHandler : MonoBehaviour {
     }
   }
 
-  public void OnTokenReceived(object sender, Firebase.Messaging.TokenReceivedEventArgs token) {
+  public virtual void OnTokenReceived(object sender, Firebase.Messaging.TokenReceivedEventArgs token) {
     DebugLog("Received Registration Token: " + token.Token);
   }
 
   // Exit if escape (or back, on mobile) is pressed.
-  void Update() {
+  protected virtual void Update() {
     if (Input.GetKeyDown(KeyCode.Escape)) {
       Application.Quit();
     }

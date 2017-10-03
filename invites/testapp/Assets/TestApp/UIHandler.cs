@@ -35,20 +35,15 @@ public class UIHandler : MonoBehaviour {
   // the required dependencies to use Firebase, and if not,
   // add them if possible.
   void Start() {
-    dependencyStatus = Firebase.FirebaseApp.CheckDependencies();
-    if (dependencyStatus != Firebase.DependencyStatus.Available) {
-      Firebase.FirebaseApp.FixDependenciesAsync().ContinueWith(task => {
-        dependencyStatus = Firebase.FirebaseApp.CheckDependencies();
-        if (dependencyStatus == Firebase.DependencyStatus.Available) {
-          InitializeFirebase();
-        } else {
-          Debug.LogError(
-              "Could not resolve all Firebase dependencies: " + dependencyStatus);
-        }
-      });
-    } else {
-      InitializeFirebase();
-    }
+    Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      dependencyStatus = task.Result;
+      if (dependencyStatus == Firebase.DependencyStatus.Available) {
+        InitializeFirebase();
+      } else {
+        Debug.LogError(
+          "Could not resolve all Firebase dependencies: " + dependencyStatus);
+      }
+    });
   }
 
   // Set the listeners for the various Invite received events.
@@ -101,18 +96,19 @@ public class UIHandler : MonoBehaviour {
     }
   }
 
-  public void SendInvite() {
+  public Task<Firebase.Invites.SendInviteResult> SendInviteAsync() {
     Firebase.Invites.Invite invite = new Firebase.Invites.Invite() {
       TitleText = "Invites Test App",
       MessageText = "Please try my app! It's awesome.",
       CallToActionText = "Download it for FREE",
       DeepLinkUrl = new System.Uri("http://google.com/abc"),
     };
-    Firebase.Invites.FirebaseInvites.SendInviteAsync(invite).ContinueWith(
-      HandleSentInvite);
+    return Firebase.Invites.FirebaseInvites.SendInviteAsync(
+        invite).ContinueWith<Firebase.Invites.SendInviteResult>(HandleSentInvite);
   }
 
-  void HandleSentInvite(Task<Firebase.Invites.SendInviteResult> sendTask) {
+  Firebase.Invites.SendInviteResult HandleSentInvite(Task<Firebase.Invites.SendInviteResult>
+      sendTask) {
     if (sendTask.IsCanceled) {
       DebugLog("Invitation canceled.");
     } else if (sendTask.IsFaulted) {
@@ -126,6 +122,7 @@ public class UIHandler : MonoBehaviour {
         DebugLog("SendInvite: Invite code: " + id);
       }
     }
+    return sendTask.Result;
   }
 
   // Output text to the debug log text field, as well as the console.
@@ -141,11 +138,11 @@ public class UIHandler : MonoBehaviour {
     scrollViewVector.y = int.MaxValue;
   }
 
-  void DisableUI() {
+  public void DisableUI() {
     UIEnabled = false;
   }
 
-  void EnableUI() {
+  public void EnableUI() {
     UIEnabled = true;
   }
 
@@ -164,7 +161,7 @@ public class UIHandler : MonoBehaviour {
       GUILayout.BeginVertical();
 
       if (GUILayout.Button("Send Invite")) {
-        SendInvite();
+        SendInviteAsync();
       }
 
       GUILayout.EndVertical();

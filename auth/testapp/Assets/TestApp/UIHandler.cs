@@ -67,20 +67,15 @@ public class UIHandler : MonoBehaviour {
   // the required dependencies to use Firebase, and if not,
   // add them if possible.
   public virtual void Start() {
-    dependencyStatus = Firebase.FirebaseApp.CheckDependencies();
-    if (dependencyStatus != Firebase.DependencyStatus.Available) {
-      Firebase.FirebaseApp.FixDependenciesAsync().ContinueWith(task => {
-        dependencyStatus = Firebase.FirebaseApp.CheckDependencies();
-        if (dependencyStatus == Firebase.DependencyStatus.Available) {
-          InitializeFirebase();
-        } else {
-          Debug.LogError(
-              "Could not resolve all Firebase dependencies: " + dependencyStatus);
-        }
-      });
-    } else {
-      InitializeFirebase();
-    }
+    Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      dependencyStatus = task.Result;
+      if (dependencyStatus == Firebase.DependencyStatus.Available) {
+        InitializeFirebase();
+      } else {
+        Debug.LogError(
+          "Could not resolve all Firebase dependencies: " + dependencyStatus);
+      }
+    });
   }
 
   // Handle initialization of the necessary firebase modules:
@@ -212,7 +207,15 @@ public class UIHandler : MonoBehaviour {
       DebugLog(operation + " canceled.");
     } else if (task.IsFaulted) {
       DebugLog(operation + " encounted an error.");
-      DebugLog(task.Exception.ToString());
+      foreach (Exception exception in task.Exception.Flatten().InnerExceptions) {
+        string authErrorCode = "";
+        Firebase.FirebaseException firebaseEx = exception as Firebase.FirebaseException;
+        if (firebaseEx != null) {
+          authErrorCode = String.Format("AuthError.{0}: ",
+            ((Firebase.Auth.AuthError)firebaseEx.ErrorCode).ToString());
+        }
+        DebugLog(authErrorCode + exception.ToString());
+      }
     } else if (task.IsCompleted) {
       DebugLog(operation + " completed");
       complete = true;

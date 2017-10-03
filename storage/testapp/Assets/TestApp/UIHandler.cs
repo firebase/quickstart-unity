@@ -26,41 +26,44 @@ using UnityEngine.UI;
 // necessary setup (initializing the firebase app, etc) on
 // startup.
 public class UIHandler : MonoBehaviour {
-  private string MyStorageBucket = "gs://YOUR-FIREBASE-BUCKET/";
+  protected string MyStorageBucket = "gs://YOUR-FIREBASE-BUCKET/";
   private const int kMaxLogSize = 16382;
 
   public GUISkin fb_GUISkin;
   private Vector2 controlsScrollViewVector = Vector2.zero;
   private string logText = "";
   private Vector2 scrollViewVector = Vector2.zero;
-  private bool UIEnabled = true;
-  private string firebaseStorageLocation;
-  private string fileContents;
+  protected bool UIEnabled = true;
+  protected string firebaseStorageLocation;
+  protected string fileContents;
   private DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
+  protected FirebaseStorage storage;
 
   // When the app starts, check to make sure that we have
   // the required dependencies to use Firebase, and if not,
   // add them if possible.
-  void Start() {
-    dependencyStatus = FirebaseApp.CheckDependencies();
-    if (dependencyStatus != DependencyStatus.Available) {
-      FirebaseApp.FixDependenciesAsync().ContinueWith(task => {
-        dependencyStatus = FirebaseApp.CheckDependencies();
-        if (dependencyStatus != DependencyStatus.Available) {
-          Debug.LogError(
-              "Could not resolve all Firebase dependencies: " + dependencyStatus);
-        }
-      });
-    }
+  protected virtual void Start() {
+    FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      dependencyStatus = task.Result;
+      if (dependencyStatus == DependencyStatus.Available) {
+        InitializeFirebase();
+      } else {
+        Debug.LogError(
+          "Could not resolve all Firebase dependencies: " + dependencyStatus);
+      }
+    });
+  }
 
+  private void InitializeFirebase() {
     var appBucket = FirebaseApp.DefaultInstance.Options.StorageBucket;
+    storage = FirebaseStorage.DefaultInstance;
     if (!String.IsNullOrEmpty(appBucket)) {
         MyStorageBucket = String.Format("gs://{0}/", appBucket);
     }
   }
 
   // Exit if escape (or back, on mobile) is pressed.
-  void Update() {
+  protected virtual void Update() {
     if (Input.GetKeyDown(KeyCode.Escape)) {
       Application.Quit();
     }
@@ -86,7 +89,7 @@ public class UIHandler : MonoBehaviour {
     GUILayout.EndScrollView();
   }
 
-  IEnumerator UploadToFirebaseStorage() {
+  protected IEnumerator UploadToFirebaseStorage() {
     StorageReference reference = FirebaseStorage.DefaultInstance
       .GetReferenceFromUrl(firebaseStorageLocation);
 #if UNITY_5_0 || UNITY_5_1 || UNITY_5_2 || UNITY_5_3 || UNITY_5_4
@@ -98,6 +101,7 @@ public class UIHandler : MonoBehaviour {
     yield return new WaitUntil(() => task.IsCompleted);
     if (task.IsFaulted) {
       DebugLog(task.Exception.ToString());
+      throw task.Exception;
     } else {
       fileContents = "";
       DebugLog("Finished uploading... Download Url: " + task.Result.DownloadUrl.ToString());
@@ -105,13 +109,14 @@ public class UIHandler : MonoBehaviour {
     }
   }
 
-  IEnumerator DownloadFromFirebaseStorage() {
+  protected IEnumerator DownloadFromFirebaseStorage() {
     StorageReference reference = FirebaseStorage.DefaultInstance
       .GetReferenceFromUrl(firebaseStorageLocation);
     var task = reference.GetBytesAsync(1024 * 1024);
     yield return new WaitUntil(() => task.IsCompleted);
     if (task.IsFaulted) {
       DebugLog(task.Exception.ToString());
+      throw task.Exception;
     } else {
       fileContents = Encoding.UTF8.GetString(task.Result);
       DebugLog("Finished downloading...");
@@ -119,7 +124,7 @@ public class UIHandler : MonoBehaviour {
     }
   }
 
-  IEnumerator DownloadFromFirebaseStorageWithStream() {
+  protected IEnumerator DownloadFromFirebaseStorageWithStream() {
     StorageReference reference = FirebaseStorage.DefaultInstance
       .GetReferenceFromUrl(firebaseStorageLocation);
     // Used to buffer data from the downloaded stream.
@@ -154,6 +159,7 @@ public class UIHandler : MonoBehaviour {
      yield return new WaitUntil(() => task.IsCompleted);
      if (task.IsFaulted) {
         DebugLog(task.Exception.ToString());
+        throw task.Exception;
      } else {
         memoryStream.Position = 0;
         fileContents = (new System.IO.StreamReader(memoryStream)).ReadToEnd();
@@ -213,6 +219,12 @@ public class UIHandler : MonoBehaviour {
   // Render the GUI:
   void OnGUI() {
     GUI.skin = fb_GUISkin;
+    if (dependencyStatus != Firebase.DependencyStatus.Available) {
+      GUILayout.Label("One or more Firebase dependencies are not present.");
+      GUILayout.Label("Current dependency status: " + dependencyStatus.ToString());
+      return;
+    }
+
     GUI.skin.textArea.fontSize = GUI.skin.textField.fontSize;
     // Reduce the text size on the desktop.
     if (UnityEngine.Application.platform != RuntimePlatform.Android &&

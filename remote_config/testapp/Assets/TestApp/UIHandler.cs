@@ -35,20 +35,15 @@ class UIHandler : MonoBehaviour {
   // the required dependencies to use Firebase, and if not,
   // add them if possible.
   void Start() {
-    dependencyStatus = Firebase.FirebaseApp.CheckDependencies();
-    if (dependencyStatus != Firebase.DependencyStatus.Available) {
-      Firebase.FirebaseApp.FixDependenciesAsync().ContinueWith(task => {
-        dependencyStatus = Firebase.FirebaseApp.CheckDependencies();
-        if (dependencyStatus == Firebase.DependencyStatus.Available) {
-          InitializeFirebase();
-        } else {
-          Debug.LogError(
-              "Could not resolve all Firebase dependencies: " + dependencyStatus);
-        }
-      });
-    } else {
-      InitializeFirebase();
-    }
+    Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      dependencyStatus = task.Result;
+      if (dependencyStatus == Firebase.DependencyStatus.Available) {
+        InitializeFirebase();
+      } else {
+        Debug.LogError(
+          "Could not resolve all Firebase dependencies: " + dependencyStatus);
+      }
+    });
   }
 
   // Initialize remote config, and set the default values.

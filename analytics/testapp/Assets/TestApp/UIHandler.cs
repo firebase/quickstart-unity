@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,20 +38,15 @@ public class UIHandler : MonoBehaviour {
   // the required dependencies to use Firebase, and if not,
   // add them if possible.
   public virtual void Start() {
-    dependencyStatus = FirebaseApp.CheckDependencies();
-    if (dependencyStatus != DependencyStatus.Available) {
-      FirebaseApp.FixDependenciesAsync().ContinueWith(task => {
-        dependencyStatus = FirebaseApp.CheckDependencies();
-        if (dependencyStatus == DependencyStatus.Available) {
-          InitializeFirebase();
-        } else {
-          Debug.LogError(
-              "Could not resolve all Firebase dependencies: " + dependencyStatus);
-        }
-      });
-    } else {
-      InitializeFirebase();
-    }
+    FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      dependencyStatus = task.Result;
+      if (dependencyStatus == DependencyStatus.Available) {
+        InitializeFirebase();
+      } else {
+        Debug.LogError(
+          "Could not resolve all Firebase dependencies: " + dependencyStatus);
+      }
+    });
   }
 
   // Exit if escape (or back, on mobile) is pressed.

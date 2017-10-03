@@ -47,32 +47,31 @@ public class UIHandler : MonoBehaviour {
   // the required dependencies to use Firebase, and if not,
   // add them if possible.
   void Start() {
-    dependencyStatus = FirebaseApp.CheckDependencies();
-    if (dependencyStatus != DependencyStatus.Available) {
-      FirebaseApp.FixDependenciesAsync().ContinueWith(task => {
-        dependencyStatus = FirebaseApp.CheckDependencies();
-        if (dependencyStatus == DependencyStatus.Available) {
-          InitializeFirebase();
-        } else {
-          Debug.LogError(
-              "Could not resolve all Firebase dependencies: " + dependencyStatus);
-        }
-      });
-    } else {
-      InitializeFirebase();
-    }
+    leaderBoard = new ArrayList();
+    leaderBoard.Add("Firebase Top " + MaxScores.ToString() + " Scores");
+
+    FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      dependencyStatus = task.Result;
+      if (dependencyStatus == DependencyStatus.Available) {
+        InitializeFirebase();
+      } else {
+        Debug.LogError(
+          "Could not resolve all Firebase dependencies: " + dependencyStatus);
+      }
+    });
   }
 
   // Initialize the Firebase database:
-  void InitializeFirebase() {
+  protected virtual void InitializeFirebase() {
     FirebaseApp app = FirebaseApp.DefaultInstance;
     // NOTE: You'll need to replace this url with your Firebase App's database
     // path in order for the database connection to work correctly in editor.
     app.SetEditorDatabaseUrl("https://replace-with-your-project.firebaseio.com/");
     if (app.Options.DatabaseUrl != null) app.SetEditorDatabaseUrl(app.Options.DatabaseUrl);
+    StartListener();
+  }
 
-    leaderBoard = new ArrayList();
-    leaderBoard.Add("Firebase Top " + MaxScores.ToString() + " Scores");
+  protected void StartListener() {
     FirebaseDatabase.DefaultInstance
       .GetReference("Leaders").OrderByChild("score")
       .ValueChanged += (object sender2, ValueChangedEventArgs e2) => {
@@ -80,6 +79,7 @@ public class UIHandler : MonoBehaviour {
         Debug.LogError(e2.DatabaseError.Message);
         return;
       }
+      Debug.Log("Received values for Leaders.");
       string title = leaderBoard[0].ToString();
       leaderBoard.Clear();
       leaderBoard.Add(title);
@@ -90,6 +90,9 @@ public class UIHandler : MonoBehaviour {
             Debug.LogError("Bad data in sample.  Did you forget to call SetEditorDatabaseUrl with your project id?");
             break;
           } else {
+            Debug.Log("Leaders entry : " +
+              childSnapshot.Child("email").Value.ToString() + " - " +
+              childSnapshot.Child("score").Value.ToString());
             leaderBoard.Insert(1, childSnapshot.Child("score").Value.ToString()
               + "  " + childSnapshot.Child("email").Value.ToString());
           }
