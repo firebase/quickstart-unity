@@ -33,6 +33,7 @@ public class UIHandler : MonoBehaviour {
   private string logText = "";
   const int kMaxLogSize = 16382;
   DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
+  protected bool firebaseInitialized = false;
 
   // When the app starts, check to make sure that we have
   // the required dependencies to use Firebase, and if not,
@@ -68,6 +69,7 @@ public class UIHandler : MonoBehaviour {
       "Google");
     // Set the user ID.
     FirebaseAnalytics.SetUserId("uber_user_510");
+    firebaseInitialized = true;
   }
 
   // End our analytics session when the program exits.

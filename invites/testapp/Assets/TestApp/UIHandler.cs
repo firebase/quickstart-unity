@@ -30,6 +30,7 @@ public class UIHandler : MonoBehaviour {
   private string logText = "";
   const int kMaxLogSize = 16382;
   Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
+  public bool firebaseInitialized = false;
 
   // When the app starts, check to make sure that we have
   // the required dependencies to use Firebase, and if not,
@@ -53,6 +54,7 @@ public class UIHandler : MonoBehaviour {
     Firebase.Invites.FirebaseInvites.InviteNotReceived += OnInviteNotReceived;
     Firebase.Invites.FirebaseInvites.ErrorReceived += OnErrorReceived;
     DebugLog("Invites initialized");
+    firebaseInitialized = true;
   }
 
   // Exit if escape (or back, on mobile) is pressed.

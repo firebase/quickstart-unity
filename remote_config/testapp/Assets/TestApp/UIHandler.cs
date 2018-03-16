@@ -30,11 +30,12 @@ class UIHandler : MonoBehaviour {
   private string logText = "";
   const int kMaxLogSize = 16382;
   Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
+  protected bool isFirebaseInitialized = false;
 
   // When the app starts, check to make sure that we have
   // the required dependencies to use Firebase, and if not,
   // add them if possible.
-  void Start() {
+  protected virtual void Start() {
     Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
       dependencyStatus = task.Result;
       if (dependencyStatus == Firebase.DependencyStatus.Available) {
@@ -61,10 +62,11 @@ class UIHandler : MonoBehaviour {
 
     Firebase.RemoteConfig.FirebaseRemoteConfig.SetDefaults(defaults);
     DebugLog("RemoteConfig configured and ready!");
+    isFirebaseInitialized = true;
   }
 
   // Exit if escape (or back, on mobile) is pressed.
-  void Update() {
+  protected virtual void Update() {
     if (Input.GetKeyDown(KeyCode.Escape)) {
       Application.Quit();
     }
@@ -103,7 +105,7 @@ class UIHandler : MonoBehaviour {
   }
 
   // Start a fetch request.
-  public void FetchData() {
+  public Task FetchDataAsync() {
     DebugLog("Fetching data...");
     // FetchAsync only fetches new data if the current data is older than the provided
     // timespan.  Otherwise it assumes the data is "recent enough", and does nothing.
@@ -112,7 +114,7 @@ class UIHandler : MonoBehaviour {
     // changes in the console will always show up immediately.
     System.Threading.Tasks.Task fetchTask = Firebase.RemoteConfig.FirebaseRemoteConfig.FetchAsync(
         TimeSpan.Zero);
-    fetchTask.ContinueWith(FetchComplete);
+    return fetchTask.ContinueWith(FetchComplete);
   }
 
   void FetchComplete(Task fetchTask) {
@@ -190,7 +192,7 @@ class UIHandler : MonoBehaviour {
         DisplayAllKeys();
       }
       if (GUILayout.Button("Fetch Remote Data")) {
-        FetchData();
+        FetchDataAsync();
       }
       GUILayout.EndVertical();
       GUILayout.EndScrollView();

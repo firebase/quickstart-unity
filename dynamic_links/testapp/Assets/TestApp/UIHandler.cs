@@ -41,15 +41,16 @@ public class UIHandler : MonoBehaviour {
     "* Click on the Dynamic Links tab\n" +
     "* Copy the domain e.g x20yz.app.goo.gl\n" +
     "* Replace the value of kDynamicLinksDomain with the copied domain.\n";
+  public bool firebaseInitialized = false;
 
   // IMPORTANT: You need to set this to a valid domain from the Firebase
   // console (see kDynamicLinksDomainInvalidError for the details).
-  public string kDynamicLinksDomain = kInvalidDynamicLinksDomain;
+  public string kDynamicLinksDomain = "f87nv.app.goo.gl";
 
   // When the app starts, check to make sure that we have
   // the required dependencies to use Firebase, and if not,
   // add them if possible.
-  void Start() {
+  public void Start() {
     FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
       dependencyStatus = task.Result;
       if (dependencyStatus == DependencyStatus.Available) {
@@ -71,6 +72,7 @@ public class UIHandler : MonoBehaviour {
   // Handle initialization of the necessary firebase modules:
   void InitializeFirebase() {
     DynamicLinks.DynamicLinkReceived += OnDynamicLink;
+    firebaseInitialized = true;
   }
 
   void OnDestroy() {
@@ -113,6 +115,12 @@ public class UIHandler : MonoBehaviour {
   }
 
   DynamicLinkComponents CreateDynamicLinkComponents() {
+    #if UNITY_5_6_OR_NEWER
+      string appIdentifier = Application.identifier;
+    #else
+      string appIdentifier = Application.bundleIdentifier;
+    #endif
+
     return new DynamicLinkComponents(
       // The base Link.
       new System.Uri("https://google.com/abc"),
@@ -138,7 +146,7 @@ public class UIHandler : MonoBehaviour {
           CampaignToken = "hijklmno",
           ProviderToken = "pq-rstuv"
       },
-      AndroidParameters = new Firebase.DynamicLinks.AndroidParameters(Application.bundleIdentifier) {
+      AndroidParameters = new Firebase.DynamicLinks.AndroidParameters(appIdentifier) {
         FallbackUrl = new System.Uri("https://mysite/fallback"),
         MinimumVersion = 12
       },

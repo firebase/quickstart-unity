@@ -27,7 +27,7 @@ using UnityEngine.UI;
 // startup.
 public class UIHandler : MonoBehaviour {
 
-  ArrayList leaderBoard;
+  ArrayList leaderBoard = new ArrayList();
   Vector2 scrollPosition = Vector2.zero;
   private Vector2 controlsScrollViewVector = Vector2.zero;
 
@@ -38,7 +38,7 @@ public class UIHandler : MonoBehaviour {
   private string email = "";
   private int score = 100;
   private Vector2 scrollViewVector = Vector2.zero;
-  bool UIEnabled = true;
+  protected bool UIEnabled = true;
 
   const int kMaxLogSize = 16382;
   DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
@@ -46,8 +46,8 @@ public class UIHandler : MonoBehaviour {
   // When the app starts, check to make sure that we have
   // the required dependencies to use Firebase, and if not,
   // add them if possible.
-  void Start() {
-    leaderBoard = new ArrayList();
+  protected virtual void Start() {
+    leaderBoard.Clear();
     leaderBoard.Add("Firebase Top " + MaxScores.ToString() + " Scores");
 
     FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
@@ -66,7 +66,7 @@ public class UIHandler : MonoBehaviour {
     FirebaseApp app = FirebaseApp.DefaultInstance;
     // NOTE: You'll need to replace this url with your Firebase App's database
     // path in order for the database connection to work correctly in editor.
-    app.SetEditorDatabaseUrl("https://replace-with-your-project.firebaseio.com/");
+    app.SetEditorDatabaseUrl("https://unity-test-app-fc4db.firebaseio.com/");
     if (app.Options.DatabaseUrl != null) app.SetEditorDatabaseUrl(app.Options.DatabaseUrl);
     StartListener();
   }
@@ -102,7 +102,7 @@ public class UIHandler : MonoBehaviour {
   }
 
   // Exit if escape (or back, on mobile) is pressed.
-  void Update() {
+  protected virtual void Update() {
     if (Input.GetKeyDown(KeyCode.Escape)) {
       Application.Quit();
     }

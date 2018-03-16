@@ -26,7 +26,7 @@ using UnityEngine.UI;
 public class UIHandler : MonoBehaviour {
 
   protected Firebase.Auth.FirebaseAuth auth;
-  private Firebase.Auth.FirebaseAuth otherAuth;
+  protected Firebase.Auth.FirebaseAuth otherAuth;
   protected Dictionary<string, Firebase.Auth.FirebaseUser> userByAuth =
     new Dictionary<string, Firebase.Auth.FirebaseUser>();
 
@@ -79,7 +79,7 @@ public class UIHandler : MonoBehaviour {
   }
 
   // Handle initialization of the necessary firebase modules:
-  void InitializeFirebase() {
+  protected void InitializeFirebase() {
     DebugLog("Setting up Firebase Auth");
     auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
     auth.StateChanged += AuthStateChanged;
