@@ -45,7 +45,7 @@ public class UIHandler : MonoBehaviour {
 
   // IMPORTANT: You need to set this to a valid domain from the Firebase
   // console (see kDynamicLinksDomainInvalidError for the details).
-  public string kDynamicLinksDomain = "f87nv.app.goo.gl";
+  public string kDynamicLinksDomain = "fwk68.app.goo.gl";
 
   // When the app starts, check to make sure that we have
   // the required dependencies to use Firebase, and if not,
@@ -133,11 +133,11 @@ public class UIHandler : MonoBehaviour {
         Term = "myterm",
         Content = "mycontent"
       },
-      IOSParameters = new Firebase.DynamicLinks.IOSParameters("com.myapp.bundleid") {
+      IOSParameters = new Firebase.DynamicLinks.IOSParameters(appIdentifier) {
         FallbackUrl = new System.Uri("https://mysite/fallback"),
         CustomScheme = "mycustomscheme",
         MinimumVersion = "1.2.3",
-        IPadBundleId = "com.myapp.bundleid.ipad",
+        IPadBundleId = appIdentifier,
         IPadFallbackUrl = new System.Uri("https://mysite/fallbackipad")
       },
       ITunesConnectAnalyticsParameters =

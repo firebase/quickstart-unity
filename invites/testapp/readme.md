@@ -24,7 +24,9 @@ using the
     - Create a project in the
       [Firebase console](https://firebase.google.com/console/),
       and associate your iOS application.
-      - You should use `com.google.firebase.unity.invites.testapp` as the
+      - For Invites, you will need an App Store ID. You can use something
+        random such as 12345678.
+      - You should use `com.google.FirebaseUnityInvitesTestApp.dev` as the
         package name while you're testing.
         - If you do not use the prescribed package name you will need to update
           the bundle identifier as described in the
@@ -57,10 +59,10 @@ using the
     - Navigate to the `Assets\TestApp` folder in the `Project` window.
     - Drag the `GoogleService-Info.plist` downloaded from the Firebase console
       into the folder.
-      
+
       NOTE: `GoogleService-Info.plist` can be placed anywhere in the project.
   - Optional: Update the Project Bundle Identifier
-    - If you did not use `com.google.firebase.unity.invites.testapp`
+    - If you did not use `com.google.FirebaseUnityInvitesTestApp.dev`
       as the project package name you will need to update the sample's Bundle
       Identifier.
       - Select the `File > Build Settings` menu option.
@@ -96,7 +98,7 @@ using the
     - Create a project in the
       [Firebase console](https://firebase.google.com/console/),
       and attach your Android app to it.
-      - You should use `com.google.firebase.unity.invites.testapp` as the
+      - You should use `com.google.FirebaseUnityInvitesTestApp.dev` as the
         package name while you're testing.
         - If you do not use the prescribed package name you will need to update
           the bundle identifier as described in the
@@ -143,7 +145,7 @@ using the
       
       NOTE: `google-services.json` can be placed anywhere in the project.
   - Optional: Update the Project Bundle Identifier
-    - If you did not use `com.google.firebase.unity.invites.testapp`
+    - If you did not use `com.google.FirebaseUnityInvitesTestApp.dev`
       as the project package name you will need to update the sample's Bundle
       Identifier.
       - Select the `File > Build Settings` menu option.

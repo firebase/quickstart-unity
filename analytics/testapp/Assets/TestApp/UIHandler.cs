@@ -69,6 +69,9 @@ public class UIHandler : MonoBehaviour {
       "Google");
     // Set the user ID.
     FirebaseAnalytics.SetUserId("uber_user_510");
+    // Set default session duration values.
+    FirebaseAnalytics.SetMinimumSessionDuration(new TimeSpan(0, 0, 10));
+    FirebaseAnalytics.SetSessionTimeoutDuration(new TimeSpan(0, 30, 0));
     firebaseInitialized = true;
   }
 
