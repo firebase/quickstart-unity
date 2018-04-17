@@ -45,7 +45,7 @@ public class UIHandler : MonoBehaviour {
 
   // IMPORTANT: You need to set this to a valid domain from the Firebase
   // console (see kDynamicLinksDomainInvalidError for the details).
-  public string kDynamicLinksDomain = "fwk68.app.goo.gl";
+  public string kDynamicLinksDomain = kInvalidDynamicLinksDomain;
 
   // When the app starts, check to make sure that we have
   // the required dependencies to use Firebase, and if not,
