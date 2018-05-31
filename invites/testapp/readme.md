@@ -59,8 +59,8 @@ using the
     - Navigate to the `Assets\TestApp` folder in the `Project` window.
     - Drag the `GoogleService-Info.plist` downloaded from the Firebase console
       into the folder.
-
-      NOTE: `GoogleService-Info.plist` can be placed anywhere in the project.
+      - NOTE: `GoogleService-Info.plist` can be placed anywhere under the
+        `Assets` folder.
   - Optional: Update the Project Bundle Identifier
     - If you did not use `com.google.FirebaseUnityInvitesTestApp.dev`
       as the project package name you will need to update the sample's Bundle
@@ -142,8 +142,8 @@ using the
     - Navigate to the `Assets\TestApp` folder in the `Project` window.
     - Drag the `google-services.json` downloaded from the Firebase console
       into the folder.
-      
-      NOTE: `google-services.json` can be placed anywhere in the project.
+      - NOTE: `google-services.json` can be placed anywhere under the `Assets`
+        folder.
   - Optional: Update the Project Bundle Identifier
     - If you did not use `com.google.FirebaseUnityInvitesTestApp.dev`
       as the project package name you will need to update the sample's Bundle

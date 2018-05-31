@@ -444,14 +444,9 @@ public class UIHandler : MonoBehaviour {
                             {"CreationTimeMillis", metadata.CreationTimeMillis},
                             {"UpdatedTimeMillis", metadata.UpdatedTimeMillis},
                             {"SizeBytes", metadata.SizeBytes},
-                            {"Md5Hash", metadata.Md5Hash},
-                            {"DownloadUrl", metadata.DownloadUrl}
+                            {"Md5Hash", metadata.Md5Hash}
                          }) {
         fieldsAndValues[kv.Key] = kv.Value;
-      }
-      var urls = metadata.DownloadUrls;
-      for (int i = 0; i < urls.Count; ++i) {
-        fieldsAndValues[String.Format("DownloadUrls[{0}]", i)] = urls[i];
       }
     }
     foreach (var key in metadata.CustomMetadataKeys) {
@@ -476,7 +471,7 @@ public class UIHandler : MonoBehaviour {
   // Display a field that edits a timespan in milliseconds.
   TimeSpan GUIDisplayTimespanMsField(TimeSpan timeSpan) {
     return TimeSpan.FromMilliseconds(
-      (double)GUIDisplayIntegerField((int)timeSpan.TotalMilliseconds)); 
+      (double)GUIDisplayIntegerField((int)timeSpan.TotalMilliseconds));
   }
 
   // Button that can be optionally disabled.
