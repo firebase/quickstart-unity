@@ -116,6 +116,27 @@ public class UIHandler : MonoBehaviour {
       new Parameter("hit_accuracy", 3.14f));
   }
 
+  // Reset analytics data for this app instance.
+  public void ResetAnalyticsData() {
+    DebugLog("Reset analytics data.");
+    FirebaseAnalytics.ResetAnalyticsData();
+  }
+
+  // Get the current app instance ID.
+  public Task<string> DisplayAppInstanceId() {
+    return FirebaseAnalytics.GetAppInstanceIdAsync().ContinueWith(task => {
+        if (task.IsCanceled) {
+          DebugLog("App instance ID fetch was canceled.");
+        } else if (task.IsFaulted) {
+          DebugLog(String.Format("Encounted an error fetching app instance ID {0}",
+                                 task.Exception.ToString()));
+        } else if (task.IsCompleted) {
+          DebugLog(String.Format("App instance ID: {0}", task.Result));
+        }
+        return task;
+      }).Unwrap();
+  }
+
   // Output text to the debug log text field, as well as the console.
   public void DebugLog(string s) {
     print(s);
@@ -165,6 +186,12 @@ public class UIHandler : MonoBehaviour {
       }
       if (GUILayout.Button("Log Level Up")) {
         AnalyticsLevelUp();
+      }
+      if (GUILayout.Button("Reset Analytics Data")) {
+        ResetAnalyticsData();
+      }
+      if (GUILayout.Button("Show App Instance ID")) {
+        DisplayAppInstanceId();
       }
       GUILayout.EndVertical();
       GUILayout.EndScrollView();
