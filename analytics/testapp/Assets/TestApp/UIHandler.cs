@@ -123,8 +123,8 @@ public class UIHandler : MonoBehaviour {
   }
 
   // Get the current app instance ID.
-  public Task<string> DisplayAppInstanceId() {
-    return FirebaseAnalytics.GetAppInstanceIdAsync().ContinueWith(task => {
+  public Task<string> DisplayAnalyticsInstanceId() {
+    return FirebaseAnalytics.GetAnalyticsInstanceIdAsync().ContinueWith(task => {
         if (task.IsCanceled) {
           DebugLog("App instance ID fetch was canceled.");
         } else if (task.IsFaulted) {
@@ -190,8 +190,8 @@ public class UIHandler : MonoBehaviour {
       if (GUILayout.Button("Reset Analytics Data")) {
         ResetAnalyticsData();
       }
-      if (GUILayout.Button("Show App Instance ID")) {
-        DisplayAppInstanceId();
+      if (GUILayout.Button("Show Analytics Instance ID")) {
+        DisplayAnalyticsInstanceId();
       }
       GUILayout.EndVertical();
       GUILayout.EndScrollView();

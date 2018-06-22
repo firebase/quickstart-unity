@@ -52,9 +52,7 @@ class UIHandler : MonoBehaviour {
     // immediately upon being initialized. Since it the prompt is being
     // suppressed, we must manually display it with a call to
     // RequestPermission() elsewhere.
-    Firebase.Messaging.FirebaseMessaging.MessagingOptions = new MessagingOption {
-      SuppressIosUserNotifications = true;
-    };
+    Firebase.Messaging.FirebaseMessaging.TokenRegistrationOnInitEnabled = false;
     Firebase.Messaging.FirebaseMessaging.MessageReceived += OnMessageReceived;
     Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
     Firebase.Messaging.FirebaseMessaging.Subscribe(topic);
@@ -64,7 +62,7 @@ class UIHandler : MonoBehaviour {
     // notifications if the prompt has not already been displayed before. (If
     // the user already responded to the prompt, thier decision is cached by
     // the OS and can be changed in the OS settings).
-    Firebase.Messaging.FirebaseMessaging.RequestPermission();
+    Firebase.Messaging.FirebaseMessaging.RequestPermissionAsync();
   }
 
   public virtual void OnMessageReceived(object sender, Firebase.Messaging.MessageReceivedEventArgs e) {

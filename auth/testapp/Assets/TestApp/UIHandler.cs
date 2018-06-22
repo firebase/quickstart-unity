@@ -37,6 +37,8 @@ public class UIHandler : MonoBehaviour {
   protected string displayName = "";
   protected string phoneNumber = "";
   protected string receivedCode = "";
+  // Whether to sign in / link or reauthentication *and* fetch user profile data.
+  protected bool signInAndFetchProfile = false;
   // Flag set when a token is being fetched.  This is used to avoid printing the token
   // in IdTokenChanged() when the user presses the get token button.
   private bool fetchingToken = false;
@@ -139,8 +141,40 @@ public class UIHandler : MonoBehaviour {
     scrollViewVector.y = int.MaxValue;
   }
 
+  // Display additional user profile information.
+  protected void DisplayProfile<T>(IDictionary<T, object> profile, int indentLevel) {
+    string indent = new String(' ', indentLevel * 2);
+    foreach (var kv in profile) {
+      var valueDictionary = kv.Value as IDictionary<object, object>;
+      if (valueDictionary != null) {
+        DebugLog(String.Format("{0}{1}:", indent, kv.Key));
+        DisplayProfile<object>(valueDictionary, indentLevel + 1);
+      } else {
+        DebugLog(String.Format("{0}{1}: {2}", indent, kv.Key, kv.Value));
+      }
+    }
+  }
+
+  // Display user information reported
+  protected void DisplaySignInResult(Firebase.Auth.SignInResult result, int indentLevel) {
+    string indent = new String(' ', indentLevel * 2);
+    DisplayDetailedUserInfo(result.User, indentLevel);
+    var metadata = result.Meta;
+    if (metadata != null) {
+      DebugLog(String.Format("{0}Created: {1}", indent, metadata.CreationTimestamp));
+      DebugLog(String.Format("{0}Last Sign-in: {1}", indent, metadata.LastSignInTimestamp));
+    }
+    var info = result.Info;
+    if (info != null) {
+      DebugLog(String.Format("{0}Additional User Info:", indent));
+      DebugLog(String.Format("{0}  User Name: {1}", indent, info.UserName));
+      DebugLog(String.Format("{0}  Provider ID: {1}", indent, info.ProviderId));
+      DisplayProfile<string>(info.Profile, indentLevel + 1);
+    }
+  }
+
   // Display user information.
-  void DisplayUserInfo(Firebase.Auth.IUserInfo userInfo, int indentLevel) {
+  protected void DisplayUserInfo(Firebase.Auth.IUserInfo userInfo, int indentLevel) {
     string indent = new String(' ', indentLevel * 2);
     var userProperties = new Dictionary<string, string> {
       {"Display Name", userInfo.DisplayName},
@@ -157,15 +191,18 @@ public class UIHandler : MonoBehaviour {
   }
 
   // Display a more detailed view of a FirebaseUser.
-  void DisplayDetailedUserInfo(Firebase.Auth.FirebaseUser user, int indentLevel) {
+  protected void DisplayDetailedUserInfo(Firebase.Auth.FirebaseUser user, int indentLevel) {
+    string indent = new String(' ', indentLevel * 2);
     DisplayUserInfo(user, indentLevel);
-    DebugLog("  Anonymous: " + user.IsAnonymous);
-    DebugLog("  Email Verified: " + user.IsEmailVerified);
+    DebugLog(String.Format("{0}Anonymous: {1}", indent, user.IsAnonymous));
+    DebugLog(String.Format("{0}Email Verified: {1}", indent, user.IsEmailVerified));
+    DebugLog(String.Format("{0}Phone Number: {1}", indent, user.PhoneNumber));
     var providerDataList = new List<Firebase.Auth.IUserInfo>(user.ProviderData);
-    if (providerDataList.Count > 0) {
-      DebugLog("  Provider Data:");
-      foreach (var providerData in user.ProviderData) {
-        DisplayUserInfo(providerData, indentLevel + 1);
+    var numberOfProviders = providerDataList.Count;
+    if (numberOfProviders > 0) {
+      for (int i = 0; i < numberOfProviders; ++i) {
+        DebugLog(String.Format("{0}Provider Data: {1}", indent, i));
+        DisplayUserInfo(providerDataList[i], indentLevel + 2);
       }
     }
   }
@@ -201,7 +238,7 @@ public class UIHandler : MonoBehaviour {
 
   // Log the result of the specified task, returning true if the task
   // completed successfully, false otherwise.
-  bool LogTaskCompletion(Task task, string operation) {
+  protected bool LogTaskCompletion(Task task, string operation) {
     bool complete = false;
     if (task.IsCanceled) {
       DebugLog(operation + " canceled.");
@@ -223,7 +260,8 @@ public class UIHandler : MonoBehaviour {
     return complete;
   }
 
-  public Task CreateUserAsync() {
+  // Create a user with the email and password.
+  public Task CreateUserWithEmailAsync() {
     DebugLog(String.Format("Attempting to create user {0}...", email));
     DisableUI();
 
@@ -233,22 +271,14 @@ public class UIHandler : MonoBehaviour {
     string newDisplayName = displayName;
     return auth.CreateUserWithEmailAndPasswordAsync(email, password)
       .ContinueWith((task) => {
-        return HandleCreateUserAsync(task, newDisplayName: newDisplayName);
+        EnableUI();
+        if (LogTaskCompletion(task, "User Creation")) {
+          var user = task.Result;
+          DisplayDetailedUserInfo(user, 1);
+          return UpdateUserProfileAsync(newDisplayName: newDisplayName);
+        }
+        return task;
       }).Unwrap();
-  }
-
-  Task HandleCreateUserAsync(Task<Firebase.Auth.FirebaseUser> authTask,
-                             string newDisplayName = null) {
-    EnableUI();
-    if (LogTaskCompletion(authTask, "User Creation")) {
-      if (auth.CurrentUser != null) {
-        DebugLog(String.Format("User Info: {0}  {1}", auth.CurrentUser.Email,
-                               auth.CurrentUser.ProviderId));
-        return UpdateUserProfileAsync(newDisplayName: newDisplayName);
-      }
-    }
-    // Nothing to update, so just return a completed Task.
-    return Task.FromResult(0);
   }
 
   // Update the user's display name with the currently selected display name.
@@ -263,76 +293,139 @@ public class UIHandler : MonoBehaviour {
     return auth.CurrentUser.UpdateUserProfileAsync(new Firebase.Auth.UserProfile {
         DisplayName = displayName,
         PhotoUrl = auth.CurrentUser.PhotoUrl,
-      }).ContinueWith(HandleUpdateUserProfile);
+      }).ContinueWith(task => {
+        EnableUI();
+        if (LogTaskCompletion(task, "User profile")) {
+          DisplayDetailedUserInfo(auth.CurrentUser, 1);
+        }
+      });
   }
 
-  void HandleUpdateUserProfile(Task authTask) {
-    EnableUI();
-    if (LogTaskCompletion(authTask, "User profile")) {
-      DisplayDetailedUserInfo(auth.CurrentUser, 1);
-    }
-  }
-
-  public Task SigninAsync() {
+  // Sign-in with an email and password.
+  public Task SigninWithEmailAsync() {
     DebugLog(String.Format("Attempting to sign in as {0}...", email));
     DisableUI();
-    return auth.SignInWithEmailAndPasswordAsync(email, password)
-      .ContinueWith(HandleSigninResult);
+    if (signInAndFetchProfile) {
+      return auth.SignInAndRetrieveDataWithCredentialAsync(
+        Firebase.Auth.EmailAuthProvider.GetCredential(email, password)).ContinueWith(
+          HandleSignInWithSignInResult);
+    } else {
+      return auth.SignInWithEmailAndPasswordAsync(email, password)
+        .ContinueWith(HandleSignInWithUser);
+    }
   }
 
   // This is functionally equivalent to the Signin() function.  However, it
   // illustrates the use of Credentials, which can be aquired from many
   // different sources of authentication.
-  public Task SigninWithCredentialAsync() {
+  public Task SigninWithEmailCredentialAsync() {
     DebugLog(String.Format("Attempting to sign in as {0}...", email));
     DisableUI();
-    Firebase.Auth.Credential cred = Firebase.Auth.EmailAuthProvider.GetCredential(email, password);
-    return auth.SignInWithCredentialAsync(cred).ContinueWith(HandleSigninResult);
+    if (signInAndFetchProfile) {
+      return auth.SignInAndRetrieveDataWithCredentialAsync(
+        Firebase.Auth.EmailAuthProvider.GetCredential(email, password)).ContinueWith(
+         HandleSignInWithSignInResult);
+    } else {
+      return auth.SignInWithCredentialAsync(
+        Firebase.Auth.EmailAuthProvider.GetCredential(email, password)).ContinueWith(
+         HandleSignInWithUser);
+    }
   }
 
   // Attempt to sign in anonymously.
   public Task SigninAnonymouslyAsync() {
     DebugLog("Attempting to sign anonymously...");
     DisableUI();
-    return auth.SignInAnonymouslyAsync().ContinueWith(HandleSigninResult);
+    return auth.SignInAnonymouslyAsync().ContinueWith(HandleSignInWithUser);
   }
 
-  void HandleSigninResult(Task<Firebase.Auth.FirebaseUser> authTask) {
+  // Called when a sign-in without fetching profile data completes.
+  void HandleSignInWithUser(Task<Firebase.Auth.FirebaseUser> task) {
     EnableUI();
-    LogTaskCompletion(authTask, "Sign-in");
+    if (LogTaskCompletion(task, "Sign-in")) {
+      DebugLog(String.Format("{0} signed in", task.Result.DisplayName));
+    }
   }
 
-  void LinkWithCredential() {
+  // Called when a sign-in with profile data completes.
+  void HandleSignInWithSignInResult(Task<Firebase.Auth.SignInResult> task) {
+    EnableUI();
+    if (LogTaskCompletion(task, "Sign-in")) {
+      DisplaySignInResult(task.Result, 1);
+    }
+  }
+
+  // Link the current user with an email / password credential.
+  protected Task LinkWithEmailCredentialAsync() {
     if (auth.CurrentUser == null) {
       DebugLog("Not signed in, unable to link credential to user.");
-      return;
+      var tcs = new TaskCompletionSource<bool>();
+      tcs.SetException(new Exception("Not signed in"));
+      return tcs.Task;
     }
     DebugLog("Attempting to link credential to user...");
-    Firebase.Auth.Credential cred = Firebase.Auth.EmailAuthProvider.GetCredential(email, password);
-    auth.CurrentUser.LinkWithCredentialAsync(cred).ContinueWith(HandleLinkCredential);
-  }
-
-  void HandleLinkCredential(Task authTask) {
-    if (LogTaskCompletion(authTask, "Link Credential")) {
-      DisplayDetailedUserInfo(auth.CurrentUser, 1);
+    Firebase.Auth.Credential cred =
+      Firebase.Auth.EmailAuthProvider.GetCredential(email, password);
+    if (signInAndFetchProfile) {
+      return auth.CurrentUser.LinkAndRetrieveDataWithCredentialAsync(cred).ContinueWith(
+        task => {
+          if (LogTaskCompletion(task, "Link Credential")) {
+            DisplaySignInResult(task.Result, 1);
+          }
+        });
+    } else {
+      return auth.CurrentUser.LinkWithCredentialAsync(cred).ContinueWith(task => {
+        if (LogTaskCompletion(task, "Link Credential")) {
+          DisplayDetailedUserInfo(task.Result, 1);
+        }
+      });
     }
   }
 
+  // Reauthenticate the user with the current email / password.
+  protected Task ReauthenticateAsync() {
+    var user = auth.CurrentUser;
+    if (user == null) {
+      DebugLog("Not signed in, unable to reauthenticate user.");
+      var tcs = new TaskCompletionSource<bool>();
+      tcs.SetException(new Exception("Not signed in"));
+      return tcs.Task;
+    }
+    DebugLog("Reauthenticating...");
+    DisableUI();
+    Firebase.Auth.Credential cred = Firebase.Auth.EmailAuthProvider.GetCredential(email, password);
+    if (signInAndFetchProfile) {
+      return user.ReauthenticateAndRetrieveDataAsync(cred).ContinueWith(task => {
+        EnableUI();
+        if (LogTaskCompletion(task, "Reauthentication")) {
+          DisplaySignInResult(task.Result, 1);
+        }
+      });
+    } else {
+      return user.ReauthenticateAsync(cred).ContinueWith(task => {
+        EnableUI();
+        if (LogTaskCompletion(task, "Reauthentication")) {
+          DisplayDetailedUserInfo(auth.CurrentUser, 1);
+        }
+      });
+    }
+  }
+
+  // Reload the currently logged in user.
   public void ReloadUser() {
     if (auth.CurrentUser == null) {
       DebugLog("Not signed in, unable to reload user.");
       return;
     }
     DebugLog("Reload User Data");
-    auth.CurrentUser.ReloadAsync().ContinueWith(HandleReloadUser);
+    auth.CurrentUser.ReloadAsync().ContinueWith(task => {
+      if (LogTaskCompletion(task, "Reload")) {
+        DisplayDetailedUserInfo(auth.CurrentUser, 1);
+      }
+    });
   }
 
-  void HandleReloadUser(Task authTask) {
-    if (LogTaskCompletion(authTask, "Reload")) {
-      DisplayDetailedUserInfo(auth.CurrentUser, 1);
-    }
-  }
-
+  // Fetch and display current user's auth token.
   public void GetUserToken() {
     if (auth.CurrentUser == null) {
       DebugLog("Not signed in, unable to get token.");
@@ -340,16 +433,15 @@ public class UIHandler : MonoBehaviour {
     }
     DebugLog("Fetching user token");
     fetchingToken = true;
-    auth.CurrentUser.TokenAsync(false).ContinueWith(HandleGetUserToken);
+    auth.CurrentUser.TokenAsync(false).ContinueWith(task => {
+      fetchingToken = false;
+      if (LogTaskCompletion(task, "User token fetch")) {
+        DebugLog("Token = " + task.Result);
+      }
+    });
   }
 
-  void HandleGetUserToken(Task<string> authTask) {
-    fetchingToken = false;
-    if (LogTaskCompletion(authTask, "User token fetch")) {
-      DebugLog("Token = " + authTask.Result);
-    }
-  }
-
+  // Display information about the currently logged in user.
   void GetUserInfo() {
     if (auth.CurrentUser == null) {
       DebugLog("Not signed in, unable to get info.");
@@ -359,17 +451,39 @@ public class UIHandler : MonoBehaviour {
     }
   }
 
-  public void SignOut() {
+  // Unlink the email credential from the currently logged in user.
+  protected Task UnlinkEmailAsync() {
+    if (auth.CurrentUser == null) {
+      DebugLog("Not signed in, unable to unlink");
+      var tcs = new TaskCompletionSource<bool>();
+      tcs.SetException(new Exception("Not signed in"));
+      return tcs.Task;
+    }
+    DebugLog("Unlinking email credential");
+    DisableUI();
+    return auth.CurrentUser.UnlinkAsync(
+      Firebase.Auth.EmailAuthProvider.GetCredential(email, password).Provider)
+        .ContinueWith(task => {
+          EnableUI();
+          LogTaskCompletion(task, "Unlinking");
+      });
+  }
+
+  // Sign out the current user.
+  protected void SignOut() {
     DebugLog("Signing out.");
     auth.SignOut();
   }
 
-
-  public Task DeleteUserAsync() {
+  // Delete the currently logged in user.
+  protected Task DeleteUserAsync() {
     if (auth.CurrentUser != null) {
       DebugLog(String.Format("Attempting to delete user {0}...", auth.CurrentUser.UserId));
       DisableUI();
-      return auth.CurrentUser.DeleteAsync().ContinueWith(HandleDeleteResult);
+      return auth.CurrentUser.DeleteAsync().ContinueWith(task => {
+        EnableUI();
+        LogTaskCompletion(task, "Delete user");
+      });
     } else {
       DebugLog("Sign-in before deleting user.");
       // Return a finished task.
@@ -377,13 +491,8 @@ public class UIHandler : MonoBehaviour {
     }
   }
 
-  void HandleDeleteResult(Task authTask) {
-    EnableUI();
-    LogTaskCompletion(authTask, "Delete user");
-  }
-
   // Show the providers for the current email address.
-  public void DisplayProvidersForEmail() {
+  protected void DisplayProvidersForEmail() {
     auth.FetchProvidersForEmailAsync(email).ContinueWith((authTask) => {
         if (LogTaskCompletion(authTask, "Fetch Providers")) {
           DebugLog(String.Format("Email Providers for '{0}':", email));
@@ -395,7 +504,7 @@ public class UIHandler : MonoBehaviour {
   }
 
   // Send a password reset email to the current email address.
-  public void SendPasswordResetEmail() {
+  protected void SendPasswordResetEmail() {
     auth.SendPasswordResetEmailAsync(email).ContinueWith((authTask) => {
         if (LogTaskCompletion(authTask, "Send Password Reset Email")) {
           DebugLog("Password reset email sent to " + email);
@@ -404,12 +513,17 @@ public class UIHandler : MonoBehaviour {
   }
 
   // Begin authentication with the phone number.
-  public void VerifyPhoneNumber() {
+  protected void VerifyPhoneNumber() {
     var phoneAuthProvider = Firebase.Auth.PhoneAuthProvider.GetInstance(auth);
     phoneAuthProvider.VerifyPhoneNumber(phoneNumber, phoneAuthTimeoutMs, null,
       verificationCompleted: (cred) => {
-          DebugLog("Phone Auth, auto-verification completed");
-          auth.SignInWithCredentialAsync(cred).ContinueWith(HandleSigninResult);
+        DebugLog("Phone Auth, auto-verification completed");
+        if (signInAndFetchProfile) {
+          auth.SignInAndRetrieveDataWithCredentialAsync(cred).ContinueWith(
+            HandleSignInWithSignInResult);
+        } else {
+          auth.SignInWithCredentialAsync(cred).ContinueWith(HandleSignInWithUser);
+        }
       },
       verificationFailed: (error) => {
           DebugLog("Phone Auth, verification failed: " + error);
@@ -424,18 +538,23 @@ public class UIHandler : MonoBehaviour {
   }
 
   // Sign in using phone number authentication using code input by the user.
-  public void VerifyReceivedPhoneCode() {
+  protected void VerifyReceivedPhoneCode() {
     var phoneAuthProvider = Firebase.Auth.PhoneAuthProvider.GetInstance(auth);
     // receivedCode should have been input by the user.
     var cred = phoneAuthProvider.GetCredential(phoneAuthVerificationId, receivedCode);
-    auth.SignInWithCredentialAsync(cred).ContinueWith(HandleSigninResult);
+    if (signInAndFetchProfile) {
+      auth.SignInAndRetrieveDataWithCredentialAsync(cred).ContinueWith(
+        HandleSignInWithSignInResult);
+    } else {
+      auth.SignInWithCredentialAsync(cred).ContinueWith(HandleSignInWithUser);
+    }
   }
 
   // Determines whether another authentication object is available to focus.
-  public bool HasOtherAuth { get { return auth != otherAuth && otherAuth != null; } }
+  protected bool HasOtherAuth { get { return auth != otherAuth && otherAuth != null; } }
 
   // Swap the authentication object currently being controlled by the application.
-  public void SwapAuthFocus() {
+  protected void SwapAuthFocus() {
     if (!HasOtherAuth) return;
     var swapAuth = otherAuth;
     otherAuth = auth;
@@ -494,19 +613,22 @@ public class UIHandler : MonoBehaviour {
       GUILayout.Space(20);
 
       if (GUILayout.Button("Create User")) {
-        CreateUserAsync();
+        CreateUserWithEmailAsync();
       }
       if (GUILayout.Button("Sign In Anonymously")) {
         SigninAnonymouslyAsync();
       }
       if (GUILayout.Button("Sign In With Email")) {
-        SigninAsync();
+        SigninWithEmailAsync();
       }
-      if (GUILayout.Button("Sign In With Credentials")) {
-        SigninWithCredentialAsync();
+      if (GUILayout.Button("Sign In With Email Credential")) {
+        SigninWithEmailCredentialAsync();
       }
-      if (GUILayout.Button("Link With Credential")) {
-        LinkWithCredential();
+      if (GUILayout.Button("Link With Email Credential")) {
+        LinkWithEmailCredentialAsync();
+      }
+      if (GUILayout.Button("Reauthenticate with Email")) {
+        ReauthenticateAsync();
       }
       if (GUILayout.Button("Reload User")) {
         ReloadUser();
@@ -516,6 +638,9 @@ public class UIHandler : MonoBehaviour {
       }
       if (GUILayout.Button("Get User Info")) {
         GetUserInfo();
+      }
+      if (GUILayout.Button("Unlink Email Credential")) {
+        UnlinkEmailAsync();
       }
       if (GUILayout.Button("Sign Out")) {
         SignOut();
@@ -534,6 +659,11 @@ public class UIHandler : MonoBehaviour {
       }
       if (GUILayout.Button("Verify Received Phone Code")) {
         VerifyReceivedPhoneCode();
+      }
+      if (GUILayout.Button(String.Format("Fetch Profile on Sign-in {0}",
+                                         signInAndFetchProfile ?
+                                           "Enabled" : "Disabled"))) {
+        signInAndFetchProfile = !signInAndFetchProfile;
       }
       if (HasOtherAuth && GUILayout.Button(String.Format("Switch to auth object {0}",
                                                          otherAuth.App.Name))) {
