@@ -39,6 +39,12 @@ inside the Unity Editor.
   - Open the scene `MainScene`.
     - Navigate to `Assets/TestApp/MainScene` in the `Project` window.
     - Double click on `MainScene` file to open.
+  - Import the `Firebase Auth` plugin.
+    - Select the `Assets > Import Package > Custom Package` menu item.
+    - Import `FirebaseAuth.unitypackage` from the
+      [Firebase Unity SDK](https://firebase.google.com/download/unity),
+      downloaded previously.
+    - Click the `Import` when the `Import Unity Package` window appears.
   - Import the `Firebase Functions` plugin.
     - Select the `Assets > Import Package > Custom Package` menu item.
     - Import `FirebaseFunctions.unitypackage` from the

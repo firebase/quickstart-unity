@@ -80,7 +80,12 @@ with the
     - Click `Switch Platform` to select `iOS` as the target platform.
     - Wait for the spinner (compiling) icon to stop in the bottom right corner
       of the Unity status bar.
-    - Click `Build and Run`.
+    - Click `Build and Run`, when Xcode opens stop the build.
+    - Configure the Xcode project for push messaging.
+      - Select the `Unity-iPhone` project from the `Navigator area`.
+      - Select the `Capabilities` tab from the `Editor area`.
+      - Switch `Push Notifications` to `On`.
+    - Build the Xcode project by selecting `Project->Run` from the menu.
   - See the *Using the Sample* section below.
 
 
