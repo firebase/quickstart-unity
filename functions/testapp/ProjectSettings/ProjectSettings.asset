@@ -94,7 +94,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleIdentifier: com.google.firebase.unity.storage.testapp
+  bundleIdentifier: com.google.firebase.unity.functions.testapp
   bundleVersion: 1.0
   preloadedAssets: []
   metroEnableIndependentInputSource: 0
@@ -104,7 +104,7 @@ PlayerSettings:
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 14
   AndroidPreferredInstallLocation: 1
-  aotOptions: 
+  aotOptions:
   apiCompatibilityLevel: 1
   stripEngineCode: 1
   iPhoneStrippingLevel: 0
