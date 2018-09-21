@@ -9,6 +9,10 @@ inside the Unity Editor.
 ## Requirements
 
 * [Unity](http://unity3d.com/) 5.3 or higher.
+* [Xcode](https://developer.apple.com/xcode/) 9.4.1 or higher
+  (when developing for iOS).
+* [Android SDK](https://developer.android.com/studio/index.html#downloads)
+  (when developing for Android).
 
 ## Deploying functions.
 - Install the [Firebase CLI](https://firebase.google.com/docs/cli/).
