@@ -45,7 +45,7 @@ using the
     - Navigate to the sample directory `testapp` in the file dialog and click
       `Open`.
   - Open the scene `MainScene`.
-    - Navigate to `Assets/TestApp/MainScene` in the `Project` window.
+    - Navigate to `Assets/Firebase/Sample/Functions` in the `Project` window.
     - Double click on `MainScene` file to open.
   - Import the `Firebase Dynamic Links` plugin.
     - Select the `Assets > Import Package > Custom Package` menu item.
@@ -54,7 +54,8 @@ using the
       downloaded previously.
     - Click the `Import` when the `Import Unity Package` window appears.
   - Add the `GoogleService-Info.plist` file to the project.
-    - Navigate to the `Assets\TestApp` folder in the `Project` window.
+    - Navigate to the `Assets/Firebase/Sample/Functions` folder in the `Project`
+      window.
     - Drag the `GoogleService-Info.plist` downloaded from the Firebase console
       into the folder.
       - NOTE: `GoogleService-Info.plist` can be placed anywhere under the
@@ -132,7 +133,7 @@ using the
     - Navigate to the sample directory `testapp` in the file dialog and click
       `Open`.
   - Open the scene `MainScene`.
-    - Navigate to `Assets/TestApp/MainScene` in the `Project` window.
+    - Navigate to `Assets/Firebase/Sample/Functions` in the `Project` window.
     - Double click on `MainScene` file to open.
   - Import the `Firebase Dynamic Links` plugin.
     - Select the `Assets > Import Package > Custom Package` menu item.
@@ -141,7 +142,8 @@ using the
       downloaded previously.
     - Click the `Import` when the `Import Unity Package` window appears.
   - Add the `google-services.json` file to the project.
-    - Navigate to the `Assets\TestApp` folder in the `Project` window.
+    - Navigate to the `Assets/Firebase/Sample/Functions` folder in the `Project`
+      window.
     - Drag the `google-services.json` downloaded from the Firebase console
       into the folder.
       - NOTE: `google-services.json` can be placed anywhere under the `Assets`
