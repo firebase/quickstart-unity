@@ -52,6 +52,11 @@ namespace Firebase.Sample.Functions {
     protected virtual void InitializeFirebase() {
       functions = FirebaseFunctions.DefaultInstance;
       UIEnabled = true;
+
+      // To use a local emulator, uncomment this line:
+      //   functions.UseFunctionsEmulator("http://localhost:5005");
+      // Or from an Android emulator:
+      //   functions.UseFunctionsEmulator("http://10.0.2.2:5005");
     }
 
     // Exit if escape (or back, on mobile) is pressed.
