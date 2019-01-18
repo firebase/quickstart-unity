@@ -25,19 +25,21 @@ inside the Unity Editor.
     - Navigate to the sample directory `testapp` in the file dialog and click
       `Open`.
   - Open the scene `MainScene`.
-    - Navigate to `Assets/TestApp/MainScene` in the `Project` window.
+    - Navigate to `Assets/Firebase/Sample/Database` in the `Project`
+      window.
     - Double click on `MainScene` file to open.
-  - Import the `Firebase Auth` plugin.
-    - Select the `Assets > Import Package > Custom Package` menu item.
-    - Import `FirebaseAuth.unitypackage` from the
-      [Firebase Unity SDK](https://firebase.google.com/download/unity),
-      downloaded previously.
-    - Click the `Import` when the `Import Unity Package` window appears.
   - Import the `Firebase Database` plugin.
-    - Select the `Assets > Import Package > Custom Package` menu item.
-    - Import `FirebaseDatabase.unitypackage` from the
-      [Firebase Unity SDK](https://firebase.google.com/download/unity),
-      downloaded previously.
+    - Select the **Assets > Import Package > Custom Package** menu item.
+    - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
+      downloaded previously, import `FirebaseDatabase.unitypackage` from the
+      directory that matches the version of Unity you use:
+       - Unity 5.x and earlier use the .NET 3.x framework, so you need to
+         import the `dotnet3/FirebaseDatabase.unitypackage` package .
+       - Unity 2017.x and newer allow the use of the .NET 4.x framework.  If
+         your project is configured to use .NET 4.x, import the
+         `dotnet4/FirebaseDatabase.unitypackage` package.
+    - When the **Import Unity Package** window appears, click the **Import**
+      button.
     - Click the `Import` when the `Import Unity Package` window appears.
   - Turn off secure access.  [Configure your rules for public access.](https://firebase.google.com/docs/database/security/quickstart#sample-rules)
   - Change the line `SetEditorDatabaseUrl("https://replace-with-your-project.firebaseio.com/");`
