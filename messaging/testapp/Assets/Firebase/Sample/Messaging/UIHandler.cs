@@ -73,11 +73,6 @@ namespace Firebase.Sample.Messaging {
 
     // Setup message event handlers.
     void InitializeFirebase() {
-      // Prevent the app from requesting permission to show notifications
-      // immediately upon being initialized. Since it the prompt is being
-      // suppressed, we must manually display it with a call to
-      // RequestPermission() elsewhere.
-      Firebase.Messaging.FirebaseMessaging.TokenRegistrationOnInitEnabled = false;
       Firebase.Messaging.FirebaseMessaging.MessageReceived += OnMessageReceived;
       Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
       Firebase.Messaging.FirebaseMessaging.SubscribeAsync(topic).ContinueWith(task => {
@@ -117,6 +112,12 @@ namespace Firebase.Sample.Messaging {
 
     public virtual void OnTokenReceived(object sender, Firebase.Messaging.TokenReceivedEventArgs token) {
       DebugLog("Received Registration Token: " + token.Token);
+    }
+
+    public void ToggleTokenOnInit() {
+      bool newValue = !Firebase.Messaging.FirebaseMessaging.TokenRegistrationOnInitEnabled;
+      Firebase.Messaging.FirebaseMessaging.TokenRegistrationOnInitEnabled = newValue;
+      DebugLog("Set TokenRegistrationOnInitEnabled to " + newValue);
     }
 
     // Exit if escape (or back, on mobile) is pressed.
@@ -175,6 +176,9 @@ namespace Firebase.Sample.Messaging {
             LogTaskCompletion(task, "UnsubscribeAsync");
           });
           DebugLog("Unsubscribed from " + topic);
+        }
+        if (GUILayout.Button("Toggle Token On Init")) {
+          ToggleTokenOnInit();
         }
         GUILayout.EndVertical();
         GUILayout.EndScrollView();
