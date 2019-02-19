@@ -28,6 +28,7 @@ namespace Firebase.Sample.Messaging {
     private string logText = "";
     const int kMaxLogSize = 16382;
     Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
+    protected bool isFirebaseInitialized = false;
     private string topic = "TestTopic";
     private bool UIEnabled = true;
 
@@ -87,6 +88,7 @@ namespace Firebase.Sample.Messaging {
       Firebase.Messaging.FirebaseMessaging.RequestPermissionAsync().ContinueWith(task => {
         LogTaskCompletion(task, "RequestPermissionAsync");
       });
+      isFirebaseInitialized = true;
     }
 
     public virtual void OnMessageReceived(object sender, Firebase.Messaging.MessageReceivedEventArgs e) {

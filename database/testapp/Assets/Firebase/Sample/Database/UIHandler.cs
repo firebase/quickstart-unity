@@ -41,6 +41,7 @@ namespace Firebase.Sample.Database {
 
     const int kMaxLogSize = 16382;
     DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
+    protected bool isFirebaseInitialized = false;
 
     // When the app starts, check to make sure that we have
     // the required dependencies to use Firebase, and if not,
@@ -69,6 +70,7 @@ namespace Firebase.Sample.Database {
       if (app.Options.DatabaseUrl != null)
         app.SetEditorDatabaseUrl(app.Options.DatabaseUrl);
       StartListener();
+      isFirebaseInitialized = true;
     }
 
     protected void StartListener() {
