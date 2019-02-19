@@ -57,6 +57,7 @@ namespace Firebase.Sample.Storage {
     // Local file to upload from / download to.
     protected string localFilename = "downloaded_file.txt";
     private DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
+    protected bool isFirebaseInitialized = false;
     // Hold a reference to the FirebaseStorage object so that we're not reinitializing the API on
     // each transfer.
     protected FirebaseStorage storage;
@@ -97,6 +98,7 @@ namespace Firebase.Sample.Storage {
       }
       storage.LogLevel = logLevel;
       UIEnabled = true;
+      isFirebaseInitialized = true;
     }
 
     // Exit if escape (or back, on mobile) is pressed.
