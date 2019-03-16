@@ -210,7 +210,7 @@ The user database can be viewed in the
 
 ## Support
 
-[https://firebase.google.com/support/]()
+[https://firebase.google.com/support/](https://firebase.google.com/support/)
 
 
 ## License

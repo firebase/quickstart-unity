@@ -130,7 +130,7 @@ Once you have done this, you can run the Unity Editor and test the application.
 
 ## Support
 
-[https://firebase.google.com/support/]()
+[https://firebase.google.com/support/](https://firebase.google.com/support/)
 
 
 ## License

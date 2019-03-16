@@ -187,7 +187,7 @@ the [Firebase Console](https://firebase.google.com/console/)).
 
 ## Support
 
-[https://firebase.google.com/support/]()
+[https://firebase.google.com/support/](https://firebase.google.com/support/)
 
 
 ## License
