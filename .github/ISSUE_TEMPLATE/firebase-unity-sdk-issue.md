@@ -10,6 +10,7 @@ assignees: ''
 ## Please fill in the following fields:
 Unity editor version: 
 Firebase Unity SDK version: 
+Firebase plugins in use (Auth, Database, etc.):
 Additional SDKs you are using (Facebook, AdMob, etc.): 
 Platform you are using the Unity editor on (Mac, Windows, or Linux): 
 Platform you are targeting (iOS, Android, and/or desktop): 
