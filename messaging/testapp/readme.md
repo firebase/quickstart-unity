@@ -254,7 +254,7 @@ curl --header "Authorization: key=<Server Key>" --header "Content-Type: applicat
 
 ## Support
 
-[https://firebase.google.com/support/]()
+[https://firebase.google.com/support/](https://firebase.google.com/support/)
 
 
 ## License

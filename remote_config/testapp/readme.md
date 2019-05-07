@@ -197,7 +197,7 @@ Firebase Console and it will be reflected in your app.
 
 ## Support
 
-[https://firebase.google.com/support/]()
+[https://firebase.google.com/support/](https://firebase.google.com/support/)
 
 
 ## License

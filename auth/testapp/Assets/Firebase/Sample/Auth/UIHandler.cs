@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if UNITY_IOS
+using UnityEngine.SocialPlatforms.GameCenter;
+#endif
+
 namespace Firebase.Sample.Auth {
   using System;
   using System.Collections.Generic;
@@ -336,6 +340,34 @@ namespace Firebase.Sample.Auth {
       return auth.SignInAnonymouslyAsync().ContinueWith(HandleSignInWithUser);
     }
 
+    public void AuthenticateToGameCenter() {
+      #if UNITY_IOS
+        Social.localUser.Authenticate(success => {
+          Debug.Log("Game Center Initialization Complete - Result: " + success);
+        });
+      #else
+        Debug.Log("Game Center is not supported on this platform.");
+      #endif
+    }
+
+    public Task SignInWithGameCenterAsync() {
+      var credentialTask = Firebase.Auth.GameCenterAuthProvider.GetCredentialAsync();
+      var continueTask = credentialTask.ContinueWith(task => {
+        if(!task.IsCompleted)
+          return null;
+
+        if(task.Exception != null)
+          Debug.Log("GC Credential Task - Exception: " + task.Exception.Message);
+
+        var credential = task.Result;
+
+        var loginTask = auth.SignInWithCredentialAsync(credential);
+        return loginTask.ContinueWith(HandleSignInWithUser);
+      });
+
+      return continueTask;
+    }
+
     // Called when a sign-in without fetching profile data completes.
     void HandleSignInWithUser(Task<Firebase.Auth.FirebaseUser> task) {
       EnableUI();
@@ -560,6 +592,33 @@ namespace Firebase.Sample.Auth {
                               otherAuth.App.Name, auth.App.Name));
     }
 
+    void GUIDisplayGameCenterControls() {
+      bool isOnIosDevice = Application.platform == RuntimePlatform.IPhonePlayer;
+      bool isOnOSXDesktop = (Application.platform == RuntimePlatform.OSXEditor ||
+                              Application.platform == RuntimePlatform.OSXPlayer);
+
+      if(isOnIosDevice || isOnOSXDesktop)
+      {
+        if (GUILayout.Button(new GUIContent("Authenticate To Game Center"))) {
+          AuthenticateToGameCenter();
+        }
+
+        bool gameCenterEnabled = (isOnIosDevice ?
+                                    Firebase.Auth.GameCenterAuthProvider.IsPlayerAuthenticated() :
+                                    false);
+        using (new ScopedGuiEnabledModifier(gameCenterEnabled))
+        {
+          string tooltip = "";
+          if(!gameCenterEnabled) {
+            tooltip = "No Game Center player authenticated.";
+          }
+          if (GUILayout.Button(new GUIContent("Sign In With Game Center", tooltip))) {
+            SignInWithGameCenterAsync();
+          }
+        }
+      }
+    }
+
     // Render the log output in a scroll view.
     void GUIDisplayLog() {
       scrollViewVector = GUILayout.BeginScrollView(scrollViewVector);
@@ -627,6 +686,7 @@ namespace Firebase.Sample.Auth {
         if (GUILayout.Button("Reauthenticate with Email")) {
           ReauthenticateAsync();
         }
+        GUIDisplayGameCenterControls();
         if (GUILayout.Button("Reload User")) {
           ReloadUser();
         }
@@ -651,7 +711,7 @@ namespace Firebase.Sample.Auth {
         if (GUILayout.Button("Password Reset Email")) {
           SendPasswordResetEmail();
         }
-        if (GUILayout.Button("Authenicate Phone Number")) {
+        if (GUILayout.Button("Authenticate Phone Number")) {
           VerifyPhoneNumber();
         }
         if (GUILayout.Button("Verify Received Phone Code")) {
@@ -703,5 +763,18 @@ namespace Firebase.Sample.Auth {
       GUIDisplayControls();
       GUILayout.EndArea();
     }
+
+    private class ScopedGuiEnabledModifier : IDisposable {
+      private bool wasEnabled;
+      public ScopedGuiEnabledModifier(bool newValue) {
+        wasEnabled = GUI.enabled;
+        GUI.enabled = newValue;
+      }
+
+      public void Dispose() {
+        GUI.enabled = wasEnabled;
+      }
+    }
+
   }
 }

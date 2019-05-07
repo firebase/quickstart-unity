@@ -14,7 +14,6 @@
 
 namespace Firebase.Sample.Crashlytics {
   using System;
-  using System.Reflection;
   using UnityEngine;
 
   using Firebase;
@@ -113,27 +112,6 @@ namespace Firebase.Sample.Crashlytics {
       scrollViewVector.y = int.MaxValue;
     }
 
-    public bool IsCrashlyticsInitialized() {
-      // This is tightly bound to the implementation of Crashlytics.
-      Debug.Log("Testing Crashlytics Initialization...");
-      Type crashlyticsType = typeof(Crashlytics);
-      Assembly assembly = crashlyticsType.Assembly;
-      Type platformType = assembly.GetType("Firebase.Crashlytics.Crashlytics+PlatformAccessor");
-
-      FieldInfo implFieldInfo = platformType.GetField("_impl", BindingFlags.NonPublic | BindingFlags.Static);
-      object impl = implFieldInfo.GetValue(null);
-
-      if (impl == null) {
-        throw new NullReferenceException("Cannot find Firebase.Crashlytics.Crashlytics+PlatformAccessor._impl via reflection");
-      }
-
-      MethodInfo isInitializedMethodInfo =  impl.GetType().GetMethod("IsSDKInitialized");
-      bool result = (bool)isInitializedMethodInfo.Invoke(impl, new object[] {});
-      DebugLog("Crashlytics.impl.isSDKInitialized(): " + result);
-
-      return result;
-    }
-
     void DisableUI() {
       UIEnabled = false;
     }
@@ -176,16 +154,11 @@ namespace Firebase.Sample.Crashlytics {
           SetUserID("SomeUserId");
         }
 
-        if (GUILayout.Button("Test Crashlytics Initialization")) {
-          IsCrashlyticsInitialized();
-        }
-
         if (GUILayout.Button("Perform All Actions")) {
           DebugLog("All actions will be performed. To view issues:");
           DebugLog(" 1. Force close app");
           DebugLog(" 2. Relaunch app");
           DebugLog(" 3. Visit Firebase Crashlytics console.");
-          DebugLog("    Remove event filter for crashes (uncaught exceptions in Unity are non-fatal)");
           DebugLog("    Add a time filter to more easily identify the errors if needed.\n");
 
           WriteCustomLog("This is a log message.");
@@ -193,7 +166,6 @@ namespace Firebase.Sample.Crashlytics {
           SetUserID("SomeUserId");
           LogCaughtException();
           ThrowUncaughtException();
-          IsCrashlyticsInitialized();
         }
 
         GUILayout.EndVertical();
