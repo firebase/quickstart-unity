@@ -14,6 +14,7 @@
 
 namespace Firebase.Sample.Storage {
   using Firebase;
+  using Firebase.Extensions;
   using Firebase.Storage;
   using System;
   using System.Collections;
@@ -79,7 +80,7 @@ namespace Firebase.Sample.Storage {
     // add them if possible.
     protected virtual void Start() {
       persistentDataPath = Application.persistentDataPath;
-      FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
         dependencyStatus = task.Result;
         if (dependencyStatus == DependencyStatus.Available) {
           InitializeFirebase();

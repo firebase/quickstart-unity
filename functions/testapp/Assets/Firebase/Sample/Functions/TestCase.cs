@@ -13,10 +13,11 @@
 // limitations under the License.
 
 namespace Firebase.Sample.Functions {
+  using Firebase;
+  using Firebase.Extensions;
+  using Firebase.Functions;
   using System;
   using System.Threading.Tasks;
-  using Firebase;
-  using Firebase.Functions;
 
   public class TestCase {
     // The name of the HTTPS callable function to call.
@@ -43,7 +44,7 @@ namespace Firebase.Sample.Functions {
     public Task RunAsync(FirebaseFunctions functions,
         Utils.Reporter reporter) {
       var func = functions.GetHttpsCallable(Name);
-      return func.CallAsync(Input).ContinueWith((task) => {
+      return func.CallAsync(Input).ContinueWithOnMainThread((task) => {
         if (ExpectedError == FunctionsErrorCode.None) {
           // We expected no error.
           if (task.IsFaulted) {

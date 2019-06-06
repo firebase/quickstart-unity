@@ -13,11 +13,11 @@
 // limitations under the License.
 
 namespace Firebase.Sample.Crashlytics {
-  using System;
-  using UnityEngine;
-
   using Firebase;
   using Firebase.Crashlytics;
+  using Firebase.Extensions;
+  using System;
+  using UnityEngine;
 
   // Handler for UI buttons on the scene.  Also performs some
   // necessary setup (initializing the firebase app, etc) on
@@ -36,7 +36,7 @@ namespace Firebase.Sample.Crashlytics {
     // the required dependencies to use Firebase, and if not,
     // add them if possible.
     public virtual void Start() {
-      FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
         dependencyStatus = task.Result;
         if (dependencyStatus == DependencyStatus.Available) {
           InitializeFirebase();

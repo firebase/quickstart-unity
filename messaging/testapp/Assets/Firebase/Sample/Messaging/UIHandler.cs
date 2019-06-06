@@ -13,6 +13,7 @@
 // limitations under the License.
 
 namespace Firebase.Sample.Messaging {
+  using Firebase.Extensions;
   using System;
   using System.Threading.Tasks;
   using UnityEngine;
@@ -61,7 +62,7 @@ namespace Firebase.Sample.Messaging {
     // the required dependencies to use Firebase, and if not,
     // add them if possible.
     protected virtual void Start() {
-      Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
         dependencyStatus = task.Result;
         if (dependencyStatus == Firebase.DependencyStatus.Available) {
           InitializeFirebase();
@@ -76,7 +77,7 @@ namespace Firebase.Sample.Messaging {
     void InitializeFirebase() {
       Firebase.Messaging.FirebaseMessaging.MessageReceived += OnMessageReceived;
       Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
-      Firebase.Messaging.FirebaseMessaging.SubscribeAsync(topic).ContinueWith(task => {
+      Firebase.Messaging.FirebaseMessaging.SubscribeAsync(topic).ContinueWithOnMainThread(task => {
         LogTaskCompletion(task, "SubscribeAsync");
       });
       DebugLog("Firebase Messaging Initialized");
@@ -85,9 +86,11 @@ namespace Firebase.Sample.Messaging {
       // notifications if the prompt has not already been displayed before. (If
       // the user already responded to the prompt, thier decision is cached by
       // the OS and can be changed in the OS settings).
-      Firebase.Messaging.FirebaseMessaging.RequestPermissionAsync().ContinueWith(task => {
-        LogTaskCompletion(task, "RequestPermissionAsync");
-      });
+      Firebase.Messaging.FirebaseMessaging.RequestPermissionAsync().ContinueWithOnMainThread(
+        task => {
+          LogTaskCompletion(task, "RequestPermissionAsync");
+        }
+      );
       isFirebaseInitialized = true;
     }
 
@@ -97,6 +100,10 @@ namespace Firebase.Sample.Messaging {
       if (notification != null) {
         DebugLog("title: " + notification.Title);
         DebugLog("body: " + notification.Body);
+        var android = notification.Android;
+        if (android != null) {
+            DebugLog("android channel_id: " + android.ChannelId);
+        }
       }
       if (e.Message.From.Length > 0)
         DebugLog("from: " + e.Message.From);
@@ -168,15 +175,19 @@ namespace Firebase.Sample.Messaging {
         GUILayout.EndHorizontal();
 
         if (GUILayout.Button("Subscribe")) {
-          Firebase.Messaging.FirebaseMessaging.SubscribeAsync(topic).ContinueWith(task => {
-            LogTaskCompletion(task, "SubscribeAsync");
-          });
+          Firebase.Messaging.FirebaseMessaging.SubscribeAsync(topic).ContinueWithOnMainThread(
+            task => {
+              LogTaskCompletion(task, "SubscribeAsync");
+            }
+          );
           DebugLog("Subscribed to " + topic);
         }
         if (GUILayout.Button("Unsubscribe")) {
-          Firebase.Messaging.FirebaseMessaging.UnsubscribeAsync(topic).ContinueWith(task => {
-            LogTaskCompletion(task, "UnsubscribeAsync");
-          });
+          Firebase.Messaging.FirebaseMessaging.UnsubscribeAsync(topic).ContinueWithOnMainThread(
+            task => {
+              LogTaskCompletion(task, "UnsubscribeAsync");
+            }
+          );
           DebugLog("Unsubscribed from " + topic);
         }
         if (GUILayout.Button("Toggle Token On Init")) {

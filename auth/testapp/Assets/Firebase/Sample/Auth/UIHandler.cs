@@ -17,6 +17,7 @@ using UnityEngine.SocialPlatforms.GameCenter;
 #endif
 
 namespace Firebase.Sample.Auth {
+  using Firebase.Extensions;
   using System;
   using System.Collections.Generic;
   using System.Threading.Tasks;
@@ -70,7 +71,7 @@ namespace Firebase.Sample.Auth {
     // the required dependencies to use Firebase, and if not,
     // add them if possible.
     public virtual void Start() {
-      Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
         dependencyStatus = task.Result;
         if (dependencyStatus == Firebase.DependencyStatus.Available) {
           InitializeFirebase();
@@ -232,7 +233,7 @@ namespace Firebase.Sample.Auth {
     void IdTokenChanged(object sender, System.EventArgs eventArgs) {
       Firebase.Auth.FirebaseAuth senderAuth = sender as Firebase.Auth.FirebaseAuth;
       if (senderAuth == auth && senderAuth.CurrentUser != null && !fetchingToken) {
-        senderAuth.CurrentUser.TokenAsync(false).ContinueWith(
+        senderAuth.CurrentUser.TokenAsync(false).ContinueWithOnMainThread(
           task => DebugLog(String.Format("Token[0:8] = {0}", task.Result.Substring(0, 8))));
       }
     }
@@ -271,7 +272,7 @@ namespace Firebase.Sample.Auth {
       // reset by AuthStateChanged() when the new user is created and signed in.
       string newDisplayName = displayName;
       return auth.CreateUserWithEmailAndPasswordAsync(email, password)
-        .ContinueWith((task) => {
+        .ContinueWithOnMainThread((task) => {
           EnableUI();
           if (LogTaskCompletion(task, "User Creation")) {
             var user = task.Result;
@@ -294,7 +295,7 @@ namespace Firebase.Sample.Auth {
       return auth.CurrentUser.UpdateUserProfileAsync(new Firebase.Auth.UserProfile {
         DisplayName = displayName,
         PhotoUrl = auth.CurrentUser.PhotoUrl,
-      }).ContinueWith(task => {
+      }).ContinueWithOnMainThread(task => {
         EnableUI();
         if (LogTaskCompletion(task, "User profile")) {
           DisplayDetailedUserInfo(auth.CurrentUser, 1);
@@ -308,11 +309,11 @@ namespace Firebase.Sample.Auth {
       DisableUI();
       if (signInAndFetchProfile) {
         return auth.SignInAndRetrieveDataWithCredentialAsync(
-          Firebase.Auth.EmailAuthProvider.GetCredential(email, password)).ContinueWith(
+          Firebase.Auth.EmailAuthProvider.GetCredential(email, password)).ContinueWithOnMainThread(
             HandleSignInWithSignInResult);
       } else {
         return auth.SignInWithEmailAndPasswordAsync(email, password)
-          .ContinueWith(HandleSignInWithUser);
+          .ContinueWithOnMainThread(HandleSignInWithUser);
       }
     }
 
@@ -324,11 +325,11 @@ namespace Firebase.Sample.Auth {
       DisableUI();
       if (signInAndFetchProfile) {
         return auth.SignInAndRetrieveDataWithCredentialAsync(
-          Firebase.Auth.EmailAuthProvider.GetCredential(email, password)).ContinueWith(
+          Firebase.Auth.EmailAuthProvider.GetCredential(email, password)).ContinueWithOnMainThread(
             HandleSignInWithSignInResult);
       } else {
         return auth.SignInWithCredentialAsync(
-          Firebase.Auth.EmailAuthProvider.GetCredential(email, password)).ContinueWith(
+          Firebase.Auth.EmailAuthProvider.GetCredential(email, password)).ContinueWithOnMainThread(
             HandleSignInWithUser);
       }
     }
@@ -337,7 +338,7 @@ namespace Firebase.Sample.Auth {
     public Task SigninAnonymouslyAsync() {
       DebugLog("Attempting to sign anonymously...");
       DisableUI();
-      return auth.SignInAnonymouslyAsync().ContinueWith(HandleSignInWithUser);
+      return auth.SignInAnonymouslyAsync().ContinueWithOnMainThread(HandleSignInWithUser);
     }
 
     public void AuthenticateToGameCenter() {
@@ -352,7 +353,7 @@ namespace Firebase.Sample.Auth {
 
     public Task SignInWithGameCenterAsync() {
       var credentialTask = Firebase.Auth.GameCenterAuthProvider.GetCredentialAsync();
-      var continueTask = credentialTask.ContinueWith(task => {
+      var continueTask = credentialTask.ContinueWithOnMainThread(task => {
         if(!task.IsCompleted)
           return null;
 
@@ -362,7 +363,7 @@ namespace Firebase.Sample.Auth {
         var credential = task.Result;
 
         var loginTask = auth.SignInWithCredentialAsync(credential);
-        return loginTask.ContinueWith(HandleSignInWithUser);
+        return loginTask.ContinueWithOnMainThread(HandleSignInWithUser);
       });
 
       return continueTask;
@@ -396,14 +397,16 @@ namespace Firebase.Sample.Auth {
       Firebase.Auth.Credential cred =
         Firebase.Auth.EmailAuthProvider.GetCredential(email, password);
       if (signInAndFetchProfile) {
-        return auth.CurrentUser.LinkAndRetrieveDataWithCredentialAsync(cred).ContinueWith(
-          task => {
-            if (LogTaskCompletion(task, "Link Credential")) {
+        return
+          auth.CurrentUser.LinkAndRetrieveDataWithCredentialAsync(cred).ContinueWithOnMainThread(
+            task => {
+              if (LogTaskCompletion(task, "Link Credential")) {
                 DisplaySignInResult(task.Result, 1);
+              }
             }
-          });
+          );
       } else {
-        return auth.CurrentUser.LinkWithCredentialAsync(cred).ContinueWith(task => {
+        return auth.CurrentUser.LinkWithCredentialAsync(cred).ContinueWithOnMainThread(task => {
           if (LogTaskCompletion(task, "Link Credential")) {
               DisplayDetailedUserInfo(task.Result, 1);
           }
@@ -424,14 +427,14 @@ namespace Firebase.Sample.Auth {
       DisableUI();
       Firebase.Auth.Credential cred = Firebase.Auth.EmailAuthProvider.GetCredential(email, password);
       if (signInAndFetchProfile) {
-        return user.ReauthenticateAndRetrieveDataAsync(cred).ContinueWith(task => {
+        return user.ReauthenticateAndRetrieveDataAsync(cred).ContinueWithOnMainThread(task => {
           EnableUI();
           if (LogTaskCompletion(task, "Reauthentication")) {
             DisplaySignInResult(task.Result, 1);
           }
         });
       } else {
-        return user.ReauthenticateAsync(cred).ContinueWith(task => {
+        return user.ReauthenticateAsync(cred).ContinueWithOnMainThread(task => {
           EnableUI();
           if (LogTaskCompletion(task, "Reauthentication")) {
             DisplayDetailedUserInfo(auth.CurrentUser, 1);
@@ -447,7 +450,7 @@ namespace Firebase.Sample.Auth {
         return;
       }
       DebugLog("Reload User Data");
-      auth.CurrentUser.ReloadAsync().ContinueWith(task => {
+      auth.CurrentUser.ReloadAsync().ContinueWithOnMainThread(task => {
         if (LogTaskCompletion(task, "Reload")) {
           DisplayDetailedUserInfo(auth.CurrentUser, 1);
         }
@@ -462,7 +465,7 @@ namespace Firebase.Sample.Auth {
       }
       DebugLog("Fetching user token");
       fetchingToken = true;
-      auth.CurrentUser.TokenAsync(false).ContinueWith(task => {
+      auth.CurrentUser.TokenAsync(false).ContinueWithOnMainThread(task => {
         fetchingToken = false;
         if (LogTaskCompletion(task, "User token fetch")) {
           DebugLog("Token = " + task.Result);
@@ -492,7 +495,7 @@ namespace Firebase.Sample.Auth {
       DisableUI();
       return auth.CurrentUser.UnlinkAsync(
         Firebase.Auth.EmailAuthProvider.GetCredential(email, password).Provider)
-          .ContinueWith(task => {
+          .ContinueWithOnMainThread(task => {
             EnableUI();
             LogTaskCompletion(task, "Unlinking");
           });
@@ -509,7 +512,7 @@ namespace Firebase.Sample.Auth {
       if (auth.CurrentUser != null) {
         DebugLog(String.Format("Attempting to delete user {0}...", auth.CurrentUser.UserId));
         DisableUI();
-        return auth.CurrentUser.DeleteAsync().ContinueWith(task => {
+        return auth.CurrentUser.DeleteAsync().ContinueWithOnMainThread(task => {
           EnableUI();
           LogTaskCompletion(task, "Delete user");
         });
@@ -522,7 +525,7 @@ namespace Firebase.Sample.Auth {
 
     // Show the providers for the current email address.
     protected void DisplayProvidersForEmail() {
-      auth.FetchProvidersForEmailAsync(email).ContinueWith((authTask) => {
+      auth.FetchProvidersForEmailAsync(email).ContinueWithOnMainThread((authTask) => {
         if (LogTaskCompletion(authTask, "Fetch Providers")) {
           DebugLog(String.Format("Email Providers for '{0}':", email));
           foreach (string provider in authTask.Result) {
@@ -534,7 +537,7 @@ namespace Firebase.Sample.Auth {
 
     // Send a password reset email to the current email address.
     protected void SendPasswordResetEmail() {
-      auth.SendPasswordResetEmailAsync(email).ContinueWith((authTask) => {
+      auth.SendPasswordResetEmailAsync(email).ContinueWithOnMainThread((authTask) => {
         if (LogTaskCompletion(authTask, "Send Password Reset Email")) {
           DebugLog("Password reset email sent to " + email);
         }
@@ -548,10 +551,10 @@ namespace Firebase.Sample.Auth {
         verificationCompleted: (cred) => {
           DebugLog("Phone Auth, auto-verification completed");
           if (signInAndFetchProfile) {
-            auth.SignInAndRetrieveDataWithCredentialAsync(cred).ContinueWith(
+            auth.SignInAndRetrieveDataWithCredentialAsync(cred).ContinueWithOnMainThread(
               HandleSignInWithSignInResult);
           } else {
-            auth.SignInWithCredentialAsync(cred).ContinueWith(HandleSignInWithUser);
+            auth.SignInWithCredentialAsync(cred).ContinueWithOnMainThread(HandleSignInWithUser);
           }
         },
         verificationFailed: (error) => {
@@ -572,10 +575,10 @@ namespace Firebase.Sample.Auth {
       // receivedCode should have been input by the user.
       var cred = phoneAuthProvider.GetCredential(phoneAuthVerificationId, receivedCode);
       if (signInAndFetchProfile) {
-        auth.SignInAndRetrieveDataWithCredentialAsync(cred).ContinueWith(
+        auth.SignInAndRetrieveDataWithCredentialAsync(cred).ContinueWithOnMainThread(
           HandleSignInWithSignInResult);
       } else {
-        auth.SignInWithCredentialAsync(cred).ContinueWith(HandleSignInWithUser);
+        auth.SignInWithCredentialAsync(cred).ContinueWithOnMainThread(HandleSignInWithUser);
       }
     }
 

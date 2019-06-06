@@ -15,6 +15,7 @@
 namespace Firebase.Sample.Database {
   using Firebase;
   using Firebase.Database;
+  using Firebase.Extensions;
   using Firebase.Unity.Editor;
   using System;
   using System.Collections;
@@ -50,7 +51,7 @@ namespace Firebase.Sample.Database {
       leaderBoard.Clear();
       leaderBoard.Add("Firebase Top " + MaxScores.ToString() + " Scores");
 
-      FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
         dependencyStatus = task.Result;
         if (dependencyStatus == DependencyStatus.Available) {
           InitializeFirebase();
@@ -178,7 +179,7 @@ namespace Firebase.Sample.Database {
       // Use a transaction to ensure that we do not encounter issues with
       // simultaneous updates that otherwise might create more than MaxScores top scores.
       reference.RunTransaction(AddScoreTransaction)
-        .ContinueWith(task => {
+        .ContinueWithOnMainThread(task => {
           if (task.Exception != null) {
             DebugLog(task.Exception.ToString());
           } else if (task.IsCompleted) {

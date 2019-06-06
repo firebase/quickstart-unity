@@ -13,14 +13,14 @@
 // limitations under the License.
 
 namespace Firebase.Sample.DynamicLinks {
+  using Firebase;
+  using Firebase.DynamicLinks;
+  using Firebase.Extensions;
   using System;
   using System.Collections;
   using System.Threading.Tasks;
   using UnityEngine;
   using UnityEngine.UI;
-
-  using Firebase;
-  using Firebase.DynamicLinks;
 
   // Handler for UI buttons on the scene.  Also performs some
   // necessary setup (initializing the firebase app, etc) on
@@ -52,7 +52,7 @@ namespace Firebase.Sample.DynamicLinks {
     // the required dependencies to use Firebase, and if not,
     // add them if possible.
     public virtual void Start() {
-      FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
         dependencyStatus = task.Result;
         if (dependencyStatus == DependencyStatus.Available) {
           InitializeFirebase();
@@ -185,7 +185,7 @@ namespace Firebase.Sample.DynamicLinks {
 
       var components = CreateDynamicLinkComponents();
       return DynamicLinks.GetShortLinkAsync(components, options)
-        .ContinueWith<ShortDynamicLink>((task) => {
+        .ContinueWithOnMainThread((task) => {
           if (task.IsCanceled) {
             DebugLog("Short link creation canceled");
           } else if (task.IsFaulted) {
