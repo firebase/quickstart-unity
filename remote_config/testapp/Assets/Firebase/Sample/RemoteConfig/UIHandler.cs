@@ -13,6 +13,7 @@
 // limitations under the License.
 
 namespace Firebase.Sample.RemoteConfig {
+  using Firebase.Extensions;
   using System;
   using System.Threading.Tasks;
   using UnityEngine;
@@ -35,7 +36,7 @@ namespace Firebase.Sample.RemoteConfig {
     // the required dependencies to use Firebase, and if not,
     // add them if possible.
     protected virtual void Start() {
-      Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
         dependencyStatus = task.Result;
         if (dependencyStatus == Firebase.DependencyStatus.Available) {
           InitializeFirebase();
@@ -113,7 +114,7 @@ namespace Firebase.Sample.RemoteConfig {
       // changes in the console will always show up immediately.
       System.Threading.Tasks.Task fetchTask = Firebase.RemoteConfig.FirebaseRemoteConfig.FetchAsync(
           TimeSpan.Zero);
-      return fetchTask.ContinueWith(FetchComplete);
+      return fetchTask.ContinueWithOnMainThread(FetchComplete);
     }
 
     void FetchComplete(Task fetchTask) {

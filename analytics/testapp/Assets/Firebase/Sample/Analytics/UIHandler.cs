@@ -13,12 +13,12 @@
 // limitations under the License.
 
 namespace Firebase.Sample.Analytics {
+  using Firebase;
+  using Firebase.Analytics;
+  using Firebase.Extensions;
   using System;
   using System.Threading.Tasks;
   using UnityEngine;
-
-  using Firebase;
-  using Firebase.Analytics;
 
   // Handler for UI buttons on the scene.  Also performs some
   // necessary setup (initializing the firebase app, etc) on
@@ -37,7 +37,7 @@ namespace Firebase.Sample.Analytics {
     // the required dependencies to use Firebase, and if not,
     // add them if possible.
     public virtual void Start() {
-      FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
         dependencyStatus = task.Result;
         if (dependencyStatus == DependencyStatus.Available) {
           InitializeFirebase();
@@ -122,7 +122,7 @@ namespace Firebase.Sample.Analytics {
 
     // Get the current app instance ID.
     public Task<string> DisplayAnalyticsInstanceId() {
-      return FirebaseAnalytics.GetAnalyticsInstanceIdAsync().ContinueWith(task => {
+      return FirebaseAnalytics.GetAnalyticsInstanceIdAsync().ContinueWithOnMainThread(task => {
         if (task.IsCanceled) {
           DebugLog("App instance ID fetch was canceled.");
         } else if (task.IsFaulted) {

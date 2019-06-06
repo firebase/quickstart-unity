@@ -13,11 +13,12 @@
 // limitations under the License.
 
 namespace Firebase.Sample.Functions {
+  using Firebase;
+  using Firebase.Extensions;
+  using Firebase.Functions;
   using System;
   using System.Collections;
   using System.Collections.Generic;
-  using Firebase;
-  using Firebase.Functions;
   using UnityEngine;
 
   // Handler for UI buttons on the scene.  Also performs some
@@ -38,7 +39,7 @@ namespace Firebase.Sample.Functions {
     // the required dependencies to use Firebase, and if not,
     // add them if possible.
     protected virtual void Start() {
-      FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
+      FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
         dependencyStatus = task.Result;
         if (dependencyStatus == DependencyStatus.Available) {
           InitializeFirebase();
@@ -101,7 +102,7 @@ namespace Firebase.Sample.Functions {
       data["firstNumber"] = firstNumber;
       data["secondNumber"] = secondNumber;
 
-      var task = func.CallAsync(data).ContinueWith((callTask) => {
+      var task = func.CallAsync(data).ContinueWithOnMainThread((callTask) => {
         if (callTask.IsFaulted) {
           // The function unexpectedly failed.
           DebugLog("FAILED!");
