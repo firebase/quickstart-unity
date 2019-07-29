@@ -113,9 +113,11 @@ namespace Firebase.Sample.Auth {
     }
 
     void OnDestroy() {
-      auth.StateChanged -= AuthStateChanged;
-      auth.IdTokenChanged -= IdTokenChanged;
-      auth = null;
+      if (auth != null) {
+        auth.StateChanged -= AuthStateChanged;
+        auth.IdTokenChanged -= IdTokenChanged;
+        auth = null;
+      }
       if (otherAuth != null) {
         otherAuth.StateChanged -= AuthStateChanged;
         otherAuth.IdTokenChanged -= IdTokenChanged;
