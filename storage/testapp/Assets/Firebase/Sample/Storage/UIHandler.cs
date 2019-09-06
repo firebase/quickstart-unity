@@ -29,7 +29,7 @@ namespace Firebase.Sample.Storage {
   // necessary setup (initializing the firebase app, etc) on
   // startup.
   public class UIHandler : MonoBehaviour {
-    protected string MyStorageBucket = "gs://unity-test-app-fc4db.appspot.com/";
+    protected string MyStorageBucket = "gs://YOUR-FIREBASE-BUCKET/";
     private const int kMaxLogSize = 16382;
     protected static string UriFileScheme = Uri.UriSchemeFile + "://";
 

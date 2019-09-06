@@ -34,19 +34,19 @@ namespace Firebase.Sample.DynamicLinks {
     private string logText = "";
     const int kMaxLogSize = 16382;
     DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
-    const string kInvalidDynamicLinksDomain = "THIS_IS_AN_INVALID_DOMAIN";
-    const string kDynamicLinksDomainInvalidError =
-      "kDynamicLinksDomain is not valid, link shortening will fail.\n" +
+    const string kInvalidDomainUriPrefix = "THIS_IS_AN_INVALID_DOMAIN";
+    const string kDomainUriPrefixInvalidError =
+      "kDomainUriPrefix is not valid, link shortening will fail.\n" +
       "To resolve this:\n" +
       "* Goto the Firebase console https://firebase.google.com/console/\n" +
       "* Click on the Dynamic Links tab\n" +
       "* Copy the domain e.g x20yz.app.goo.gl\n" +
-      "* Replace the value of kDynamicLinksDomain with the copied domain.\n";
+      "* Replace the value of kDomainUriPrefix with the copied domain.\n";
     public bool firebaseInitialized = false;
 
     // IMPORTANT: You need to set this to a valid domain from the Firebase
-    // console (see kDynamicLinksDomainInvalidError for the details).
-    public string kDynamicLinksDomain = "fwk68.app.goo.gl";
+    // console (see kDomainUriPrefixInvalidError for the details).
+    public string kDomainUriPrefix = kInvalidDomainUriPrefix;
 
     // When the app starts, check to make sure that we have
     // the required dependencies to use Firebase, and if not,
@@ -126,7 +126,7 @@ namespace Firebase.Sample.DynamicLinks {
         // The base Link.
         new System.Uri("https://google.com/abc"),
         // The dynamic link domain.
-        kDynamicLinksDomain) {
+        kDomainUriPrefix) {
         GoogleAnalyticsParameters = new Firebase.DynamicLinks.GoogleAnalyticsParameters() {
           Source = "mysource",
           Medium = "mymedium",
@@ -176,10 +176,10 @@ namespace Firebase.Sample.DynamicLinks {
     }
 
     private Task<ShortDynamicLink> CreateAndDisplayShortLinkAsync(DynamicLinkOptions options) {
-      if (kDynamicLinksDomain == kInvalidDynamicLinksDomain) {
-        DebugLog(kDynamicLinksDomainInvalidError);
+      if (kDomainUriPrefix == kInvalidDomainUriPrefix) {
+        DebugLog(kDomainUriPrefixInvalidError);
         var source = new TaskCompletionSource<ShortDynamicLink>();
-        source.TrySetException(new Exception(kDynamicLinksDomainInvalidError));
+        source.TrySetException(new Exception(kDomainUriPrefixInvalidError));
         return source.Task;
       }
 
