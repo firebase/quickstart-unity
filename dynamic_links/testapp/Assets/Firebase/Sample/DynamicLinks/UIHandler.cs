@@ -46,7 +46,7 @@ namespace Firebase.Sample.DynamicLinks {
 
     // IMPORTANT: You need to set this to a valid domain from the Firebase
     // console (see kDomainUriPrefixInvalidError for the details).
-    public string kDomainUriPrefix = "https://fwk68.app.goo.gl";
+    public string kDomainUriPrefix = kInvalidDomainUriPrefix;
 
     // When the app starts, check to make sure that we have
     // the required dependencies to use Firebase, and if not,
