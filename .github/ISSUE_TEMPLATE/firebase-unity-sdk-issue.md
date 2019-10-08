@@ -20,3 +20,5 @@ Platform you are targeting (iOS, Android, and/or desktop):
 
 ## Please answer the following, if applicable:
 Have you been able to reproduce this issue with just the Firebase Unity quickstarts (this GitHub project)?
+
+What's the issue repro rate? (eg 100%, 1/5 etc)
