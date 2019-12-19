@@ -39,6 +39,12 @@ namespace Firebase.Sample.Auth {
     protected string displayName = "";
     protected string phoneNumber = "";
     protected string receivedCode = "";
+    protected string scope1 = "";
+    protected string scope2 = "";
+    protected string customParameterKey1 = "";
+    protected string customParameterValue1 = "";
+    protected string customParameterKey2 = "";
+    protected string customParameterValue2 = "";
     // Whether to sign in / link or reauthentication *and* fetch user profile data.
     protected bool signInAndFetchProfile = false;
     // Flag set when a token is being fetched.  This is used to avoid printing the token
@@ -224,7 +230,7 @@ namespace Firebase.Sample.Auth {
         user = senderAuth.CurrentUser;
         userByAuth[senderAuth.App.Name] = user;
         if (signedIn) {
-          DebugLog("Signed in " + user.UserId);
+          DebugLog("AuthStateChanged Signed in " + user.UserId);
           displayName = user.DisplayName ?? "";
           DisplayDetailedUserInfo(user, 1);
         }
@@ -546,6 +552,100 @@ namespace Firebase.Sample.Auth {
       });
     }
 
+    protected Firebase.Auth.FederatedOAuthProvider BuildFederatedOAuthProvider(string providerId) {
+      Firebase.Auth.FederatedOAuthProviderData data = new Firebase.Auth.FederatedOAuthProviderData();
+      data.ProviderId = providerId;
+      List<string> scopes = new List<string>();
+      if(scope1 != "" ) {
+        scopes.Add(scope1);
+      }
+      if(scope2 != "" ) {
+        scopes.Add(scope2);
+      }
+      data.Scopes = scopes;
+
+      data.CustomParameters = new Dictionary<string, string>();
+      if(customParameterKey1 != "" && customParameterValue1 != "") {
+        data.CustomParameters.Add(customParameterKey1, customParameterValue1);
+      }
+      if(customParameterKey2 != "" && customParameterValue2 != "") {
+        data.CustomParameters.Add(customParameterKey2, customParameterValue2);
+      }
+
+      return  new Firebase.Auth.FederatedOAuthProvider(data);
+    }
+    protected void SignInWithProvider(string providerId) {
+      Firebase.Auth.FederatedOAuthProvider provider = BuildFederatedOAuthProvider(providerId);
+      auth.SignInWithProviderAsync(provider).ContinueWithOnMainThread(signin_task => {
+          if (LogTaskCompletion(signin_task, "SignInWithProvider")) {
+            DebugLog("SignInWithProviderTask Completed:" + signin_task.IsCompleted);
+          }
+          if(signin_task.Exception != null) {
+            DebugLog("SignInWithProviderTask - Exception: " + signin_task.Exception.Message);
+            return;
+          }
+
+          DisplaySignInResult(signin_task.Result, 1);
+      });
+    }
+
+    protected void ReauthenticateWithProvider(string providerId) {
+      if(auth.CurrentUser == null) {
+        DebugLog("Login with user before re-authenticating");
+        return;
+      }
+
+      Firebase.Auth.FederatedOAuthProvider provider = BuildFederatedOAuthProvider(providerId);
+
+      auth.CurrentUser.ReauthenticateWithProviderAsync(provider).ContinueWithOnMainThread(task => {
+        if (LogTaskCompletion(task, "ReauthenticateWithProvider")) {
+          DebugLog("ReauthenticateWithProvider Completed:" + task.IsCompleted);
+        }
+        if(task.Exception != null) {
+          Debug.Log("ReauthenticateWithProviderTask - Exception: " + task.Exception.Message);
+          return;
+        }
+        DisplaySignInResult(task.Result, 1);
+      });
+    }
+
+    protected void LinkWithProvider(string providerId) {
+      if(auth.CurrentUser == null) {
+        DebugLog("Login with user before linking.");
+        return;
+      }
+
+      Firebase.Auth.FederatedOAuthProvider provider = BuildFederatedOAuthProvider(providerId);
+      auth.CurrentUser.LinkWithProviderAsync(provider).ContinueWithOnMainThread(task => {
+        if (LogTaskCompletion(task, "LinkWithProvider")) {
+          DebugLog("LinkWithProvider Completed:" + task.IsCompleted);
+        }
+        if(task.Exception != null) {
+          Debug.Log("LinkWithProvider - Exception: " + task.Exception.Message);
+          return;
+        }
+        DisplaySignInResult(task.Result, 1);
+      });
+    }
+
+    protected void UnlinkUser(string providerId) {
+      if(auth.CurrentUser == null) {
+        DebugLog("Login with user before un-linking.");
+        return;
+      }
+
+      if (auth.CurrentUser != null) {
+        DebugLog("Attempting to ulink user from provider: " + providerId);
+        DisableUI();
+        auth.CurrentUser.UnlinkAsync(providerId).ContinueWithOnMainThread( task => {
+          EnableUI();
+          DebugLog("Unlink Complete");
+        });
+      } else {
+        DebugLog("Sign-in before unlinking user.");
+      }
+    }
+
     // Begin authentication with the phone number.
     protected void VerifyPhoneNumber() {
       var phoneAuthProvider = Firebase.Auth.PhoneAuthProvider.GetInstance(auth);
@@ -731,6 +831,77 @@ namespace Firebase.Sample.Auth {
                                                             otherAuth.App.Name))) {
           SwapAuthFocus();
         }
+
+        GUILayout.Space(20);
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("Phone-Only OAuth2:", GUILayout.Width(Screen.width * 0.4f));
+        GUILayout.EndHorizontal();
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("scope 1:", GUILayout.Width(Screen.width * 0.20f));
+        scope1 = GUILayout.TextField(scope1, GUILayout.Width(Screen.width * 0.5f));
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(20);
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("scope 2:", GUILayout.Width(Screen.width * 0.20f));
+        scope2 = GUILayout.TextField(scope2, GUILayout.Width(Screen.width * 0.5f));
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(20);
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("customParam Key1:", GUILayout.Width(Screen.width * 0.20f));
+        customParameterKey1 = GUILayout.TextField(customParameterKey1, GUILayout.Width(Screen.width * 0.5f));
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(20);
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("customParam Value1:", GUILayout.Width(Screen.width * 0.20f));
+        customParameterValue1 = GUILayout.TextField(customParameterValue1, GUILayout.Width(Screen.width * 0.25f));
+        GUILayout.EndHorizontal();
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("customParam Key2:", GUILayout.Width(Screen.width * 0.20f));
+        customParameterKey2 = GUILayout.TextField(customParameterKey2, GUILayout.Width(Screen.width * 0.5f));
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(20);
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("customParam Value2:", GUILayout.Width(Screen.width * 0.20f));
+        customParameterValue2 = GUILayout.TextField(customParameterValue2, GUILayout.Width(Screen.width * 0.5f));
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(20);
+        if (GUILayout.Button("SignInWith | Microsoft")) {
+          SignInWithProvider(Firebase.Auth.MicrosoftAuthProvider.ProviderId);
+        }
+        if (GUILayout.Button("SignInWith | Yahoo")) {
+          SignInWithProvider(Firebase.Auth.YahooAuthProvider.ProviderId);
+        }
+        if (GUILayout.Button("ReauthWith | Microsoft")) {
+          ReauthenticateWithProvider(Firebase.Auth.MicrosoftAuthProvider.ProviderId);
+        }
+        if (GUILayout.Button("ReauthWith | Yahoo")) {
+          ReauthenticateWithProvider(Firebase.Auth.YahooAuthProvider.ProviderId);
+        }
+        if (GUILayout.Button("LinkWith | Microsoft")) {
+          LinkWithProvider(Firebase.Auth.MicrosoftAuthProvider.ProviderId);
+        }
+        if (GUILayout.Button("LinkWith | Yahoo")) {
+          LinkWithProvider(Firebase.Auth.YahooAuthProvider.ProviderId);
+        }
+        if (GUILayout.Button("Unlink User | Microsoft")) {
+          UnlinkUser(Firebase.Auth.MicrosoftAuthProvider.ProviderId);
+        }
+        if (GUILayout.Button("Unlink User | Yahoo")) {
+          UnlinkUser(Firebase.Auth.YahooAuthProvider.ProviderId);
+        }
+
         GUIDisplayCustomControls();
         GUILayout.EndVertical();
         GUILayout.EndScrollView();
