@@ -25,9 +25,9 @@ using the
       [Firebase console](https://firebase.google.com/console/),
       and associate your iOS application.
       - You should use `com.google.firebase.unity.remoteconfig.testapp` as the
-        package name while you're testing.
-        - If you do not use the prescribed package name you will need to update
-          the bundle identifier as described in the
+         iOS bundle ID when creating the Firebase iOS app in the console.
+        - If you do not use the prescribed Bundle ID, you will later need to
+          update the bundle identifier in Unity as described in
           `Optional: Update the Project Bundle Identifier` below.
     - Download the `GoogleService-Info.plist` file associated with your
       Firebase project from the console.
@@ -41,12 +41,14 @@ using the
     and unzip it somewhere convenient.
   - Open the sample project in the Unity editor.
     - Select the `File > Open Project` menu item.
-    - Click `Open`.
+    - If Unity Hub appears, click `Add`. Otherwise click `Open`.
     - Navigate to the sample directory `testapp` in the file dialog and click
       `Open`.
+      - You might be prompted to upgrade the project to your version of Unity.
+        Click `Confirm` to upgrade the project and continue.
   - Open the scene `MainScene`.
     - Navigate to `Assets/Firebase/Sample/RemoteConfig` in the `Project` window.
-    - Double click on `MainScene` file to open.
+    - Double click on the `MainScene` file to open it.
   - Import the `Firebase Remote Config` plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
@@ -68,13 +70,14 @@ using the
         `Assets` folder.
   - Optional: Update the Project Bundle Identifier
     - If you did not use `com.google.firebase.unity.remoteconfig.testapp`
-      as the project package name you will need to update the sample's Bundle
+      as the iOS bundle ID when creating your app in the Firebase
+      Console then you will need to update the sample's Bundle
       Identifier.
       - Select the `File > Build Settings` menu option.
       - Select `iOS` in the `Platform` list.
       - Click `Player Settings`
-      - In the `Player Settings` panel scroll down to `Bundle Identifier`
-        and update the value to the package name you provided when you
+      - In the `Settings for iOS` panel scroll down to `Bundle Identifier`
+        and update the value to the `iOS bundle ID` you provided when you
         registered your app with Firebase.
   - Build for iOS
     - Select the `File > Build Settings` menu option.
@@ -93,21 +96,32 @@ using the
       [Firebase console](https://firebase.google.com/console/),
       and attach your Android app to it.
       - You should use `com.google.firebase.unity.remoteconfig.testapp` as the
-        package name while you're testing.
-        - If you do not use the prescribed package name you will need to update
-          the bundle identifier as described in the
+        Android package name while you're testing.
+        - If you do not use the prescribed package name, you will need to update
+          the bundle identifier as described in
           `Optional: Update the Project Bundle Identifier` below.
-
-      - To [generate a SHA1](https://developers.google.com/android/guides/client-auth),
+      - Android apps must be signed by a key, and the key's signature must
+        be registered to your project in the Firebase Console. To
+        [generate a SHA1](https://developers.google.com/android/guides/client-auth),
         first you will need to set the keystore in the Unity project.
         - Locate the `Publishing Settings` under `Player Settings`.
-        - Select an existing keystore, or create a new keystore using the toggle.
+        - Select an existing keystore, or create a new keystore using the 
+          toggle.
         - Select an existing key, or create a new key using "Create a new key".
-      - After setting the keystore and key, you can generate a SHA1 by
-        running this command:
-        ```
-        keytool -exportcert -list -v -alias <key_name> -keystore <path_to_keystore>
-        ```
+        - After setting the keystore and key, you can generate a SHA1 by
+          running this command:
+          ```
+          keytool -list -v -keystore <path_to_keystore> -alias <key_name>
+          ```
+        - Copy the SHA1 digest string into your clipboard.
+        - Navigate to your Android App in your firebase console.
+          - From the main console view, click on your Android App at the top and
+            click the gear to open the settings page.
+        - Scroll down to your apps at the bottom of the page and click on
+          `Add Fingerprint`.
+        - Paste the SHA1 digest of your key into the form.  The SHA1 box
+          will illuminate if the string is valid.  If it's not valid, check
+          that you have copied the entire SHA1 digest string.
     - Download the `google-services.json` file associated with your
         Firebase project from the console.
         This file identifies your Android app to the Firebase backend, and will
@@ -120,12 +134,14 @@ using the
     and unzip it somewhere convenient.
   - Open the sample project in the Unity editor.
     - Select the `File > Open Project` menu item.
-    - Click `Open`.
+    - If Unity Hub appears, click `Add`.  Otherwise click `Open`.
     - Navigate to the sample directory `testapp` in the file dialog and click
       `Open`.
+      - You might be prompted to upgrade the project to your version of Unity.
+        Click `Confirm` to upgrade the project and continue.
   - Open the scene `MainScene`.
     - Navigate to `Assets/Firebase/Sample/RemoteConfig` in the `Project` window.
-    - Double click on `MainScene` file to open.
+    - Double click on the `MainScene` file to open it.
   - Import the `Firebase Remote Config` plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
@@ -147,12 +163,12 @@ using the
         folder.
   - Optional: Update the Project Bundle Identifier
     - If you did not use `com.google.firebase.unity.remoteconfig.testapp`
-      as the project package name you will need to update the sample's Bundle
-      Identifier.
+      as the `Android package name` when you created your app in the Firebase
+      Console, you will need to update the sample's Bundle Identifier.
       - Select the `File > Build Settings` menu option.
       - Select `Android` in the `Platform` list.
       - Click `Player Settings`
-      - In the `Player Settings` panel scroll down to `Bundle Identifier`
+      - In the `Settings for Android` panel scroll down to `Bundle Identifier`
         and update the value to the package name you provided when you
         registered your app with Firebase.
   - Build for Android
@@ -194,6 +210,25 @@ The sample provides a simple interface with two buttons:
 Using Firebase Remote Config you can update and publish new data through the
 Firebase Console and it will be reflected in your app.
 
+
+## Troubleshooting
+
+  - When upgrading to a new Firebase release: import the new firebase
+    unity package through **Assets > Import Package > Custom Package** as above.
+    After the import is complete you may need to run the **Assets > Play
+    Services Resolver** for the changes to be reflected in the editor. If
+    issues persist, delete the plugin and install it again.
+  - **Android:** After exiting the editor and returning you will need to
+    reconfigure the **Project Keystore** in **Player Settings > Publishing
+    Settings**.  Select your **Custom Keystore** from the dropdown list and
+    enter its password.  Then, select your **Project Key** alias and enter
+    your key's password.
+    enabled in your project, you'll see compile errors from some types in the
+  - Please see the
+    [Known Issues](https://firebase.google.com/docs/unity/setup#known-issues)
+    section of the
+    Unity Setup Guide](https://firebase.google.com/docs/unity/setup) for other
+    troubleshooting topics.
 
 ## Support
 
