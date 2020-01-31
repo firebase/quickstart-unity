@@ -20,7 +20,6 @@ namespace Firebase.Sample.DynamicLinks {
   using System.Collections;
   using System.Threading.Tasks;
   using UnityEngine;
-  using UnityEngine.UI;
 
   // Handler for UI buttons on the scene.  Also performs some
   // necessary setup (initializing the firebase app, etc) on
