@@ -10,7 +10,7 @@ with the
 ## Requirements
 
 * [Unity](http://unity3d.com/) 5.3 or higher.
-* [Xcode](https://developer.apple.com/xcode/) 10.1 or higher
+* [Xcode](https://developer.apple.com/xcode/) 10.3 or higher
   (when developing for iOS).
 * [Android SDK](https://developer.android.com/studio/index.html#downloads)
   (when developing for Android).

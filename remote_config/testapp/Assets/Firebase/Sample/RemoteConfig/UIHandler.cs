@@ -49,6 +49,7 @@ namespace Firebase.Sample.RemoteConfig {
 
     // Initialize remote config, and set the default values.
     void InitializeFirebase() {
+      // [START set_defaults]
       System.Collections.Generic.Dictionary<string, object> defaults =
         new System.Collections.Generic.Dictionary<string, object>();
 
@@ -61,6 +62,7 @@ namespace Firebase.Sample.RemoteConfig {
       defaults.Add("config_test_bool", false);
 
       Firebase.RemoteConfig.FirebaseRemoteConfig.SetDefaults(defaults);
+      // [END set_defaults]
       DebugLog("RemoteConfig configured and ready!");
       isFirebaseInitialized = true;
     }
@@ -104,18 +106,20 @@ namespace Firebase.Sample.RemoteConfig {
       }
     }
 
+    // [START fetch_async]
     // Start a fetch request.
+    // FetchAsync only fetches new data if the current data is older than the provided
+    // timespan.  Otherwise it assumes the data is "recent enough", and does nothing.
+    // By default the timespan is 12 hours, and for production apps, this is a good
+    // number. For this example though, it's set to a timespan of zero, so that
+    // changes in the console will always show up immediately.
     public Task FetchDataAsync() {
       DebugLog("Fetching data...");
-      // FetchAsync only fetches new data if the current data is older than the provided
-      // timespan.  Otherwise it assumes the data is "recent enough", and does nothing.
-      // By default the timespan is 12 hours, and for production apps, this is a good
-      // number.  For this example though, it's set to a timespan of zero, so that
-      // changes in the console will always show up immediately.
       System.Threading.Tasks.Task fetchTask = Firebase.RemoteConfig.FirebaseRemoteConfig.FetchAsync(
           TimeSpan.Zero);
       return fetchTask.ContinueWithOnMainThread(FetchComplete);
     }
+    //[END fetch_async]
 
     void FetchComplete(Task fetchTask) {
       if (fetchTask.IsCanceled) {
