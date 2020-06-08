@@ -30,6 +30,7 @@ namespace Firebase.Sample.Firestore {
     private static DateTimeOffset dateTimeOffset = new DateTimeOffset(1990, 1, 2, 3, 4, 5, TimeSpan.FromHours(1));
 
     public static IEnumerable<object[]> TestData(FirebaseFirestore database) {
+      // TODO(b/153551034): Refactor this using structs or classes.
       return new List<object[]>
       {
                 // Simple types
@@ -91,10 +92,8 @@ namespace Firebase.Sample.Firestore {
                 // We don't cover the whole range of ulong
                 { new object[] { UInt64Enum.MinValue, (long) 0 } },
                 { new object[] { UInt64Enum.MaxRepresentableValue, (long) long.MaxValue } },
-                #if !UNITY_IOS // TODO(b/141830498): Fix iOS issues.
                 { new object[] { CustomConversionEnum.Foo, "Foo" } },
                 { new object[] { CustomConversionEnum.Bar, "Bar" } },
-                #endif
 
                 // Timestamps
                 { new object[] { Timestamp.FromDateTime(dateTime),
@@ -116,25 +115,34 @@ namespace Firebase.Sample.Firestore {
                 // Array values
                 { new object[] { new string[] { "x", "y" }, new List<object> { "x", "y" } } },
                 { new object[] { new List<string> { "x", "y" }, new List<object> { "x", "y" } } },
+                { new object[] { new int[] { 3, 4 }, new List<object> { 3L, 4L } } },
                 // Deliberately DateTime rather than Timestamp here - we need to be able to detect the element type to perform the
                 // per-element deserialization correctly
                 { new object[] { new List<DateTime> { dateTime, dateTime },
                     new List<object> { Timestamp.FromDateTime(dateTime), Timestamp.FromDateTime(dateTime) } } },
 
-                // Map values (that can be deserialized again): dictionaries, attributed types, expandos (which are just dictionaries), custom serialized map-like values
+                // Map values (that can be deserialized again): dictionaries, attributed types, expandos (which are
+                // just dictionaries), custom serialized map-like values
 
                 // Dictionaries
-                { new object[] { new Dictionary<string, object> { { "name", "Jon" }, { "score", 10L } },
-                    new Dictionary<string, object> { { "name", "Jon" }, { "score", 10L } } } },
-                #if !UNITY_IOS // TODO(b/141830498): Fix iOS issues.
+                { new object[] { new Dictionary<string, byte> { { "A", 10 }, { "B", 20 } },
+                    new Dictionary<string, object> { { "A", 10L }, { "B", 20L } } } },
                 { new object[] { new Dictionary<string, int> { { "A", 10 }, { "B", 20 } },
                     new Dictionary<string, object> { { "A", 10L }, { "B", 20L } } } },
-                #endif
+                { new object[] { new Dictionary<string, object> { { "name", "Jon" }, { "score", 10L } },
+                    new Dictionary<string, object> { { "name", "Jon" }, { "score", 10L } } } },
                 // Attributed type (each property has an attribute)
                 { new object[] { new GameResult { Name = "Jon", Score = 10 },
                     new Dictionary<string, object> { { "name", "Jon" }, { "Score", 10L } } } },
+                // Attributed type contained in a dictionary
+                { new object[] {
+                    new Dictionary<string, GameResult>
+                      { { "result", new GameResult { Name = "Jon", Score = 10 } } },
+                    new Dictionary<string, object>
+                      { {"result",
+                         new Dictionary<string, object>
+                           { { "name", "Jon" }, { "Score", 10L } } } } }},
                 // Attributed type containing a dictionary
-                #if !UNITY_IOS // TODO(b/141830498): Fix iOS issues.
                 { new object[] { new DictionaryInterfaceContainer { Integers = new Dictionary<string, int> { { "A", 10 }, { "B", 20 } } },
                     new Dictionary<string, object> {
                         { "Integers", new Dictionary<string, object> { { "A", 10L }, { "B", 20L } } }
@@ -142,10 +150,8 @@ namespace Firebase.Sample.Firestore {
                 // Attributed type serialized and deserialized by CustomPlayerConverter
                 { new object[] { new CustomPlayer { Name = "Amanda", Score = 15 },
                     new Dictionary<string, object> { { "PlayerName", "Amanda" }, { "PlayerScore", 15L } } } },
-                #endif
 
                 // Attributed value type serialized and deserialized by CustomValueTypeConverter
-                #if !UNITY_IOS // TODO(b/141830498): Fix iOS issues.
                 { new object[] { new CustomValueType("xyz", 10),
                     new Dictionary<string, object> { { "Name", "xyz" }, { "Value", 10L } } } },
 
@@ -156,27 +162,33 @@ namespace Firebase.Sample.Firestore {
                         { "EnumAttributedByName", "MinValue" },
                         { "EnumByNumber", (long)int.MaxValue }
                     } } },
-                #endif
 
                 // Attributed struct
                 { new object[] { new StructModel { Name = "xyz", Value = 10 },
                     new Dictionary<string, object> { { "Name", "xyz" }, { "Value", 10L } } } },
 
-                // Nullable type handling
-                #if !UNITY_IOS // TODO(b/141830498): Fix iOS issues.
-                { new object[] { new NullableContainer { NullableValue = null },
-                    new Dictionary<string, object> { { "NullableValue", null } } } },
-                { new object[] { new NullableContainer { NullableValue = 10 },
-                    new Dictionary<string, object> { { "NullableValue", 10L } } } },
-                { new object[] { new NullableEnumContainer { NullableValue = null },
-                    new Dictionary<string, object> { { "NullableValue", null } } } },
-                { new object[] { new NullableEnumContainer { NullableValue = (Int32Enum) 10 },
-                    new Dictionary<string, object> { { "NullableValue", 10L } } } },
-                #endif
-
                 // Document references
                 { new object[] { database.Document("a/b"), database.Document("a/b") } },
             };
+    }
+
+
+    public static IEnumerable<object[]> UnsupportedTestData() {
+      return new List<object[]>
+      {
+        // Nullable type handling
+        { new object[] { new NullableContainer { NullableValue = 10 },
+          new Dictionary<string, object> { { "NullableValue", 10L } } } },
+        { new object[] { new NullableEnumContainer { NullableValue = (Int32Enum) 10 },
+          new Dictionary<string, object> { { "NullableValue", 10L } } } },
+        // This one fails because the `NullableContainer` it gets back has a random value
+        // while it should be null.
+        { new object[] { new NullableContainer { NullableValue = null },
+          new Dictionary<string, object> { { "NullableValue", null } } } },
+        { new object[] { new NullableEnumContainer { NullableValue = null },
+          new Dictionary<string, object> { { "NullableValue", null } } } },
+      };
+
     }
 
     // Only equatable for the sake of testing; that's not a requirement of the serialization code.
@@ -197,13 +209,14 @@ namespace Firebase.Sample.Firestore {
     [FirestoreData]
     internal class NullableContainer : IEquatable<NullableContainer> {
       [FirestoreProperty]
-      public int? NullableValue { get; set; }
+      public long? NullableValue { get; set; }
 
-      public override int GetHashCode() { return NullableValue.GetValueOrDefault(); }
+      public override int GetHashCode() { return (int)NullableValue.GetValueOrDefault().GetHashCode(); }
 
       public override bool Equals(object obj) { return Equals(obj as NullableContainer); }
 
       public bool Equals(NullableContainer other) { return other != null && other.NullableValue == NullableValue; }
+      public override string ToString() { return String.Format("NullableContainer: {0}", NullableValue.GetValueOrDefault()); }
     }
 
     [FirestoreData]
@@ -211,7 +224,7 @@ namespace Firebase.Sample.Firestore {
       [FirestoreProperty]
       public Int32Enum? NullableValue { get; set; }
 
-      public override int GetHashCode() { return (int)NullableValue.GetValueOrDefault(); }
+      public override int GetHashCode() { return (int)NullableValue.GetValueOrDefault().GetHashCode(); }
 
       public override bool Equals(object obj) { return Equals(obj as NullableEnumContainer); }
 
@@ -331,8 +344,8 @@ namespace Firebase.Sample.Firestore {
       public Email(string address) { Address = address; }
     }
 
-    public class EmailConverter : IFirestoreConverter<Email> {
-      public Email FromFirestore(object value) {
+    public class EmailConverter : FirestoreConverter<Email> {
+      public override Email FromFirestore(object value) {
         if (value == null) {
           throw new ArgumentNullException("value"); // Shouldn't happen
         } else if (value is string) {
@@ -341,7 +354,7 @@ namespace Firebase.Sample.Firestore {
           throw new ArgumentException(String.Format("Unexpected data: {}", value.GetType()));
         }
       }
-      public object ToFirestore(Email value) { return value == null ? null : value.Address; }
+      public override object ToFirestore(Email value) { return value == null ? null : value.Address; }
     }
 
     [FirestoreData]
@@ -370,8 +383,8 @@ namespace Firebase.Sample.Firestore {
       public Guid? GuidOrNull { get; set; }
     }
 
-    public class GuidConverter : IFirestoreConverter<Guid> {
-      public Guid FromFirestore(object value) {
+    public class GuidConverter : FirestoreConverter<Guid> {
+      public override Guid FromFirestore(object value) {
         if (value == null) {
           throw new ArgumentNullException("value"); // Shouldn't happen
         } else if (value is string) {
@@ -380,7 +393,7 @@ namespace Firebase.Sample.Firestore {
           throw new ArgumentException(String.Format("Unexpected data: {0}", value.GetType()));
         }
       }
-      public object ToFirestore(Guid value) { return value.ToString("N"); }
+      public override object ToFirestore(Guid value) { return value.ToString("N"); }
     }
 
     // Only equatable for the sake of testing; that's not a requirement of the serialization code.
@@ -394,17 +407,17 @@ namespace Firebase.Sample.Firestore {
       public bool Equals(CustomPlayer other) { return other != null && other.Name == Name && other.Score == Score; }
     }
 
-    public class CustomPlayerConverter : IFirestoreConverter<CustomPlayer> {
-      public CustomPlayer FromFirestore(object value) {
-        var map = (IDictionary<string, object>)value;
+    public class CustomPlayerConverter : FirestoreConverter<CustomPlayer> {
+      public override CustomPlayer FromFirestore(object value) {
+        var map = (IDictionary<string, object>) value;
         return new CustomPlayer {
-          Name = (string)map["PlayerName"],
+          Name = (string) map["PlayerName"],
           // Unbox to long, then convert to int.
-          Score = (int)(long)map["PlayerScore"]
+          Score = (int) (long) map["PlayerScore"]
         };
       }
 
-      public object ToFirestore(CustomPlayer value) {
+      public override object ToFirestore(CustomPlayer value) {
         return new Dictionary<string, object>
         {
                     { "PlayerName", value.Name },
@@ -424,21 +437,21 @@ namespace Firebase.Sample.Firestore {
       }
 
       public override int GetHashCode() { return Name.GetHashCode() + Value; }
-      public override bool Equals(object obj) { return obj is CustomValueType && Equals((CustomValueType)obj); }
+      public override bool Equals(object obj) { return obj is CustomValueType && Equals((CustomValueType) obj); }
       public bool Equals(CustomValueType other) { return Name == other.Name && Value == other.Value; }
       public override string ToString() { return String.Format("CustomValueType: {0}", new { Name, Value }); }
     }
 
-    internal class CustomValueTypeConverter : IFirestoreConverter<CustomValueType> {
-      public CustomValueType FromFirestore(object value) {
-        var dictionary = (IDictionary<string, object>)value;
+    internal class CustomValueTypeConverter : FirestoreConverter<CustomValueType> {
+      public override CustomValueType FromFirestore(object value) {
+        var dictionary = (IDictionary<string, object>) value;
         return new CustomValueType(
-            (string)dictionary["Name"],
-            (int)(long)dictionary["Value"]
+            (string) dictionary["Name"],
+            (int) (long) dictionary["Value"]
         );
       }
 
-      public object ToFirestore(CustomValueType value) {
+      public override object ToFirestore(CustomValueType value) {
         return new Dictionary<string, object>
         {
                     { "Name", value.Name },
@@ -455,7 +468,7 @@ namespace Firebase.Sample.Firestore {
       public int Value { get; set; }
 
       public override int GetHashCode() { return Name.GetHashCode() + Value; }
-      public override bool Equals(object obj) { return obj is StructModel && Equals((StructModel)obj); }
+      public override bool Equals(object obj) { return obj is StructModel && Equals((StructModel) obj); }
       public bool Equals(StructModel other) { return Name == other.Name && Value == other.Value; }
 
       public override string ToString() { return String.Format("StructModel: {0}", new { Name, Value }); }
