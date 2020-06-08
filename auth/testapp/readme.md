@@ -235,7 +235,6 @@ If any of these options fail please ensure that you have:
     Settings**.  Select your **Custom Keystore** from the dropdown list and
     enter its password.  Then, select your **Project Key** alias and enter
     your key's password.
-    enabled in your project, you'll see compile errors from some types in the
   - Please see the
     [Known Issues](https://firebase.google.com/docs/unity/setup#known-issues)
     section of the
