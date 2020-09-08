@@ -1,5 +1,5 @@
 ---
-name: Firebase Unity SDK issue
+name: 🐞 Bug report
 about: Please use this template to report issues with the Firebase Unity SDK.
 labels: new
 ---
