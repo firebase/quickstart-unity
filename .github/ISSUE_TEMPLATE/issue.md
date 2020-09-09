@@ -13,13 +13,13 @@ template_path=.github/ISSUE_TEMPLATE/issue.md
 
   * Unity editor version: _____
   * Firebase Unity SDK version: _____
-  * Source you installed the SDK (.unitypackage or Unity Package Manager): _____
-  * Problematic Firebase Component (Auth, Database, etc.): _____
-  * Other Firebase Components in use (Auth, Database, etc.): _____
-  * Additional SDKs you are using (Facebook, AdMob, etc.): _____
-  * Platform you are using the Unity editor on (Mac, Windows, or Linux): _____
-  * Platform you are targeting (iOS, Android, and/or desktop): _____
-  * Scripting Runtime (Mono, and/or IL2CPP): _____
+  * Source you installed the SDK: _____ (.unitypackage or Unity Package Manager)
+  * Problematic Firebase Component: _____ (Auth, Database, etc.)
+  * Other Firebase Components in use: _____ (Auth, Database, etc.)
+  * Additional SDKs you are using: _____ (Facebook, AdMob, etc.)
+  * Platform you are using the Unity editor on: _____ (Mac, Windows, or Linux)
+  * Platform you are targeting: _____ (iOS, Android, and/or desktop)
+  * Scripting Runtime: _____ (Mono, and/or IL2CPP)
 
 ### [REQUIRED] Please describe the issue here:
 
