@@ -193,6 +193,24 @@ namespace Firebase.Sample.Messaging {
         if (GUILayout.Button("Toggle Token On Init")) {
           ToggleTokenOnInit();
         }
+        if (GUILayout.Button("GetToken")) {
+          String token = "";
+          Firebase.Messaging.FirebaseMessaging.GetTokenAsync().ContinueWithOnMainThread(
+            task => {
+              token = task.Result;
+              LogTaskCompletion(task, "GetTokenAsync");
+            }
+          );
+          DebugLog("GetTokenAsync " + token);
+        }
+
+        if (GUILayout.Button("DeleteToken")) {
+          Firebase.Messaging.FirebaseMessaging.DeleteTokenAsync().ContinueWithOnMainThread(
+            task => {
+              LogTaskCompletion(task, "DeleteTokenAsync");
+            }
+          );
+        }
         GUILayout.EndVertical();
         GUILayout.EndScrollView();
       }

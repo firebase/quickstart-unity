@@ -29,166 +29,253 @@ namespace Firebase.Sample.Firestore {
     private static DateTime dateTime = new DateTime(1990, 1, 2, 3, 4, 5, DateTimeKind.Utc);
     private static DateTimeOffset dateTimeOffset = new DateTimeOffset(1990, 1, 2, 3, 4, 5, TimeSpan.FromHours(1));
 
-    public static IEnumerable<object[]> TestData(FirebaseFirestore database) {
-      // TODO(b/153551034): Refactor this using structs or classes.
-      return new List<object[]>
-      {
-                // Simple types
-                { new object[] { null, null } },
-                { new object[] { true, true } },
-                { new object[] { false, false } },
-                { new object[] { "test", "test" } },
-                { new object[] { (byte) 1, 1L } },
-                { new object[] { (sbyte) 1, 1L } },
-                { new object[] { (short) 1, 1L } },
-                { new object[] { (ushort) 1, 1L } },
-                { new object[] { 1, 1L } },
-                { new object[] { 1U, 1L } },
-                { new object[] { 1L, 1L } },
-                { new object[] { 1UL, 1L } },
-                { new object[] { 1.5F, 1.5D } },
-                { new object[] { float.PositiveInfinity, double.PositiveInfinity } },
-                { new object[] { float.NegativeInfinity, double.NegativeInfinity } },
-                { new object[] { float.NaN, double.NaN } },
-                { new object[] { 1.5D, 1.5D } },
-                { new object[] { double.PositiveInfinity, double.PositiveInfinity } },
-                { new object[] { double.NegativeInfinity, double.NegativeInfinity } },
-                { new object[] { double.NaN, double.NaN } },
+    internal class TestCase {
+      internal enum TestOutcome {
+        Success,
+        // Given input type can be write to Firestore, can be read into Firestore raw types, but not
+        // the input type.
+        ReadToInputTypesNotSupported,
+        // Given input type cannot be write to Firestore, nor can any data be read into the input
+        // type.
+        Unsupported
+      }
 
-                // Min/max values of each integer type
-                { new object[] { byte.MinValue, (long) byte.MinValue } },
-                { new object[] { byte.MaxValue, (long) byte.MaxValue } },
-                { new object[] { sbyte.MinValue, (long) sbyte.MinValue } },
-                { new object[] { sbyte.MaxValue, (long) sbyte.MaxValue } },
-                { new object[] { short.MinValue, (long) short.MinValue } },
-                { new object[] { short.MaxValue, (long) short.MaxValue } },
-                { new object[] { ushort.MinValue, (long) ushort.MinValue } },
-                { new object[] { ushort.MaxValue, (long) ushort.MaxValue } },
-                { new object[] { int.MinValue, (long) int.MinValue } },
-                { new object[] { int.MaxValue, (long) int.MaxValue } },
-                { new object[] { uint.MinValue, (long) uint.MinValue } },
-                { new object[] { uint.MaxValue, (long) uint.MaxValue } },
-                { new object[] { long.MinValue, long.MinValue } },
-                { new object[] { long.MaxValue, long.MaxValue } },
-                // We don't cover the whole range of ulong
-                { new object[] { (ulong) 0, 0L } },
-                { new object[] { (ulong) long.MaxValue, long.MaxValue } },
+      private TestOutcome _result = TestOutcome.Success;
 
-                // Enum types
-                { new object[] { ByteEnum.MinValue, (long) byte.MinValue } },
-                { new object[] { ByteEnum.MaxValue, (long) byte.MaxValue } },
-                { new object[] { SByteEnum.MinValue, (long) sbyte.MinValue } },
-                { new object[] { SByteEnum.MaxValue, (long) sbyte.MaxValue } },
-                { new object[] { Int16Enum.MinValue, (long) short.MinValue } },
-                { new object[] { Int16Enum.MaxValue, (long) short.MaxValue } },
-                { new object[] { UInt16Enum.MinValue, (long) ushort.MinValue } },
-                { new object[] { UInt16Enum.MaxValue, (long) ushort.MaxValue } },
-                { new object[] { Int32Enum.MinValue, (long) int.MinValue } },
-                { new object[] { Int32Enum.MaxValue, (long) int.MaxValue } },
-                { new object[] { UInt32Enum.MinValue, (long) uint.MinValue } },
-                { new object[] { UInt32Enum.MaxValue, (long) uint.MaxValue } },
-                { new object[] { Int64Enum.MinValue, (long) long.MinValue } },
-                { new object[] { Int64Enum.MaxValue, (long) long.MaxValue } },
-                // We don't cover the whole range of ulong
-                { new object[] { UInt64Enum.MinValue, (long) 0 } },
-                { new object[] { UInt64Enum.MaxRepresentableValue, (long) long.MaxValue } },
-                { new object[] { CustomConversionEnum.Foo, "Foo" } },
-                { new object[] { CustomConversionEnum.Bar, "Bar" } },
+      /// <summary>
+      ///  Expected outcome of this test.
+      /// </summary>
+      internal TestOutcome Result {
+        get { return _result; }
+      private
+        set { _result = value; }
+      }
 
-                // Timestamps
-                { new object[] { Timestamp.FromDateTime(dateTime),
-                    Timestamp.FromDateTime(dateTime) } },
-                { new object[] { dateTime,
-                    Timestamp.FromDateTime(dateTime) } },
-                { new object[] { dateTimeOffset,
-                    Timestamp.FromDateTimeOffset(dateTimeOffset) } },
+      /// <summary>
+      /// The object to serialize into Firestore document.
+      /// </summary>
+      internal object Input { get; private set; }
 
-                // Blobs
-                { new object[] { new byte[] { 1, 2, 3, 4 },
-                    Blob.CopyFrom(new byte[] { 1, 2, 3, 4 } ) } },
-                { new object[] { Blob.CopyFrom(new byte[] { 1, 2, 3, 4 } ),
-                    Blob.CopyFrom(new byte[] { 1, 2, 3, 4 } ) } },
+      /// <summary>
+      /// The expected output from the Firestore document deserialized to raw
+      /// Firestore type (<code>Dictionary<string, object></code>, or primitive types).
+      /// </summary>
+      internal object ExpectedRawOutput { get; private set; }
 
-                // GeoPoints
-                { new object[] { new GeoPoint(1.5, 2.5), new GeoPoint(1.5, 2.5) } },
+      public TestCase(object input, object expectedRawOutput) {
+        Input = input;
+        ExpectedRawOutput = expectedRawOutput;
+      }
 
-                // Array values
-                { new object[] { new string[] { "x", "y" }, new List<object> { "x", "y" } } },
-                { new object[] { new List<string> { "x", "y" }, new List<object> { "x", "y" } } },
-                { new object[] { new int[] { 3, 4 }, new List<object> { 3L, 4L } } },
-                // Deliberately DateTime rather than Timestamp here - we need to be able to detect the element type to perform the
-                // per-element deserialization correctly
-                { new object[] { new List<DateTime> { dateTime, dateTime },
-                    new List<object> { Timestamp.FromDateTime(dateTime), Timestamp.FromDateTime(dateTime) } } },
-
-                // Map values (that can be deserialized again): dictionaries, attributed types, expandos (which are
-                // just dictionaries), custom serialized map-like values
-
-                // Dictionaries
-                { new object[] { new Dictionary<string, byte> { { "A", 10 }, { "B", 20 } },
-                    new Dictionary<string, object> { { "A", 10L }, { "B", 20L } } } },
-                { new object[] { new Dictionary<string, int> { { "A", 10 }, { "B", 20 } },
-                    new Dictionary<string, object> { { "A", 10L }, { "B", 20L } } } },
-                { new object[] { new Dictionary<string, object> { { "name", "Jon" }, { "score", 10L } },
-                    new Dictionary<string, object> { { "name", "Jon" }, { "score", 10L } } } },
-                // Attributed type (each property has an attribute)
-                { new object[] { new GameResult { Name = "Jon", Score = 10 },
-                    new Dictionary<string, object> { { "name", "Jon" }, { "Score", 10L } } } },
-                // Attributed type contained in a dictionary
-                { new object[] {
-                    new Dictionary<string, GameResult>
-                      { { "result", new GameResult { Name = "Jon", Score = 10 } } },
-                    new Dictionary<string, object>
-                      { {"result",
-                         new Dictionary<string, object>
-                           { { "name", "Jon" }, { "Score", 10L } } } } }},
-                // Attributed type containing a dictionary
-                { new object[] { new DictionaryInterfaceContainer { Integers = new Dictionary<string, int> { { "A", 10 }, { "B", 20 } } },
-                    new Dictionary<string, object> {
-                        { "Integers", new Dictionary<string, object> { { "A", 10L }, { "B", 20L } } }
-                    } } },
-                // Attributed type serialized and deserialized by CustomPlayerConverter
-                { new object[] { new CustomPlayer { Name = "Amanda", Score = 15 },
-                    new Dictionary<string, object> { { "PlayerName", "Amanda" }, { "PlayerScore", 15L } } } },
-
-                // Attributed value type serialized and deserialized by CustomValueTypeConverter
-                { new object[] { new CustomValueType("xyz", 10),
-                    new Dictionary<string, object> { { "Name", "xyz" }, { "Value", 10L } } } },
-
-                // Attributed type with enums (name and number)
-                { new object[] { new ModelWithEnums { EnumDefaultByName = CustomConversionEnum.Foo, EnumAttributedByName = Int32Enum.MinValue, EnumByNumber = Int32Enum.MaxValue },
-                    new Dictionary<string, object> {
-                        { "EnumDefaultByName", "Foo" },
-                        { "EnumAttributedByName", "MinValue" },
-                        { "EnumByNumber", (long)int.MaxValue }
-                    } } },
-
-                // Attributed struct
-                { new object[] { new StructModel { Name = "xyz", Value = 10 },
-                    new Dictionary<string, object> { { "Name", "xyz" }, { "Value", 10L } } } },
-
-                // Document references
-                { new object[] { database.Document("a/b"), database.Document("a/b") } },
-            };
+      public TestCase(object input, object expectedRawOutput, TestOutcome result) {
+        Input = input;
+        ExpectedRawOutput = expectedRawOutput;
+        Result = result;
+      }
     }
 
+    public static IEnumerable<TestCase> TestData(FirebaseFirestore database) {
+      return new List<TestCase> {
+        // Simple types
+        { new TestCase(null, null) },
+        { new TestCase(true, true) },
+        { new TestCase(false, false) },
+        { new TestCase("test", "test") },
+        { new TestCase((byte)1, 1L) },
+        { new TestCase((sbyte)1, 1L) },
+        { new TestCase((short)1, 1L) },
+        { new TestCase((ushort)1, 1L) },
+        { new TestCase(1, 1L) },
+        { new TestCase(1U, 1L) },
+        { new TestCase(1L, 1L) },
+        { new TestCase(1UL, 1L) },
+        { new TestCase(1.5F, 1.5D) },
+        { new TestCase(float.PositiveInfinity, double.PositiveInfinity) },
+        { new TestCase(float.NegativeInfinity, double.NegativeInfinity) },
+        { new TestCase(float.NaN, double.NaN) },
+        { new TestCase(1.5D, 1.5D) },
+        { new TestCase(double.PositiveInfinity, double.PositiveInfinity) },
+        { new TestCase(double.NegativeInfinity, double.NegativeInfinity) },
+        { new TestCase(double.NaN, double.NaN) },
 
-    public static IEnumerable<object[]> UnsupportedTestData() {
-      return new List<object[]>
-      {
+        // Min/max values of each integer type
+        { new TestCase(byte.MinValue, (long)byte.MinValue) },
+        { new TestCase(byte.MaxValue, (long)byte.MaxValue) },
+        { new TestCase(sbyte.MinValue, (long)sbyte.MinValue) },
+        { new TestCase(sbyte.MaxValue, (long)sbyte.MaxValue) },
+        { new TestCase(short.MinValue, (long)short.MinValue) },
+        { new TestCase(short.MaxValue, (long)short.MaxValue) },
+        { new TestCase(ushort.MinValue, (long)ushort.MinValue) },
+        { new TestCase(ushort.MaxValue, (long)ushort.MaxValue) },
+        { new TestCase(int.MinValue, (long)int.MinValue) },
+        { new TestCase(int.MaxValue, (long)int.MaxValue) },
+        { new TestCase(uint.MinValue, (long)uint.MinValue) },
+        { new TestCase(uint.MaxValue, (long)uint.MaxValue) },
+        { new TestCase(long.MinValue, long.MinValue) },
+        { new TestCase(long.MaxValue, long.MaxValue) },
+        // We don't cover the whole range of ulong
+        { new TestCase((ulong)0, 0L) },
+        { new TestCase((ulong) long.MaxValue, long.MaxValue) },
+
+        // Enum types
+        { new TestCase(ByteEnum.MinValue, (long)byte.MinValue) },
+        { new TestCase(ByteEnum.MaxValue, (long)byte.MaxValue) },
+        { new TestCase(SByteEnum.MinValue, (long)sbyte.MinValue) },
+        { new TestCase(SByteEnum.MaxValue, (long)sbyte.MaxValue) },
+        { new TestCase(Int16Enum.MinValue, (long)short.MinValue) },
+        { new TestCase(Int16Enum.MaxValue, (long)short.MaxValue) },
+        { new TestCase(UInt16Enum.MinValue, (long)ushort.MinValue) },
+        { new TestCase(UInt16Enum.MaxValue, (long)ushort.MaxValue) },
+        { new TestCase(Int32Enum.MinValue, (long)int.MinValue) },
+        { new TestCase(Int32Enum.MaxValue, (long)int.MaxValue) },
+        { new TestCase(UInt32Enum.MinValue, (long)uint.MinValue) },
+        { new TestCase(UInt32Enum.MaxValue, (long)uint.MaxValue) },
+        { new TestCase(Int64Enum.MinValue, (long)long.MinValue) },
+        { new TestCase(Int64Enum.MaxValue, (long)long.MaxValue) },
+        // We don't cover the whole range of ulong
+        { new TestCase(UInt64Enum.MinValue, (long)0) },
+        { new TestCase(UInt64Enum.MaxRepresentableValue, (long)long.MaxValue) },
+        { new TestCase(CustomConversionEnum.Foo, "Foo") },
+        { new TestCase(CustomConversionEnum.Bar, "Bar") },
+
+        // Timestamps
+        { new TestCase(Timestamp.FromDateTime(dateTime), Timestamp.FromDateTime(dateTime)) },
+        { new TestCase(dateTime, Timestamp.FromDateTime(dateTime)) },
+        { new TestCase(dateTimeOffset, Timestamp.FromDateTimeOffset(dateTimeOffset)) },
+
+        // Blobs
+        { new TestCase(new byte[] { 1, 2, 3, 4 }, Blob.CopyFrom(new byte[] { 1, 2, 3, 4 })) },
+        { new TestCase(Blob.CopyFrom(new byte[] { 1, 2, 3, 4 }),
+                       Blob.CopyFrom(new byte[] { 1, 2, 3, 4 })) },
+
+        // GeoPoints
+        { new TestCase(new GeoPoint(1.5, 2.5), new GeoPoint(1.5, 2.5)) },
+
+        // Array values
+        { new TestCase(new string[] { "x", "y" }, new List<object> { "x", "y" }) },
+        { new TestCase(new List<string> { "x", "y" }, new List<object> { "x", "y" }) },
+        { new TestCase(new int[] { 3, 4 }, new List<object> { 3L, 4L }) },
+
+        // Deliberately DateTime rather than Timestamp here - we need to be able to detect the
+        // element type to perform the per-element deserialization correctly
+        { new TestCase(new List<DateTime> { dateTime, dateTime },
+                       new List<object> { Timestamp.FromDateTime(dateTime),
+                                          Timestamp.FromDateTime(dateTime) }) },
+
+        // Map values (that can be deserialized again): dictionaries, attributed types, expandos
+        // (which are just dictionaries), custom serialized map-like values
+
+        // Dictionaries
+        { new TestCase(new Dictionary<string, byte> { { "A", 10 }, { "B", 20 } },
+                       new Dictionary<string, object> { { "A", 10L }, { "B", 20L } }) },
+        { new TestCase(new Dictionary<string, int> { { "A", 10 }, { "B", 20 } },
+                       new Dictionary<string, object> { { "A", 10L }, { "B", 20L } }) },
+        { new TestCase(new Dictionary<string, object> { { "name", "Jon" }, { "score", 10L } },
+                       new Dictionary<string, object> { { "name", "Jon" }, { "score", 10L } }) },
+        // Attributed type (each property has an attribute)
+        { new TestCase(new GameResult { Name = "Jon", Score = 10 },
+                       new Dictionary<string, object> { { "name", "Jon" }, { "Score", 10L } }) },
+        // Attributed type contained in a dictionary
+        { new TestCase(
+            new Dictionary<string, GameResult> { { "result",
+                                                   new GameResult { Name = "Jon", Score = 10 } } },
+            new Dictionary<string, object> {
+              { "result", new Dictionary<string, object> { { "name", "Jon" }, { "Score", 10L } } }
+            }) },
+        // Attributed type containing a dictionary
+        { new TestCase(
+            new DictionaryInterfaceContainer {
+              Integers = new Dictionary<string, int> { { "A", 10 }, { "B", 20 } }
+            },
+            new Dictionary<string, object> {
+              { "Integers", new Dictionary<string, object> { { "A", 10L }, { "B", 20L } } }
+            }) },
+        // Attributed type serialized and deserialized by CustomPlayerConverter
+        { new TestCase(new CustomPlayer { Name = "Amanda", Score = 15 },
+                       new Dictionary<string, object> { { "PlayerName", "Amanda" },
+                                                        { "PlayerScore", 15L } }) },
+
+        // Attributed value type serialized and deserialized by CustomValueTypeConverter
+        { new TestCase(new CustomValueType("xyz", 10),
+                       new Dictionary<string, object> { { "Name", "xyz" }, { "Value", 10L } }) },
+
+        // Attributed type with enums (name and number)
+        { new TestCase(new ModelWithEnums { EnumDefaultByName = CustomConversionEnum.Foo,
+                                            EnumAttributedByName = Int32Enum.MinValue,
+                                            EnumByNumber = Int32Enum.MaxValue },
+                       new Dictionary<string, object> { { "EnumDefaultByName", "Foo" },
+                                                        { "EnumAttributedByName", "MinValue" },
+                                                        { "EnumByNumber", (long)int.MaxValue } }) },
+
+        // Attributed type with List field
+        { new TestCase(new CustomUser { Name = "Jon", HighScore = 10,
+                                        Emails = new List<string> { "jon@example.com" } },
+                       new Dictionary<string, object> {
+                         { "Name", "Jon" },
+                         { "HighScore", 10l },
+                         { "Emails", new List<object> { "jon@example.com" } }
+                       }) },
+
+        // Attributed type with IEnumerable field
+        { new TestCase(
+            new CustomUserEnumerableEmails() { Name = "Jon", HighScore = 10,
+                                               Emails = new List<string> { "jon@example.com" } },
+            new Dictionary<string, object> { { "Name", "Jon" },
+                                             { "HighScore", 10l },
+                                             { "Emails",
+                                               new List<object> { "jon@example.com" } } }) },
+
+        // Attributed type with Set field and custom converter.
+        { new TestCase(
+            new CustomUserSetEmailsWithConverter() {
+              Name = "Jon", HighScore = 10, Emails = new HashSet<string> { "jon@example.com" }
+            },
+            new Dictionary<string, object> { { "Name", "Jon" },
+                                             { "HighScore", 10l },
+                                             { "Emails",
+                                               new List<object> { "jon@example.com" } } }) },
+
+        // Attributed struct
+        { new TestCase(new StructModel { Name = "xyz", Value = 10 },
+                       new Dictionary<string, object> { { "Name", "xyz" }, { "Value", 10L } }) },
+
+        // Document references
+        { new TestCase(database.Document("a/b"), database.Document("a/b")) },
+      };
+    }
+
+    public static IEnumerable<TestCase> UnsupportedTestData() {
+      return new List<TestCase> {
         // Nullable type handling
-        { new object[] { new NullableContainer { NullableValue = 10 },
-          new Dictionary<string, object> { { "NullableValue", 10L } } } },
-        { new object[] { new NullableEnumContainer { NullableValue = (Int32Enum) 10 },
-          new Dictionary<string, object> { { "NullableValue", 10L } } } },
+        { new TestCase(new NullableContainer { NullableValue = 10 },
+                       new Dictionary<string, object> { { "NullableValue", 10L } },
+                       TestCase.TestOutcome.Unsupported) },
+        { new TestCase(new NullableEnumContainer { NullableValue = (Int32Enum)10 },
+                       new Dictionary<string, object> { { "NullableValue", 10L } },
+                       TestCase.TestOutcome.Unsupported) },
         // This one fails because the `NullableContainer` it gets back has a random value
         // while it should be null.
-        { new object[] { new NullableContainer { NullableValue = null },
-          new Dictionary<string, object> { { "NullableValue", null } } } },
-        { new object[] { new NullableEnumContainer { NullableValue = null },
-          new Dictionary<string, object> { { "NullableValue", null } } } },
-      };
+        { new TestCase(new NullableContainer { NullableValue = null },
+                       new Dictionary<string, object> { { "NullableValue", null } },
+                       TestCase.TestOutcome.Unsupported) },
+        { new TestCase(new NullableEnumContainer { NullableValue = null },
+                       new Dictionary<string, object> { { "NullableValue", null } },
+                       TestCase.TestOutcome.Unsupported) },
 
+        // IEnumerable values cannot be assigned from a List.
+        // TODO(b/173894435): there should be a way to specify if it is serialization or
+        // deserialization failure.
+        { new TestCase(Enumerable.Range(3, 2).Select(i => (long)i),
+                       Enumerable.Range(3, 2).Select(i => (long)i),
+                       TestCase.TestOutcome.ReadToInputTypesNotSupported) },
+        { new TestCase(
+            new CustomUserSetEmails { Name = "Jon", HighScore = 10,
+                                      Emails = new HashSet<string> { "jon@example.com" } },
+            new Dictionary<string, object> { { "Name", "Jon" },
+                                             { "HighScore", 10L },
+                                             { "Emails", new List<object> { "jon@example.com" } } },
+            TestCase.TestOutcome.ReadToInputTypesNotSupported) },
+      };
     }
 
     // Only equatable for the sake of testing; that's not a requirement of the serialization code.
@@ -334,8 +421,111 @@ namespace Firebase.Sample.Firestore {
       public int HighScore { get; set; }
       [FirestoreProperty]
       public string Name { get; set; }
+      [FirestoreProperty] public List<string> Emails { get; set; }
+
+      public override bool Equals(object obj) {
+        if (!(obj is CustomUser)) {
+          return false;
+        }
+
+        CustomUser other = (CustomUser)obj;
+        return HighScore == other.HighScore && Name == other.Name &&
+               Emails.SequenceEqual(other.Emails);
+      }
+
+      public override int GetHashCode() {
+        return 0;
+      }
+    }
+
+    [FirestoreData]
+    public sealed class CustomUserEnumerableEmails {
       [FirestoreProperty]
-      public Email Email { get; set; }
+      public int HighScore { get; set; }
+      [FirestoreProperty] public string Name { get; set; }
+      [FirestoreProperty] public IEnumerable<string> Emails { get; set; }
+
+      public override bool Equals(object obj) {
+        if (!(obj is CustomUserEnumerableEmails)) {
+          return false;
+        }
+
+        CustomUserEnumerableEmails other = (CustomUserEnumerableEmails)obj;
+        return HighScore == other.HighScore && Name == other.Name &&
+               Emails.SequenceEqual(other.Emails);
+      }
+
+      public override int GetHashCode() {
+        return 0;
+      }
+    }
+
+    [FirestoreData]
+    public sealed class CustomUserSetEmails {
+      [FirestoreProperty]
+      public int HighScore { get; set; }
+      [FirestoreProperty] public string Name { get; set; }
+      [FirestoreProperty] public HashSet<string> Emails { get; set; }
+
+      public override bool Equals(object obj) {
+        if (!(obj is CustomUserSetEmails)) {
+          return false;
+        }
+
+        CustomUserSetEmails other = (CustomUserSetEmails)obj;
+        return HighScore == other.HighScore && Name == other.Name &&
+               Emails.SequenceEqual(other.Emails);
+      }
+
+      public override int GetHashCode() {
+        return 0;
+      }
+    }
+
+    [FirestoreData(ConverterType = typeof(CustomUserSetEmailsConverter))]
+    public sealed class CustomUserSetEmailsWithConverter {
+      [FirestoreProperty]
+      public int HighScore { get; set; }
+      [FirestoreProperty] public string Name { get; set; }
+      [FirestoreProperty] public HashSet<string> Emails { get; set; }
+
+      public override bool Equals(object obj) {
+        if (!(obj is CustomUserSetEmailsWithConverter)) {
+          return false;
+        }
+
+        var other = (CustomUserSetEmailsWithConverter)obj;
+        return HighScore == other.HighScore && Name == other.Name &&
+               Emails.SequenceEqual(other.Emails);
+      }
+
+      public override int GetHashCode() {
+        return 0;
+      }
+    }
+
+    public class CustomUserSetEmailsConverter
+        : FirestoreConverter<CustomUserSetEmailsWithConverter> {
+      public override CustomUserSetEmailsWithConverter FromFirestore(object value) {
+        if (value == null) {
+          throw new ArgumentNullException("value");  // Shouldn't happen
+        }
+
+        var map = (Dictionary<string, object>)value;
+        var emails = (List<object>)map["Emails"];
+        var emailSet = new HashSet<string>(emails.Select(o => o.ToString()));
+        return new CustomUserSetEmailsWithConverter { Name = (string)map["Name"],
+                                                      HighScore = Convert.ToInt32(map["HighScore"]),
+                                                      Emails = emailSet };
+      }
+
+      public override object ToFirestore(CustomUserSetEmailsWithConverter value) {
+        return new Dictionary<string, object> {
+          { "Name", value.Name },
+          { "HighScore", value.HighScore },
+          { "Emails", value.Emails },
+        };
+      }
     }
 
     [FirestoreData(ConverterType = typeof(EmailConverter))]
@@ -409,11 +599,11 @@ namespace Firebase.Sample.Firestore {
 
     public class CustomPlayerConverter : FirestoreConverter<CustomPlayer> {
       public override CustomPlayer FromFirestore(object value) {
-        var map = (IDictionary<string, object>) value;
+        var map = (IDictionary<string, object>)value;
         return new CustomPlayer {
-          Name = (string) map["PlayerName"],
+          Name = (string)map["PlayerName"],
           // Unbox to long, then convert to int.
-          Score = (int) (long) map["PlayerScore"]
+          Score = (int)(long)map["PlayerScore"]
         };
       }
 
@@ -437,17 +627,17 @@ namespace Firebase.Sample.Firestore {
       }
 
       public override int GetHashCode() { return Name.GetHashCode() + Value; }
-      public override bool Equals(object obj) { return obj is CustomValueType && Equals((CustomValueType) obj); }
+      public override bool Equals(object obj) { return obj is CustomValueType && Equals((CustomValueType)obj); }
       public bool Equals(CustomValueType other) { return Name == other.Name && Value == other.Value; }
       public override string ToString() { return String.Format("CustomValueType: {0}", new { Name, Value }); }
     }
 
     internal class CustomValueTypeConverter : FirestoreConverter<CustomValueType> {
       public override CustomValueType FromFirestore(object value) {
-        var dictionary = (IDictionary<string, object>) value;
+        var dictionary = (IDictionary<string, object>)value;
         return new CustomValueType(
-            (string) dictionary["Name"],
-            (int) (long) dictionary["Value"]
+            (string)dictionary["Name"],
+            (int)(long)dictionary["Value"]
         );
       }
 
@@ -468,7 +658,7 @@ namespace Firebase.Sample.Firestore {
       public int Value { get; set; }
 
       public override int GetHashCode() { return Name.GetHashCode() + Value; }
-      public override bool Equals(object obj) { return obj is StructModel && Equals((StructModel) obj); }
+      public override bool Equals(object obj) { return obj is StructModel && Equals((StructModel)obj); }
       public bool Equals(StructModel other) { return Name == other.Name && Value == other.Value; }
 
       public override string ToString() { return String.Format("StructModel: {0}", new { Name, Value }); }
