@@ -16,7 +16,6 @@ namespace Firebase.Sample.Database {
   using Firebase;
   using Firebase.Database;
   using Firebase.Extensions;
-  using Firebase.Unity.Editor;
   using System;
   using System.Collections;
   using System.Collections.Generic;

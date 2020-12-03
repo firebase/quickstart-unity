@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -10,6 +12,12 @@ namespace Firebase.Sample.Firestore {
     private readonly List<T> events = new List<T>();
     private int maxEvents = 0;
     private bool assertOnAnyEvent = false;
+    private int mainThreadId = -1;
+
+    public EventAccumulator() { }
+    public EventAccumulator(int mainThreadId) {
+      this.mainThreadId = mainThreadId;
+    }
 
     /// <summary>
     /// Returns a listener callback suitable for passing to Listen().
@@ -19,7 +27,9 @@ namespace Firebase.Sample.Firestore {
         return (value) => {
           lock (this) {
             HardAssert(!assertOnAnyEvent, "Received unexpected event: " + value);
-            Debug.Log("EventAccumulator Received new event: " + value);
+            if (mainThreadId > 0) {
+              HardAssert(1 == Thread.CurrentThread.ManagedThreadId, "Listener callback from non-main thread.");
+            }
             events.Add(value);
             CheckFulfilled();
           }
@@ -74,7 +84,7 @@ namespace Firebase.Sample.Firestore {
     private void HardAssert(bool condition, string message) {
       if (!condition) {
         string text = "Assertion Failure: " + message;
-        Debug.Log(text);
+        UnityEngine.Debug.Log(text);
         throw new Exception(text);
       }
     }
