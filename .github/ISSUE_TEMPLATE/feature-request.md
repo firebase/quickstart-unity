@@ -1,7 +1,8 @@
 ---
 name: ➕ Feature request
 about: If you have a feature request for the Firebase Unity SDK, file it here.
-labels: 'type: feature request'
+title: "[FR] "
+labels: 'new, type: feature request'
 ---
 
 <!-- DO NOT DELETE
@@ -11,7 +12,7 @@ template_path=.github/ISSUE_TEMPLATE/feature-request.md
 
 ### [READ] Guidelines
 
-When filing a feature request please make sure the issue title starts with "FR:".
+When filing a feature request please make sure the issue title starts with "[FR]".
 
 A good feature request ideally
 * is either immediately obvious (i.e. "Add Sign in with Apple support"), or
