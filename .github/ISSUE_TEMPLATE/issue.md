@@ -1,7 +1,8 @@
 ---
 name: 🐞 Bug report
 about: Please use this template to report issues with the Firebase Unity SDK.
-labels: new
+title: "[Bug] "
+labels: 'new, type: question'
 ---
 
 <!-- DO NOT DELETE
