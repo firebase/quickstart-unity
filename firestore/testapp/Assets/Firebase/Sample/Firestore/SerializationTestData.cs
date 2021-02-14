@@ -58,7 +58,7 @@ namespace Firebase.Sample.Firestore {
 
       /// <summary>
       /// The expected output from the Firestore document deserialized to raw
-      /// Firestore type (<code>Dictionary<string, object></code>, or primitive types).
+      /// Firestore type (<code>Dictionary&lt;string, object&gt;</code>, or primitive types).
       /// </summary>
       internal object ExpectedRawOutput { get; private set; }
 
@@ -212,7 +212,7 @@ namespace Firebase.Sample.Firestore {
                                         Emails = new List<string> { "jon@example.com" } },
                        new Dictionary<string, object> {
                          { "Name", "Jon" },
-                         { "HighScore", 10l },
+                         { "HighScore", 10L },
                          { "Emails", new List<object> { "jon@example.com" } }
                        }) },
 
@@ -221,7 +221,7 @@ namespace Firebase.Sample.Firestore {
             new CustomUserEnumerableEmails() { Name = "Jon", HighScore = 10,
                                                Emails = new List<string> { "jon@example.com" } },
             new Dictionary<string, object> { { "Name", "Jon" },
-                                             { "HighScore", 10l },
+                                             { "HighScore", 10L },
                                              { "Emails",
                                                new List<object> { "jon@example.com" } } }) },
 
@@ -231,7 +231,7 @@ namespace Firebase.Sample.Firestore {
               Name = "Jon", HighScore = 10, Emails = new HashSet<string> { "jon@example.com" }
             },
             new Dictionary<string, object> { { "Name", "Jon" },
-                                             { "HighScore", 10l },
+                                             { "HighScore", 10L },
                                              { "Emails",
                                                new List<object> { "jon@example.com" } } }) },
 

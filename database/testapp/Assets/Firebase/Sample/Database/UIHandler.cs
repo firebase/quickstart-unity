@@ -83,8 +83,8 @@ namespace Firebase.Sample.Database {
           if (e2.Snapshot != null && e2.Snapshot.ChildrenCount > 0) {
             foreach (var childSnapshot in e2.Snapshot.Children) {
               if (childSnapshot.Child("score") == null
-              || childSnapshot.Child("score").Value == null) {
-                Debug.LogError("Bad data in sample.  Did you forget to call SetEditorDatabaseUrl with your project id?");
+                  || childSnapshot.Child("score").Value == null) {
+                Debug.LogError("Bad data in sample.");
                 break;
               } else {
                 Debug.Log("Leaders entry : " +
