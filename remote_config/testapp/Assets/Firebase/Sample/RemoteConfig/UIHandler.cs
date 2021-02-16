@@ -61,7 +61,7 @@ namespace Firebase.Sample.RemoteConfig {
       defaults.Add("config_test_float", 1.0);
       defaults.Add("config_test_bool", false);
 
-      Firebase.RemoteConfig.FirebaseRemoteConfig.SetDefaults(defaults);
+      Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.SetDefaults(defaults);
       // [END set_defaults]
       DebugLog("RemoteConfig configured and ready!");
       isFirebaseInitialized = true;
@@ -83,24 +83,24 @@ namespace Firebase.Sample.RemoteConfig {
     public void DisplayData() {
       DebugLog("Current Data:");
       DebugLog("config_test_string: " +
-               Firebase.RemoteConfig.FirebaseRemoteConfig.GetValue("config_test_string").StringValue);
+               Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.GetValue("config_test_string").StringValue);
       DebugLog("config_test_int: " +
-               Firebase.RemoteConfig.FirebaseRemoteConfig.GetValue("config_test_int").LongValue);
+               Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.GetValue("config_test_int").LongValue);
       DebugLog("config_test_float: " +
-               Firebase.RemoteConfig.FirebaseRemoteConfig.GetValue("config_test_float").DoubleValue);
+               Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.GetValue("config_test_float").DoubleValue);
       DebugLog("config_test_bool: " +
-               Firebase.RemoteConfig.FirebaseRemoteConfig.GetValue("config_test_bool").BooleanValue);
+               Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.GetValue("config_test_bool").BooleanValue);
     }
 
     public void DisplayAllKeys() {
       DebugLog("Current Keys:");
       System.Collections.Generic.IEnumerable<string> keys =
-          Firebase.RemoteConfig.FirebaseRemoteConfig.Keys;
+          Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.Keys;
       foreach (string key in keys) {
         DebugLog("    " + key);
       }
       DebugLog("GetKeysByPrefix(\"config_test_s\"):");
-      keys = Firebase.RemoteConfig.FirebaseRemoteConfig.GetKeysByPrefix("config_test_s");
+      keys = Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.GetKeysByPrefix("config_test_s");
       foreach (string key in keys) {
         DebugLog("    " + key);
       }
@@ -115,7 +115,7 @@ namespace Firebase.Sample.RemoteConfig {
     // changes in the console will always show up immediately.
     public Task FetchDataAsync() {
       DebugLog("Fetching data...");
-      System.Threading.Tasks.Task fetchTask = Firebase.RemoteConfig.FirebaseRemoteConfig.FetchAsync(
+      System.Threading.Tasks.Task fetchTask = Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.FetchAsync(
           TimeSpan.Zero);
       return fetchTask.ContinueWithOnMainThread(FetchComplete);
     }
@@ -130,10 +130,10 @@ namespace Firebase.Sample.RemoteConfig {
         DebugLog("Fetch completed successfully!");
       }
 
-      var info = Firebase.RemoteConfig.FirebaseRemoteConfig.Info;
+      var info = Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.Info;
       switch (info.LastFetchStatus) {
         case Firebase.RemoteConfig.LastFetchStatus.Success:
-          Firebase.RemoteConfig.FirebaseRemoteConfig.ActivateFetched();
+          Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.ActivateFetched();
           DebugLog(String.Format("Remote data loaded and ready (last fetch time {0}).",
                                  info.FetchTime));
           break;

@@ -8,7 +8,7 @@ inside the Unity Editor.
 
 ## Requirements
 
-* [Unity](http://unity3d.com/) 5.3 or higher
+* [Unity](http://unity3d.com/) The quickstart project requires 2017.4 or higher.
 * [Xcode](https://developer.apple.com/xcode/) 10.3 or higher
   (when developing for iOS).
 * [Android SDK](https://developer.android.com/studio/index.html#downloads)

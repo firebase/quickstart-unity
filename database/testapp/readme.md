@@ -8,7 +8,7 @@ inside the Unity Editor.
 
 ## Requirements
 
-* [Unity](http://unity3d.com/) 5.3 or higher.
+* [Unity](http://unity3d.com/) The quickstart project requires 2017.4 or higher.
 * [Xcode](https://developer.apple.com/xcode/) 10.3 or higher
   (when developing for iOS).
 * [Android SDK](https://developer.android.com/studio/index.html#downloads)
@@ -43,9 +43,6 @@ inside the Unity Editor.
     - When the **Import Unity Package** window appears, click the **Import**
       button.
   - Turn off secure access.  [Configure your rules for public access.](https://firebase.google.com/docs/database/security/quickstart#sample-rules)
-  - Change the line `SetEditorDatabaseUrl("https://replace-with-your-project.firebaseio.com/");`
-    to replace `replace-with-your-project` with the id found in the
-    firebase console.
 
 Once you have done this, you can run the Unity Editor and test the application.
 You will be able to enter an email, a score, and press `Add Score` to see the

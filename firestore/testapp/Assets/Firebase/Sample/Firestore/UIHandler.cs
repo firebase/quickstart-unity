@@ -37,9 +37,7 @@ namespace Firebase.Sample.Firestore {
     private string logText = "";
     private Vector2 scrollViewVector = Vector2.zero;
     protected bool UIEnabled = false;
-    private Vector2 fieldContentsScrollViewVector = Vector2.zero;
     private GUIStyle disabledButtonStyle;
-    private float textAreaLineHeight;
 
     // Path to the collection to query on.
     protected string collectionPath = "col1";
