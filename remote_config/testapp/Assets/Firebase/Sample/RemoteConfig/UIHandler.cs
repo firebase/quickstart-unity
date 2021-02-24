@@ -61,10 +61,13 @@ namespace Firebase.Sample.RemoteConfig {
       defaults.Add("config_test_float", 1.0);
       defaults.Add("config_test_bool", false);
 
-      Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.SetDefaults(defaults);
-      // [END set_defaults]
-      DebugLog("RemoteConfig configured and ready!");
-      isFirebaseInitialized = true;
+      Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.SetDefaultsAsync(defaults)
+        .ContinueWithOnMainThread(task => {
+        // [END set_defaults]
+        DebugLog("RemoteConfig configured and ready!");
+        isFirebaseInitialized = true;
+      });
+
     }
 
     // Exit if escape (or back, on mobile) is pressed.
@@ -83,24 +86,28 @@ namespace Firebase.Sample.RemoteConfig {
     public void DisplayData() {
       DebugLog("Current Data:");
       DebugLog("config_test_string: " +
-               Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.GetValue("config_test_string").StringValue);
+               Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance
+               .GetValue("config_test_string").StringValue);
       DebugLog("config_test_int: " +
-               Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.GetValue("config_test_int").LongValue);
+               Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance
+               .GetValue("config_test_int").LongValue);
       DebugLog("config_test_float: " +
-               Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.GetValue("config_test_float").DoubleValue);
+               Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance
+               .GetValue("config_test_float").DoubleValue);
       DebugLog("config_test_bool: " +
-               Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.GetValue("config_test_bool").BooleanValue);
+               Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance
+               .GetValue("config_test_bool").BooleanValue);
     }
 
     public void DisplayAllKeys() {
       DebugLog("Current Keys:");
       System.Collections.Generic.IEnumerable<string> keys =
-          Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.Keys;
+          Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.Keys;
       foreach (string key in keys) {
         DebugLog("    " + key);
       }
       DebugLog("GetKeysByPrefix(\"config_test_s\"):");
-      keys = Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.GetKeysByPrefix("config_test_s");
+      keys = Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.GetKeysByPrefix("config_test_s");
       foreach (string key in keys) {
         DebugLog("    " + key);
       }
@@ -115,7 +122,8 @@ namespace Firebase.Sample.RemoteConfig {
     // changes in the console will always show up immediately.
     public Task FetchDataAsync() {
       DebugLog("Fetching data...");
-      System.Threading.Tasks.Task fetchTask = Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.FetchAsync(
+      System.Threading.Tasks.Task fetchTask =
+      Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.FetchAsync(
           TimeSpan.Zero);
       return fetchTask.ContinueWithOnMainThread(FetchComplete);
     }
@@ -130,12 +138,15 @@ namespace Firebase.Sample.RemoteConfig {
         DebugLog("Fetch completed successfully!");
       }
 
-      var info = Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.Info;
+      var info = Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.Info;
       switch (info.LastFetchStatus) {
         case Firebase.RemoteConfig.LastFetchStatus.Success:
-          Firebase.RemoteConfig.FirebaseRemoteConfigDeprecated.ActivateFetched();
-          DebugLog(String.Format("Remote data loaded and ready (last fetch time {0}).",
+          Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.ActivateAsync()
+          .ContinueWithOnMainThread(task => {
+            DebugLog(String.Format("Remote data loaded and ready (last fetch time {0}).",
                                  info.FetchTime));
+          });
+
           break;
         case Firebase.RemoteConfig.LastFetchStatus.Failure:
           switch (info.LastFetchFailureReason) {
