@@ -13,6 +13,7 @@
     "precompiledReferences": [
         "nunit.framework.dll",
         "Firebase.App.dll",
+        "Firebase.Auth.dll",
         "Firebase.Firestore.dll",
         "Firebase.TaskExtension.dll",
         "Unity.Tasks.dll"
