@@ -199,6 +199,13 @@ using the
       of the Unity status bar.
     - Click `Build and Run`.
   - See the *Using the Sample* section below.
+  - Please ensure that you are requesting for `BIND_JOB_SERVICE` permission on messaging services in `AndroidManifest.xml`. Example,
+  ```
+    <service android:name="com.google.firebase.messaging.MessageForwardingService"
+             android:permission="android.permission.BIND_JOB_SERVICE"
+             android:exported="false" >
+    </service>
+  ```
 
 
 ## Using the Sample
