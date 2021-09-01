@@ -119,7 +119,7 @@ Before you submit your pull request consider the following guidelines:
 * Create your patch, **including appropriate test cases**.
 * Follow our [Coding Rules](#rules).
 * Avoid checking in files that shouldn't be tracked (e.g `.tmp`, `.idea`).
-  We recommend using a [global](#global-gitignore) gitignore for this.
+  We recommend using a [global gitignore][global-gitignore] for this.
 * Commit your changes using a descriptive commit message.
 
      ```shell
