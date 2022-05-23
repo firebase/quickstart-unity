@@ -1,14 +1,16 @@
 ---
-name: 🐞 Bug report
-about: Please use this template to report issues with the Firebase Unity SDK.
-title: "[Bug] "
-labels: 'new, type: question'
+name: Firebase Unity Sample issue
+about: Report issues with the Firebase Unity Sample.
+labels: new
 ---
-
 <!-- DO NOT DELETE
 validate_template=true
 template_path=.github/ISSUE_TEMPLATE/issue.md
 -->
+
+### [READ] For Firebase Unity SDK issues, please report to [Firebase Unity open-source](https://github.com/firebase/firebase-unity-sdk/issues/new/choose)
+
+Once you've read this section and determined that your issue is appropriate for this repository, please delete this section.
 
 ### [REQUIRED] Please fill in the following fields:
 
