@@ -62,7 +62,7 @@ using the
     - When the **Import Unity Package** window appears, click the **Import**
       button.
   - Add the `GoogleService-Info.plist` file to the project.
-    - Navigate to the `Assets/Firebase/Sample/Functions` folder in the `Project`
+    - Navigate to the `Assets/Firebase/Sample/DynamicLinks` folder in the `Project`
       window.
     - Drag the `GoogleService-Info.plist` downloaded from the Firebase console
       into the folder.
