@@ -15,6 +15,12 @@ using the
 * [Android SDK](https://developer.android.com/studio/index.html#downloads)
   (when developing for Android).
 
+## Notes
+
+* This testapp was designed for use on iOS and Android targets, and when
+  running in the Unity editor. While the code will also execute on tvOS, there
+  isn't an easy way for users to provide the click events required to use the
+  UI elements on that platform.
 
 ## Building the Sample
 
@@ -68,21 +74,21 @@ using the
       into the folder.
       - NOTE: `GoogleService-Info.plist` can be placed anywhere under the
         `Assets` folder.
-  - Optional: Update the Project Bundle Identifier
+  - Optional: Update the Project Bundle Identifier.
     - If you did not use `com.google.firebase.unity.remoteconfig.testapp`
-      as the iOS bundle ID when creating your app in the Firebase
-      Console then you will need to update the sample's Bundle
-      Identifier.
+      as the Apple bundle ID when creating your app in the Firebase
+      Console, you will need to update the sample's Bundle Identifier.
       - Select the `File > Build Settings` menu option.
-      - Select `iOS` in the `Platform` list.
-      - Click `Player Settings`
-      - In the `Settings for iOS` panel scroll down to `Bundle Identifier`
-        and update the value to the `iOS bundle ID` you provided when you
-        registered your app with Firebase.
-  - Build for iOS
+      - Select `iOS` or `tvOS` in the `Platform` list, depending on your build
+        target.
+      - Click `Player Settings`.
+      - In the `Settings for iOS` or `Settings for tvOS` panel, scroll down to
+        `Bundle Identifier` and update the value to the `iOS bundle ID` you
+        provided when you registered your app with Firebase.
+  - Build for iOS or tvOS.
     - Select the `File > Build Settings` menu option.
-    - Select `iOS` in the `Platform` list.
-    - Click `Switch Platform` to select `iOS` as the target platform.
+    - Select either `iOS` or `tvOS` in the `Platform` list.
+    - Click `Switch Platform` to enable your selection as the target platform.
     - Wait for the spinner (compiling) icon to stop in the bottom right corner
       of the Unity status bar.
     - Click `Build and Run`.
