@@ -24,24 +24,27 @@ using the
 
 ## Building the Sample
 
-### iOS
+### iOS or tvOS
 
-  - Register your iOS app with Firebase.
+  - Register your iOS+ (iOS or tvOS) app with Firebase.
     - Create a project in the
-      [Firebase console](https://firebase.google.com/console/),
-      and associate your iOS application.
+      [Firebase console](https://firebase.google.com/console/).
+    - Associate your project to an app by clicking the `Add app` button,
+      and selecting the **Unity** icon.
+      - Check the box labeled `Register as Apple app`.
       - You should use `com.google.firebase.unity.remoteconfig.testapp` as the
-         iOS bundle ID when creating the Firebase iOS app in the console.
+        Apple bundle ID when creating the Unity app in the console.
         - If you do not use the prescribed Bundle ID, you will later need to
           update the bundle identifier in Unity as described in
           `Optional: Update the Project Bundle Identifier` below.
     - Download the `GoogleService-Info.plist` file associated with your
-      Firebase project from the console.
-      This file identifies your iOS app to the Firebase backend, and will
-      need to be included in the sample later.
+      Firebase project from the console. This file identifies your iOS+
+      app to the Firebase backend, and will need to be included in the sample
+      later.
     - For further details please refer to the
       [general instructions](https://firebase.google.com/docs/ios/setup)
-      which describes how to configure a Firebase application for iOS.
+      which describes how to configure a Firebase application for iOS
+      and tvOS.
   - Download the
     [Firebase Unity SDK](https://firebase.google.com/download/unity)
     and unzip it somewhere convenient.
@@ -58,13 +61,7 @@ using the
   - Import the `Firebase Remote Config` plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
-      downloaded previously, import `FirebaseRemoteConfig.unitypackage` from the
-      directory that matches the version of Unity you use:
-       - Unity 5.x and earlier use the .NET 3.x framework, so you need to
-         import the `dotnet3/FirebaseRemoteConfig.unitypackage` package .
-       - Unity 2017.x and newer allow the use of the .NET 4.x framework.  If
-         your project is configured to use .NET 4.x, import the
-         `dotnet4/FirebaseRemoteConfig.unitypackage` package.
+      downloaded previously, import `FirebaseRemoteConfig.unitypackage`.
     - When the **Import Unity Package** window appears, click the **Import**
       button.
   - Add the `GoogleService-Info.plist` file to the project.
@@ -151,13 +148,7 @@ using the
   - Import the `Firebase Remote Config` plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
-      downloaded previously, import `FirebaseRemoteConfig.unitypackage` from the
-      directory that matches the version of Unity you use:
-       - Unity 5.x and earlier use the .NET 3.x framework, so you need to
-         import the `dotnet3/FirebaseRemoteConfig.unitypackage` package .
-       - Unity 2017.x and newer allow the use of the .NET 4.x framework.  If
-         your project is configured to use .NET 4.x, import the
-         `dotnet4/FirebaseRemoteConfig.unitypackage` package.
+      downloaded previously, import `FirebaseRemoteConfig.unitypackage`.
     - When the **Import Unity Package** window appears, click the **Import**
       button.
   - Add the `google-services.json` file to the project.

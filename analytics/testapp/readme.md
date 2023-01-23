@@ -23,13 +23,13 @@ with the
 
 ## Building the Sample
 
-### iOS and tvOS
+### iOS or tvOS
 
   - Register your iOS+ (iOS or tvOS) app with Firebase.
     - Create a project in the
       [Firebase console](https://firebase.google.com/console/).
     - Associate your project to an app by clicking the `Add app` button,
-      and selecting `Unity`.
+      and selecting the **Unity** icon.
       - Check the box labeled `Register as Apple app`.
       - You should use `com.google.firebase.unity.analytics.testapp` as the
         Apple bundle ID when creating the Unity app in the console.
@@ -79,7 +79,7 @@ with the
         target.
       - Click `Player Settings`.
       - In the `Settings for iOS` or `Settings for tvOS` panel, scroll down to
-        `Bundle Identifier` and update the value to the `iOS bundle ID` you
+        `Bundle Identifier` and update the value to the `Apple bundle ID` you
         provided when you registered your app with Firebase.
   - Build for iOS or tvOS
     - Select the `File > Build Settings` menu option.

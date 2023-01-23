@@ -24,13 +24,13 @@ with the
 
 ## Building the Sample
 
-### iOS and tvOS
+### iOS or tvOS
 
   - Register your iOS app with Firebase.
     - Create a project in the
       [Firebase console](https://firebase.google.com/console/).
     - Associate your project to an app by clicking the `Add app` button,
-      and selecting `Unity`.
+      and selecting the **Unity** icon.
       - Check the box labeled `Register as Apple app`.
       - You should use `com.google.FirebaseUnityAuthTestApp.dev` as the
         Apple bundle ID when creating the Unity app in the console.
@@ -43,9 +43,9 @@ with the
       - Select the *Sign-In Method* tab
       - Enable *Email/Password* and *Anonymous* sign-in providers.
     - Download the `GoogleService-Info.plist` file associated with your
-      Firebase project from the console.
-      This file identifies your iOS+ app to the Firebase backend, and will
-      need to be included in the sample later.
+      Firebase project from the console. This file identifies your iOS+ app
+      to the Firebase backend, and will need to be included in the sample
+      later.
     - For further details please refer to the
       [general instructions](https://firebase.google.com/docs/ios/setup)
       which describes how to configure a Firebase application for iOS
@@ -66,13 +66,7 @@ with the
   - Import the `Firebase Auth` plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
-      downloaded previously, import `FirebaseAuth.unitypackage` from the
-      directory that matches the version of Unity you use:
-       - Unity 5.x and earlier use the .NET 3.x framework, so you need to
-         import the `dotnet3/FirebaseAuth.unitypackage` package .
-       - Unity 2017.x and newer allow the use of the .NET 4.x framework.  If
-         your project is configured to use .NET 4.x, import the
-         `dotnet4/FirebaseAuth.unitypackage` package.
+      downloaded previously, import `FirebaseAuth.unitypackage`.
     - When the **Import Unity Package** window appears, click the **Import**
       button.
   - Add the `GoogleService-Info.plist` file to the project.
@@ -91,7 +85,7 @@ with the
         target.
       - Click `Player Settings`.
       - In the `Settings for iOS` or `Settings for tvOS` panel, scroll down to
-        `Bundle Identifier` and update the value to the `iOS bundle ID` you
+        `Bundle Identifier` and update the value to the `Apple bundle ID` you
         provided when you registered your app with Firebase.
   - Build for iOS or tvOS
     - Select the `File > Build Settings` menu option.

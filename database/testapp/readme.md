@@ -70,25 +70,54 @@ documentation.
 
 ## Building the Sample for Devices
 
-### iOS
+### iOS or tvOS
 
-  - Register your iOS app with Firebase.
+  - Register your iOS+ (iOS or tvOS) app with Firebase.
     - Create a project in the
-      [Firebase console](https://firebase.google.com/console/),
-      and associate your iOS application.
+      [Firebase console](https://firebase.google.com/console/).
+    - Associate your project to an app by clicking the `Add app` button,
+      and selecting the **Unity** icon.
+      - Check the box labeled `Register as Apple app`.
       - You should use `com.google.firebase.unity.database.testapp` as the
-        iOS bundle ID when creating the Firebase iOS app in the console.
+        Apple bundle ID when creating the Unity app in the console.
         - If you do not use the prescribed Bundle ID, you will later need to
           update the bundle identifier in Unity as described in
           `Optional: Update the Project Bundle Identifier` below.
+    - Download the `GoogleService-Info.plist` file associated with your
+      Firebase project from the console. This file identifies your iOS+
+      app to the Firebase backend, and will need to be included in the sample
+      later.
+    - For further details please refer to the
+      [general instructions](https://firebase.google.com/docs/ios/setup)
+      which describes how to configure a Firebase application for iOS
+      and tvOS.
+  - Download the
+    [Firebase Unity SDK](https://firebase.google.com/download/unity)
+    and unzip it somewhere convenient.
+  - Open the sample project in the Unity editor.
+    - Select the `File > Open Project` menu item.
+    - If Unity Hub appears, click `Add`. Otherwise click `Open`.
+    - Navigate to the sample directory `testapp` in the file dialog and click
+      `Open`.
+      - You might be prompted to upgrade the project to your version of Unity.
+        Click `Confirm` to upgrade the project and continue.
+  - Open the scene `MainScene`.
+    - Navigate to `Assets/Firebase/Sample/Database` in the `Project` window.
+    - Double click on the `MainScene` file to open it.
+  - Import the `Firebase Database` plugin.
+    - Select the **Assets > Import Package > Custom Package** menu item.
+    - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
+      downloaded previously, import `FirebaseDatabase.unitypackage`.
+    - When the **Import Unity Package** window appears, click the **Import**
+      button.
   - Add the `GoogleService-Info.plist` file to the project.
-    - Navigate to the `Assets/Firebase/Sample/Database` folder in the
-      `Project` window.
+    - Navigate to the `Assets/Firebase/Sample/Database` folder in the `Project`
+      window.
     - Drag the `GoogleService-Info.plist` downloaded from the Firebase console
       into the folder.
       - NOTE: `GoogleService-Info.plist` can be placed anywhere under the
-        `Assets` folder.  - Optional: Update the Project Bundle Identifier
-    - Optional: Update the Project Bundle Identifier
+        `Assets` folder.
+  - Optional: Update the Project Bundle Identifier.
     - If you did not use `com.google.firebase.unity.database.testapp`
       as the Apple bundle ID when creating your app in the Firebase
       Console, you will need to update the sample's Bundle Identifier.
@@ -97,9 +126,9 @@ documentation.
         target.
       - Click `Player Settings`.
       - In the `Settings for iOS` or `Settings for tvOS` panel, scroll down to
-        `Bundle Identifier` and update the value to the `iOS bundle ID` you
+        `Bundle Identifier` and update the value to the `Apple bundle ID` you
         provided when you registered your app with Firebase.
-  - Build for iOS or tvOS
+  - Build for iOS or tvOS.
     - Select the `File > Build Settings` menu option.
     - Select either `iOS` or `tvOS` in the `Platform` list.
     - Click `Switch Platform` to enable your selection as the target platform.
@@ -147,6 +176,24 @@ documentation.
       - For further details please refer to the
         [general instructions](https://firebase.google.com/docs/android/setup)
         which describes how to configure a Firebase application for Android.
+  - Open the sample project in the Unity editor.
+    - Select the `File > Open Project` menu item.
+    - If Unity Hub appears, click `Add`. Otherwise click `Open`.
+    - Navigate to the sample directory `testapp` in the file dialog and click
+      `Open`.
+      - You might be prompted to upgrade the project to your version of Unity.
+        Click `Confirm` to upgrade the project and continue.
+  - Open the scene `MainScene`.
+    - Navigate to `Assets/Firebase/Sample/Database` in the `Project` window.
+    - Double click on the `MainScene` file to open it.
+      - You might be prompted to upgrade the project to your version of Unity.
+        Click `Confirm` to upgrade the project and continue.
+  - Import the `Firebase Database` plugin.
+    - Select the **Assets > Import Package > Custom Package** menu item.
+    - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
+      downloaded previously, import `FirebaseDatabase.unitypackage`.
+    - When the **Import Unity Package** window appears, click the **Import**
+      button.
   - Add the `google-services.json` file to the project.
     - Navigate to the `Assets/Firebase/Sample/Database` folder in the
       `Project` window.
