@@ -16,10 +16,12 @@ inside the Unity Editor.
 
 ## Notes
 
-* This testapp was designed for use on iOS and Android targets, and when
-  running in the Unity editor. While the code will also execute on tvOS, there
-  isn't an easy way for users to provide the click events required to use the
-  UI elements on that platform.
+### Usage on tvOS
+
+This testapp was designed for use on iOS and Android targets, and when
+running in the Unity editor. While the code will also execute on tvOS, there
+isn't an easy way for users to provide the click events required to use the
+UI elements on that platform.
 
 ## Running the Sample inside the Editor
 
@@ -59,7 +61,7 @@ Once you have done this, you can run the Unity Editor and test the application.
       Firebase project from the console.
       - For further details please refer to the
       [general instructions](https://firebase.google.com/docs/ios/setup)
-      which describes how to configure a Firebase application for iOS
+      page which describes how to configure a Firebase application for iOS
       and tvOS.
   - Select `File > Open Project` menu item.
     - If Unity Hub appears, click `Add`.  Otherwise click `Open`.
@@ -141,7 +143,8 @@ Once you have done this, you can run the Unity Editor and test the application.
         Firebase project from the console.
       - For further details please refer to the
         [general instructions](https://firebase.google.com/docs/android/setup)
-        which describes how to configure a Firebase application for Android.
+        page which describes how to configure a Firebase application for
+        Android.
   - Select `File > Open Project` menu item.
     - If Unity Hub appears, click `Add`.  Otherwise click `Open`.
     - Navigate to this sample project directory `testapp` in the file dialog and

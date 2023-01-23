@@ -16,12 +16,12 @@ inside the Unity Editor.
 
 ## Notes
 
-### tvOS Support
+### Usage on tvOS
 
-* This testapp was designed for use on iOS and Android targets, and when
-  running in the Unity editor. While the code will also execute on tvOS, there
-  isn't an easy way for users to provide the click events required to use the
-  UI elements on that platform.
+This testapp was designed for use on iOS and Android targets, and when
+running in the Unity editor. While the code will also execute on tvOS, there
+isn't an easy way for users to provide the click events required to use the
+UI elements on that platform.
 
 ## Running the Sample inside the Editor
 
@@ -29,34 +29,29 @@ inside the Unity Editor.
     [Firebase Unity SDK](https://firebase.google.com/download/unity)
     and unzip it somewhere convenient.
   - Open the sample project in the Unity editor.
-    - Select the `File > Open Project` menu item.
-    - If Unity Hub appears, click `Add`. Otherwise click `Open`.
+    - Select the **File > Open Project** menu item.
+    - If Unity Hub appears, click **Add**. Otherwise click **Open**.
     - Navigate to the sample directory `testapp` in the file dialog and click
-      `Open`.
+      **Open**.
       - You might be prompted to upgrade the project to your version of Unity.
-        Click `Confirm` to upgrade the project and continue.
+        Click **Confirm** to upgrade the project and continue.
   - Open the scene `MainScene`.
-    - Navigate to `Assets/Firebase/Sample/Storage` in the `Project` window.
+    - Navigate to `Assets/Firebase/Sample/Storage` in the **Project** window.
     - Double click on the `MainScene` file to open it.
   - Import the `Firebase Storage` plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
-      downloaded previously, import `FirebaseStorage.unitypackage` from the
-      directory that matches the version of Unity you use:
-       - Unity 5.x and earlier use the .NET 3.x framework, so you need to
-         import the `dotnet3/FirebaseStorage.unitypackage` package .
-       - Unity 2017.x and newer allow the use of the .NET 4.x framework.  If
-         your project is configured to use .NET 4.x, import the
-         `dotnet4/FirebaseStorage.unitypackage` package.
+      downloaded previously, import `FirebaseStorage.unitypackage`.
     - When the **Import Unity Package** window appears, click the **Import**
       button.
   - Turn off secure access using [Public Rules](https://firebase.google.com/docs/storage/security/start)
     - Navigate to the Storage tab in the firebase console.
     - In the Rules section, replace the line
-    `allow read, write: if request.auth != null;` with `allow read, write;`
-  - Change the line `private const string MyStorageBucket = "gs://YOUR-FIREBASE-BUCKET/";`
-    to replace YOUR-FIREBASE-BUCKET with the bucket found in the
-    firebase console under the Storage tab.
+      `allow read, write: if request.auth != null;` with `allow read, write;`
+  - Change the line
+    `private const string MyStorageBucket = "gs://YOUR-FIREBASE-BUCKET/";` to
+    replace `YOUR-FIREBASE-BUCKET` with the bucket found in the Firebase
+    console under the Storage tab.
 
 Once you have done this, you can run the Unity Editor and test the application.
 You will be able to enter text to upload to Cloud Storage and afterwards
@@ -83,20 +78,20 @@ download that same text.
       later.
     - For further details please refer to the
       [general instructions](https://firebase.google.com/docs/ios/setup)
-      which describes how to configure a Firebase application for iOS
+      page which describes how to configure a Firebase application for iOS
       and tvOS.
   - Download the
     [Firebase Unity SDK](https://firebase.google.com/download/unity)
     and unzip it somewhere convenient.
   - Open the sample project in the Unity editor.
-    - Select the `File > Open Project` menu item.
-    - If Unity Hub appears, click `Add`. Otherwise click `Open`.
+    - Select the **File > Open Project** menu item.
+    - If Unity Hub appears, click **Add**. Otherwise click **Open**.
     - Navigate to the sample directory `testapp` in the file dialog and click
-      `Open`.
+      **Open**.
       - You might be prompted to upgrade the project to your version of Unity.
-        Click `Confirm` to upgrade the project and continue.
+        Click **Confirm** to upgrade the project and continue.
   - Open the scene `MainScene`.
-    - Navigate to `Assets/Firebase/Sample/Storage` in the `Project` window.
+    - Navigate to `Assets/Firebase/Sample/Storage` in the **Project** window.
     - Double click on the `MainScene` file to open it.
   - Import the `Firebase Storage` plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
@@ -105,8 +100,8 @@ download that same text.
     - When the **Import Unity Package** window appears, click the **Import**
       button.
   - Add the `GoogleService-Info.plist` file to the project.
-    - Navigate to the `Assets/Firebase/Sample/Storage` folder in the `Project`
-      window.
+    - Navigate to the `Assets/Firebase/Sample/Storage` folder in the
+      **Project** window.
     - Drag the `GoogleService-Info.plist` downloaded from the Firebase console
       into the folder.
       - NOTE: `GoogleService-Info.plist` can be placed anywhere under the
@@ -115,20 +110,21 @@ download that same text.
     - If you did not use `com.google.firebase.unity.storage.testapp`
       as the `Apple bundle ID` when creating your app in the Firebase
       Console, you will need to update the sample's Bundle Identifier.
-      - Select the `File > Build Settings` menu option.
-      - Select `iOS` or `tvOS` in the `Platform` list, depending on your build
-        target.
-      - Click `Player Settings`.
-      - In the `Settings for iOS` or `Settings for tvOS` panel, scroll down to
-        `Bundle Identifier` and update the value to the `iOS bundle ID` you
-        provided when you registered your app with Firebase.
+      - Select the **File > Build Settings** menu option.
+      - Select **iOS** or **tvOS** in the **Platform** list, depending on your
+        build target.
+      - Click **Player Settings**.
+      - In the **Settings for iOS** or **Settings for tvOS** panel, scroll
+        down to **Bundle Identifier** and update the value to the
+        `Apple bundle ID` you provided when you registered your app with
+        Firebase.
   - Build for iOS or tvOS.
-    - Select the `File > Build Settings` menu option.
-    - Select either `iOS` or `tvOS` in the `Platform` list.
-    - Click `Switch Platform` to enable your selection as the target platform.
+    - Select the **File > Build Settings** menu option.
+    - Select either **iO** or **tvOS** in the **Platform** list.
+    - Click **Switch Platform** to enable your selection as the target platform.
     - Wait for the spinner (compiling) icon to stop in the bottom right corner
       of the Unity status bar.
-    - Click `Build and Run`.
+    - Click **Build and Run**.
   - See the *Using the Sample* section below.
 
 ### Android
@@ -156,7 +152,7 @@ download that same text.
           keytool -list -v -keystore <path_to_keystore> -alias <key_name>
           ```
         - Copy the SHA1 digest string into your clipboard.
-        - Navigate to your Android App in your firebase console.
+        - Navigate to your Android App in your Firebase console.
           - From the main console view, click on your Android App at the top and
             click the gear to open the settings page.
         - Scroll down to your apps at the bottom of the page and click on
@@ -170,7 +166,27 @@ download that same text.
         need to be included in the sample later.
       - For further details please refer to the
         [general instructions](https://firebase.google.com/docs/android/setup)
-        which describes how to configure a Firebase application for Android.
+        page which describes how to configure a Firebase application for
+        Android.
+  - Download the
+    [Firebase Unity SDK](https://firebase.google.com/download/unity) and unzip
+    it somewhere convenient.
+  - Open the sample project in the Unity editor.
+    - Select the **File > Open Project** menu item.
+    - If Unity Hub appears, click **Add**.  Otherwise click **Open**.
+    - Navigate to the sample directory `testapp` in the file dialog and click
+      **Open**.
+      - You might be prompted to upgrade the project to your version of Unity.
+        Click **Confirm** to upgrade the project and continue.
+  - Open the scene `MainScene`.
+    - Navigate to `Assets/Firebase/Sample/Storage` in the **Project** window.
+    - Double click on the `MainScene` file to open it.
+  - Import the `Firebase Storage` plugin.
+    - Select the **Assets > Import Package > Custom Package** menu item.
+    - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
+      downloaded previously, import `FirebaseStorage.unitypackage`.
+    - When the **Import Unity Package** window appears, click the **Import**
+      button.
   - Add the `google-services.json` file to the project.
     - Navigate to the `Assets/Firebase/Sample/Storage` folder in the `Project`
       window.
@@ -188,14 +204,13 @@ download that same text.
       - In the `Settings for Android` panel scroll down to `Bundle Identifier`
         and update the value to the package name you provided when you
         registered your app with Firebase.
-  - Build for Android
-    - Select the `File > Build Settings` menu option.
-    - Select `Android` in the `Platform` list.
-    - Click `Switch Platform` to select `Android` as the target platform.
+  - Build for Android.
+    - Select the **File > Build Settings** menu option.
+    - Select **Android** in the **Platform** list.
+    - Click **Switch Platform** to select **Android** as the target platform.
     - Wait for the spinner (compiling) icon to stop in the bottom right corner
       of the Unity status bar.
-    - Click `Build and Run`.
-
+    - Click **Build and Run**.
 
 ## Troubleshooting
 

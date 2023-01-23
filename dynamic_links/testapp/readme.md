@@ -17,7 +17,7 @@ using the
 
 ## Notes
 
-* Dynamic Links is not supported on tvOS targets.
+* Dynamic Links is not supported on tvOS.
 
 ## Building the Sample
 
@@ -40,22 +40,22 @@ using the
       later.
     - For further details please refer to the
       [general instructions](https://firebase.google.com/docs/ios/setup)
-      which describes how to configure a Firebase application for iOS.
+      page which describes how to configure a Firebase application for iOS.
   - Download the
     [Firebase Unity SDK](https://firebase.google.com/download/unity)
     and unzip it somewhere convenient.
   - Open the sample project in the Unity editor.
-    - Select the `File > Open Project` menu item.
-    - Click `Open`.
+    - Select the **File > Open Project** menu item.
+    - Click **Open**.
     - Navigate to the sample directory `testapp` in the file dialog and click
-      `Open`.
+      **Open**.
       - You might be prompted to upgrade the project to your version of Unity.
-        Click `Confirm` to upgrade the project and continue.
+        Click **Confirm** to upgrade the project and continue.
   - Open the scene `MainScene`.
-    - Navigate to `Assets/Firebase/Sample/Functions` in the `Project` window.
+    - Navigate to `Assets/Firebase/Sample/Functions` in the **Project** window.
     - Double click on `MainScene` file to open it.
       - You might be prompted to upgrade the project to your version of Unity.
-        Click `Confirm` to upgrade the project and continue.
+        Click **Confirm** to upgrade the project and continue.
   - Import the `Firebase Dynamic Links` plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
@@ -73,12 +73,12 @@ using the
     - If you did not use `com.google.FirebaseUnityDynamicLinksTestApp.dev`
       as the `Apple bundle ID` when creating your app in the Firebase
       Console, you will need to update the sample's Bundle Identifier.
-      - Select the `File > Build Settings` menu option.
-      - Select `iOS` in the `Platform` list
-      - Click `Player Settings`.
-      - In the `Settings for iOS` panel, scroll down to `Bundle Identifier` and
-        update the value to the `Apple bundle ID` you provided when you
-        registered your app with Firebase.
+      - Select the **File > Build Settings** menu option.
+      - Select **iOS** in the **Platform** list
+      - Click **Player Settings**.
+      - In the **Settings for iOS** panel, scroll down t
+        **Bundle Identifier** and update the value to the `Apple bundle ID` you
+        provided when you registered your app with Firebase.
   - Copy the dynamic links domain URI prefix for your project under the Dynamic
     Links tab of the [Firebase console](https://firebase.google.com/console/)
     e.g xyz.app.goo.gl and assign it to the string DomainUriPrefix on the
@@ -87,12 +87,12 @@ using the
       [these instructions](https://firebase.google.com/docs/dynamic-links/custom-domains)
       to set up the domain in Firebase console and in your project's Info.plist.
   - Build for iOS.
-    - Select the `File > Build Settings` menu option.
-    - Select `iOS` in the `Platform` list.
-    - Click `Switch Platform` to enable your selection as the target platform.
+    - Select the **File > Build Settings** menu option.
+    - Select **iOS** in the **Platform** list.
+    - Click **Switch Platform** to enable your selection as the target platform.
     - Wait for the spinner (compiling) icon to stop in the bottom right corner
       of the Unity status bar.
-    - Click `Build and Run`.
+    - Click **Build and Run**.
   - Configure the Xcode project capabilities to send invites and receive links.
     - Enable the Keychain Sharing capability on iOS 10 or above (required by
       Google Sign-In to send invites).
@@ -146,49 +146,45 @@ using the
         need to be included in the sample later.
       - For further details please refer to the
         [general instructions](https://firebase.google.com/docs/android/setup)
-        which describes how to configure a Firebase application for Android.
+        page which describes how to configure a Firebase application for
+        Android.
   - Download the
     [Firebase Unity SDK](https://firebase.google.com/download/unity)
     and unzip it somewhere convenient.
   - Open the sample project in the Unity editor.
-    - Select the `File > Open Project` menu item.
-    - Click `Open`.
+    - Select the **File > Open Project** menu item.
+    - Click **Open**.
       - You might be prompted to upgrade the project to your version of Unity.
-        Click `Confirm` to upgrade the project and continue.
+        Click **Confirm** to upgrade the project and continue.
     - Navigate to the sample directory `testapp` in the file dialog and click
-      `Open`.
+      **Open**.
   - Open the scene `MainScene`.
-    - Navigate to `Assets/Firebase/Sample/Functions` in the `Project` window.
+    - Navigate to `Assets/Firebase/Sample/Functions` in the **Project** window.
     - Double click on `MainScene` file to open it.
   - Import the `Firebase Dynamic Links` plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
-      downloaded previously, import `FirebaseDynamicLinks.unitypackage` from the
-      directory that matches the version of Unity you use:
-       - Unity 5.x and earlier use the .NET 3.x framework, so you need to
-         import the `dotnet3/FirebaseDynamicLinks.unitypackage` package .
-       - Unity 2017.x and newer allow the use of the .NET 4.x framework.  If
-         your project is configured to use .NET 4.x, import the
-         `dotnet4/FirebaseDynamicLinks.unitypackage` package.
+      downloaded previously, import `FirebaseDynamicLinks.unitypackage`.
     - When the **Import Unity Package** window appears, click the **Import**
       button.
   - Add the `google-services.json` file to the project.
-    - Navigate to the `Assets/Firebase/Sample/Functions` folder in the `Project`
-      window.
+    - Navigate to the `Assets/Firebase/Sample/Functions` folder in the
+      **Project** window.
     - Drag the `google-services.json` downloaded from the Firebase console
       into the folder.
       - NOTE: `google-services.json` can be placed anywhere under the `Assets`
         folder.
-  - Optional: Update the Project Bundle Identifier
+  - Optional: Update the Project Bundle Identifier.
     - If you did not use `com.google.FirebaseUnityDynamicLinksTestApp.dev`
       as the `Android package name` when you created your app in the Firebase
       Console, you will need to update the sample's Bundle Identifier.
-      - Select the `File > Build Settings` menu option.
-      - Select `Android` in the `Platform` list.
-      - Click `Player Settings`
-      - In the `Settings for Android` panel scroll down to `Bundle Identifier`
-        and update the value to the Android package name you provided when you
-        registered your app with Firebase.
+      - Select the **File > Build Settings** menu option.
+      - Select **Android** in the **Platform** list.
+      - Click **Player Settings**.
+      - In the **Settings for Android** panel scroll down to
+        **Bundle Identifier** and update the value to the
+        `Android package name` you provided when you registered your app with
+        Firebase.
   - Copy the dynamic links domain URI prefix for your project under the Dynamic
     Links tab of the [Firebase console](https://firebase.google.com/console/)
     e.g xyz.app.goo.gl and assign it to the string DomainUriPrefix on the
@@ -196,13 +192,13 @@ using the
     - Optional: If you want to use a custom Dynamic Links domain, follow
       [these instructions](https://firebase.google.com/docs/dynamic-links/custom-domains)
       to set up the domain in Firebase console.
-  - Build for Android
-    - Select the `File > Build Settings` menu option.
-    - Select `Android` in the `Platform` list.
-    - Click `Switch Platform` to select `Android` as the target platform.
+  - Build for Android.
+    - Select the **File > Build Settings** menu option.
+    - Select **Android** in the **Platform** list.
+    - Click **Switch Platform** to select **Android** as the target platform.
     - Wait for the spinner (compiling) icon to stop in the bottom right corner
       of the Unity status bar.
-    - Click `Build and Run`.
+    - Click **Build and Run**.
   - See the *Using the Sample* section below.
 
 

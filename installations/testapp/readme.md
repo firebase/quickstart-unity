@@ -14,10 +14,12 @@ deleting Installations using the Firebase Installations API of the
 
 ## Notes
 
-* This testapp was designed for use on iOS and Android targets, and when
-  running in the Unity editor. While the code will also execute on tvOS, there
-  isn't an easy way for users to provide the click events required to use the
-  UI elements on that platform.
+### Usage on tvOS
+
+This testapp was designed for use on iOS and Android targets, and when
+running in the Unity editor. While the code will also execute on tvOS, there
+isn't an easy way for users to provide the click events required to use the
+UI elements on that platform.
 
 ## Building the Sample
 
@@ -40,20 +42,21 @@ deleting Installations using the Firebase Installations API of the
       later.
     - For further details please refer to the
       [general instructions](https://firebase.google.com/docs/ios/setup)
-      which describes how to configure a Firebase application for iOS
+      page which describes how to configure a Firebase application for iOS
       and tvOS.
   - Download the
     [Firebase Unity SDK](https://firebase.google.com/download/unity)
     and unzip it somewhere convenient.
   - Open the sample project in the Unity editor.
-    - Select the `File > Open Project` menu item.
-    - Click `Open`.
+    - Select the **File > Open Project** menu item.
+    - Click **Open**.
     - Navigate to the sample directory `testapp` in the file dialog and click
-      `Open`.
+      **Open**.
       - You might be prompted to upgrade the project to your version of Unity.
-        Click `Confirm` to upgrade the project and continue.
+        Click **Confirm** to upgrade the project and continue.
   - Open the scene `MainScene`.
-    - Navigate to `Assets/Firebase/Sample/Installations` in the `Project` window.
+    - Navigate to `Assets/Firebase/Sample/Installations` in the **Project**
+      window.
     - Double click on `MainScene` file to open.
   - Import the `Firebase Installations` plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
@@ -63,7 +66,7 @@ deleting Installations using the Firebase Installations API of the
       button.
   - Add the `GoogleService-Info.plist` file to the project.
     - Navigate to the `Assets/Firebase/Sample/Installations` folder in the
-      `Project` window.
+      **Project** window.
     - Drag the `GoogleService-Info.plist` downloaded from the Firebase console
       into the folder.
       - NOTE: `GoogleService-Info.plist` can be placed anywhere under the
@@ -72,20 +75,21 @@ deleting Installations using the Firebase Installations API of the
     - If you did not use `com.google.firebase.unity.installations.testapp`
       as the `Apple bundle ID` when creating your app in the Firebase
       Console, you will need to update the sample's Bundle Identifier.
-      - Select the `File > Build Settings` menu option.
-      - Select `iOS` or `tvOS` in the `Platform` list, depending on your build
-        target.
-      - Click `Player Settings`.
-      - In the `Settings for iOS` or `Settings for tvOS` panel, scroll down to
-        `Bundle Identifier` and update the value to the `iOS bundle ID` you
-        provided when you registered your app with Firebase.
+      - Select the **File > Build Settings** menu option.
+      - Select **iOS** or **tvOS** in the **Platform** list, depending on your
+        build target.
+      - Click **Player Settings**.
+      - In the **Settings for iOS** or **Settings for tvOS** panel, scroll
+        down to **Bundle Identifier** and update the value to the 
+        `Apple bundle ID` you provided when you registered your app with
+        Firebase.
   - Build for iOS or tvOS.
-    - Select the `File > Build Settings` menu option.
-    - Select either `iOS` or `tvOS` in the `Platform` list.
-    - Click `Switch Platform` to enable your selection as the target platform.
+    - Select the **File > Build Settings** menu option.
+    - Select either **iOS** or **tvOS** in the **Platform** list.
+    - Click **Switch Platform** to enable your selection as the target platform.
     - Wait for the spinner (compiling) icon to stop in the bottom right corner
       of the Unity status bar.
-    - Click `Build and Run`.
+    - Click **Build and Run**.
   - See the *Using the Sample* section below.
 
 
@@ -117,17 +121,19 @@ deleting Installations using the Firebase Installations API of the
         need to be included in the sample later.
       - For further details please refer to the
         [general instructions](https://firebase.google.com/docs/android/setup)
-        which describes how to configure a Firebase application for Android.
+        page which describes how to configure a Firebase application for
+        Android.
   - Download the
     [Firebase Unity SDK](https://firebase.google.com/download/unity)
     and unzip it somewhere convenient.
   - Open the sample project in the Unity editor.
-    - Select the `File > Open Project` menu item.
-    - Click `Open`.
+    - Select the **File > Open Project** menu item.
+    - Click **Open**.
     - Navigate to the sample directory `testapp` in the file dialog and click
-      `Open`.
+      **Open**.
   - Open the scene `MainScene`.
-    - Navigate to `Assets/Firebase/Sample/Installations` in the `Project` window.
+    - Navigate to `Assets/Firebase/Sample/Installations` in the **Project**
+      window.
     - Double click on `MainScene` file to open it.
   - Import the `Firebase Installations` plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
@@ -135,28 +141,28 @@ deleting Installations using the Firebase Installations API of the
       downloaded previously, import `FirebaseInstallations.unitypackage`.
   - Add the `google-services.json` file to the project.
     - Navigate to the `Assets/Firebase/Sample/Installations` folder in the
-      `Project` window.
+      **Project** window.
     - Drag the `google-services.json` downloaded from the Firebase console
       into the folder.
       - NOTE: `google-services.json` can be placed anywhere under the `Assets`
         folder.
-  - Optional: Update the Project Bundle Identifier
+  - Optional: Update the Project Bundle Identifier.
     - If you did not use `com.google.firebase.unity.installations.testapp`
       as the project package name you will need to update the sample's Bundle
       Identifier.
-      - Select the `File > Build Settings` menu option.
-      - Select `Android` in the `Platform` list.
-      - Click `Player Settings`
-      - In the `Player Settings` panel scroll down to `Bundle Identifier`
+      - Select the **File > Build Settings** menu option.
+      - Select **Android** in the **Platform** list.
+      - Click **Player Settings**.
+      - In the **Player Settings** panel scroll down to **Bundle Identifier**
         and update the value to the package name you provided when you
         registered your app with Firebase.
-  - Build for Android
-    - Select the `File > Build Settings` menu option.
-    - Select `Android` in the `Platform` list.
-    - Click `Switch Platform` to select `Android` as the target platform.
+  - Build for Android.
+    - Select the **File > Build Settings** menu option.
+    - Select **Android** in the **Platform** list.
+    - Click **Switch Platform** to select **Android** as the target platform.
     - Wait for the spinner (compiling) icon to stop in the bottom right corner
       of the Unity status bar.
-    - Click `Build and Run`.
+    - Click **Build and Run**.
   - See the *Using the Sample* section below.
 
 
