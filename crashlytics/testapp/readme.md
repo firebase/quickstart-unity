@@ -51,7 +51,7 @@ Once you have done this, you can run the Unity Editor and test the application.
 
   - [Create a new Firebase project and Unity iOS app](https://firebase.google.com/docs/unity/setup).
     - You should use `com.google.firebase.unity.crashlytics.testapp` as the
-        Apple bundle ID when creating the Unity app in the console.
+        `Apple bundle ID` when creating the Unity app in the console.
         - If you do not use the prescribed Bundle ID, you will later need to
           update the bundle identifier in Unity as described in the
           `Optional: Update the Project Bundle Identifier` below.
@@ -90,7 +90,7 @@ Once you have done this, you can run the Unity Editor and test the application.
       the Unity plugin)
   - Optional: Update the Project Bundle Identifier.
     - If you did not use `com.google.firebase.unity.crashlytics.testapp`
-      as the Apple bundle ID when creating your app in the Firebase
+      as the `Apple bundle ID` when creating your app in the Firebase
       Console, you will need to update the sample's Bundle Identifier.
       - Select the `File > Build Settings` menu option.
       - Select `iOS` or `tvOS` in the `Platform` list, depending on your build

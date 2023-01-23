@@ -33,7 +33,7 @@ using the
       and selecting the **Unity** icon.
       - Check the box labeled `Register as Apple app`.
       - You should use `com.google.firebase.unity.remoteconfig.testapp` as the
-        Apple bundle ID when creating the Unity app in the console.
+        `Apple bundle ID` when creating the Unity app in the console.
         - If you do not use the prescribed Bundle ID, you will later need to
           update the bundle identifier in Unity as described in
           `Optional: Update the Project Bundle Identifier` below.
@@ -73,7 +73,7 @@ using the
         `Assets` folder.
   - Optional: Update the Project Bundle Identifier.
     - If you did not use `com.google.firebase.unity.remoteconfig.testapp`
-      as the Apple bundle ID when creating your app in the Firebase
+      as the `Apple bundle ID` when creating your app in the Firebase
       Console, you will need to update the sample's Bundle Identifier.
       - Select the `File > Build Settings` menu option.
       - Select `iOS` or `tvOS` in the `Platform` list, depending on your build
