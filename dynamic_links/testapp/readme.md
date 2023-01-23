@@ -208,6 +208,9 @@ using the
 
 ## Using the Sample
 
+**Note:** the UI elements of the quickstart app respond only to mouse clicks,
+and so will not be responsive on tvOS.
+
   - Receiving a link
     - When you first run the app, it will check for an incoming dynamic link
       and report whether it was able to fetch a link.

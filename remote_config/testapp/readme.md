@@ -180,6 +180,9 @@ using the
 
 ## Using the Sample
 
+**Note:** the UI elements of the quickstart app respond only to mouse clicks,
+and so will not be responsive on tvOS.
+
 Before running, you should add some data to the Firebase Console for the
 sample to fetch.
 

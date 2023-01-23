@@ -70,7 +70,7 @@ with the
       into the folder.
       - NOTE: `GoogleService-Info.plist` can be placed anywhere under the
         `Assets` folder.
-  - Optional: Update the Project Bundle Identifier
+  - Optional: Update the Project Bundle Identifier.
     - If you did not use `com.google.firebase.unity.analytics.testapp`
       as the Apple bundle ID when creating your app in the Firebase
       Console, you will need to update the sample's Bundle Identifier.
@@ -81,7 +81,7 @@ with the
       - In the `Settings for iOS` or `Settings for tvOS` panel, scroll down to
         `Bundle Identifier` and update the value to the `Apple bundle ID` you
         provided when you registered your app with Firebase.
-  - Build for iOS or tvOS
+  - Build for iOS or tvOS.
     - Select the `File > Build Settings` menu option.
     - Select either `iOS` or `tvOS` in the `Platform` list.
     - Click `Switch Platform` to enable your selection as the target platform.
@@ -187,7 +187,7 @@ with the
 
 ## Using the Sample
 
-**Note:** that the UI Elements of the quickstart app respond to mouse clicks,
+**Note:** the UI elements of the quickstart app respond only to mouse clicks,
 and so will not be responsive on tvOS.
 
 The sample provides a simple interface with several buttons, demonstrating

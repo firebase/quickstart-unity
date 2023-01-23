@@ -190,6 +190,9 @@ Once you have done this, you can run the Unity Editor and test the application.
 
 ## Testing and Validation
 
+**Note:** the UI elements of the quickstart app respond only to mouse clicks,
+and so will not be responsive on tvOS.
+
   - Once the Unity test app is running (detach debugger if attached), click the
     `Perform All Actions` button.
   - Trigger upload by completely closing and relaunching the test app.

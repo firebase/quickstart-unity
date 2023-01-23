@@ -21,7 +21,7 @@ deleting Installations using the Firebase Installations API of the
 
 ## Building the Sample
 
-### iOS
+### iOS or tvOS
 
   - Register your iOS+ (iOS or tvOS) app with Firebase.
     - Create a project in the
@@ -161,6 +161,9 @@ deleting Installations using the Firebase Installations API of the
 
 
 ## Using the Sample
+
+**Note:** the UI elements of the quickstart app respond only to mouse clicks,
+and so will not be responsive on tvOS.
 
 The sample provides a simple interface with several buttons:
 

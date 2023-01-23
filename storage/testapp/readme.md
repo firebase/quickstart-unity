@@ -16,6 +16,8 @@ inside the Unity Editor.
 
 ## Notes
 
+### tvOS Support
+
 * This testapp was designed for use on iOS and Android targets, and when
   running in the Unity editor. While the code will also execute on tvOS, there
   isn't an easy way for users to provide the click events required to use the
