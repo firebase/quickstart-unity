@@ -15,16 +15,6 @@ using the
 * [Android SDK](https://developer.android.com/studio/index.html#downloads)
   (when developing for Android).
 
-## Notes
-
-### Usage on tvOS
-
-This testapp was designed for use on iOS and Android targets, and when
-running in the Unity editor. While the code will also execute on tvOS,
-the buttons will be unresponsive as there isn't an easy way to provide
-the app with the click / touch events to orchestrate the UI elements on
-that platform.
-
 ## Building the Sample
 
 ### iOS or tvOS
@@ -187,6 +177,15 @@ that platform.
     - Click **Build and Run**.
   - See the **Using the Sample** section below.
 
+## Notes
+
+### Usage on tvOS
+
+This testapp was designed for use on iOS and Android targets, and when
+running in the Unity editor. While the code will also execute on tvOS,
+the buttons will be unresponsive as there isn't an easy way to provide
+the app with the click / touch events to orchestrate the UI elements on
+that platform.
 
 ## Using the Sample
 

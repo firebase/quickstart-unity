@@ -14,16 +14,6 @@ inside the Unity Editor.
 * [Android SDK](https://developer.android.com/studio/index.html#downloads)
   (when developing for Android).
 
-## Notes
-
-### Usage on tvOS
-
-This testapp was designed for use on iOS and Android targets, and when
-running in the Unity editor. While the code will also execute on tvOS,
-the buttons will be unresponsive as there isn't an easy way to provide
-the app with the click / touch events to orchestrate the UI elements on
-that platform.
-
 ## Running the Sample inside the Editor
 
   - Download the
@@ -53,7 +43,7 @@ Once you have done this, you can run the Unity Editor and test the application.
 
 ### iOS or tvOS
 
-  - Register your iOS app with Firebase.
+  - Register your iOS+ (iOS or tvOS) app with Firebase.
     - Create a project in the
       [Firebase console](https://firebase.google.com/console/).
     - Associate your project to an app by clicking the `Add app` button,
@@ -210,6 +200,15 @@ Once you have done this, you can run the Unity Editor and test the application.
       of the Unity status bar.
     - Click **Build and Run**.
 
+## Notes
+
+### Usage on tvOS
+
+This testapp was designed for use on iOS and Android targets, and when
+running in the Unity editor. While the code will also execute on tvOS,
+the buttons will be unresponsive as there isn't an easy way to provide
+the app with the click / touch events to orchestrate the UI elements on
+that platform.
 
 ## Testing and Validation
 

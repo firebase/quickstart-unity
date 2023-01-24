@@ -85,7 +85,8 @@ using the
       the `UIHandler` object in the `MainScene`.
     - Optional: If you want to use a custom Dynamic Links domain, follow
       [these instructions](https://firebase.google.com/docs/dynamic-links/custom-domains)
-      to set up the domain in Firebase console and in your project's `Info.plist`.
+      to set up the domain in Firebase console and in your project's
+      `Info.plist`.
   - Build for iOS.
     - Select the **File > Build Settings** menu option.
     - Select **iOS** in the **Platform** list.
@@ -94,16 +95,17 @@ using the
       of the Unity status bar.
     - Click **Build and Run**.
   - Configure the Xcode project capabilities to send invites and receive links.
-    - Enable the Keychain Sharing capability on iOS 10 or above (required by
-      Google Sign-In to send invites).
-      You can enable this capability on your project in Xcode 8 by going to
-      your project's settings, Capabilities, and turning on Keychain Sharing.
+    - Enable the Keychain Sharing capability (required by Google Sign-In to
+      send invites).
+      - You can enable this capability on your project in Xcode by going to
+        your project's settings, **Capabilities**, and turning on
+        **Keychain Sharing**.
     - Copy the domain URI prefix for your project under the **Dynamic Links** tab of
       the [Firebase console](https://firebase.google.com/console/) Then, in your
       project's Capabilities tab:
       - Enable the Associated Domains capability.
-      - Add applinks:YOUR_DYNAMIC_LINKS_DOMAIN
-        For example: `applinks:xyz.app.goo.gl`.
+      - Add `applinks:YOUR_DYNAMIC_LINKS_DOMAIN`. For example:
+        `applinks:xyz.app.goo.gl`.
   - See the **Using the Sample** section below.
 
 

@@ -14,16 +14,6 @@ inside the Unity Editor.
 * [Android SDK](https://developer.android.com/studio/index.html#downloads)
   (when developing for Android).
 
-## Notes
-
-### Usage on tvOS
-
-This testapp was designed for use on iOS and Android targets, and when
-running in the Unity editor. While the code will also execute on tvOS,
-the buttons will be unresponsive as there isn't an easy way to provide
-the app with the click / touch events to orchestrate the UI elements on
-that platform.
-
 ## Deploying functions.
 - Install the [Firebase CLI](https://firebase.google.com/docs/cli/).
 - Deploy the provided functions.
@@ -245,6 +235,16 @@ Once you have done this, you can run the Unity Editor and test the application.
       of the Unity status bar.
     - Click **Build and Run**.
 
+## Notes
+
+### Usage on tvOS
+
+This testapp was designed for use on iOS and Android targets, and when
+running in the Unity editor. While the code will also execute on tvOS,
+the buttons will be unresponsive as there isn't an easy way to provide
+the app with the click / touch events to orchestrate the UI elements on
+that platform.
+
 
 ## Troubleshooting
 
@@ -265,7 +265,7 @@ Once you have done this, you can run the Unity Editor and test the application.
     troubleshooting topics.
   - When running the app, if all that you see is a blue horizon, then please
     ensure that you followed the steps to **Open the scene `MainScene`**
-    above.`    
+    above.
 
 
 ## Support

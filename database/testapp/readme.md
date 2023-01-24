@@ -14,16 +14,6 @@ inside the Unity Editor.
 * [Android SDK](https://developer.android.com/studio/index.html#downloads)
   (when developing for Android).
 
-## Notes
-
-### Usage on tvOS
-
-This testapp was designed for use on iOS and Android targets, and when
-running in the Unity editor. While the code will also execute on tvOS,
-the buttons will be unresponsive as there isn't an easy way to provide
-the app with the click / touch events to orchestrate the UI elements on
-that platform.
-
 ## Running the Sample inside the Editor
 
   - Download the
@@ -135,7 +125,7 @@ documentation.
     - Wait for the spinner (compiling) icon to stop in the bottom right corner
       of the Unity status bar.
     - Click **Build and Run**.
-    - Build the Xcode project by selecting **Project->Run** from the menu.
+    - Build the Xcode project by selecting **Project > Run** from the menu.
 
 ### Android
 
@@ -224,6 +214,16 @@ documentation.
       of the Unity status bar.
     - Click **Build and Run**.
 
+## Notes
+
+### Usage on tvOS
+
+This testapp was designed for use on iOS and Android targets, and when
+running in the Unity editor. While the code will also execute on tvOS,
+the buttons will be unresponsive as there isn't an easy way to provide
+the app with the click / touch events to orchestrate the UI elements on
+that platform.
+
 ## Troubleshooting
 
   - When upgrading to a new Firebase release: import the new firebase
@@ -244,7 +244,6 @@ documentation.
   - When running the app, if all that you see is a blue horizon, then please
     ensure that you followed the steps to **Open the scene `MainScene`**
     above.
-
 
 ## Support
 

@@ -15,21 +15,11 @@ with the
 * [Android SDK](https://developer.android.com/studio/index.html#downloads)
   (when developing for Android).
 
-## Notes
-
-### Usage on tvOS
-
-This testapp was designed for use on iOS and Android targets, and when
-running in the Unity editor. While the code will also execute on tvOS,
-the buttons will be unresponsive as there isn't an easy way to provide
-the app with the click / touch events to orchestrate the UI elements on
-that platform.
-
 ## Building the Sample
 
 ### iOS or tvOS
 
-  - Register your iOS app with Firebase.
+  - Register your iOS+ (iOS or tvOS) app with Firebase.
     - Create a project in the
       [Firebase console](https://firebase.google.com/console/).
     - Associate your project to an app by clicking the `Add app` button,
@@ -42,7 +32,7 @@ that platform.
           **Optional: Update the Project Bundle Identifier** below.
     - Enable Authentication in the project.
       - Go to the [Firebase console](https://firebase.google.com/console/).
-      - Select the **Auth**tab in the sidebar.
+      - Select the **Auth** tab in the sidebar.
       - Select the **Sign-In Method** tab
       - Enable **Email/Password** and **Anonymous** sign-in providers.
     - Download the `GoogleService-Info.plist` file associated with your
@@ -98,7 +88,7 @@ that platform.
     - Wait for the spinner (compiling) icon to stop in the bottom right corner
       of the Unity status bar.
     - Click **Build and Run**.
-    - Build the Xcode project by selecting **Project->Run** from the menu.
+    - Build the Xcode project by selecting **Project > Run** from the menu.
   - See the **Using the Sample** section below.
 
 
@@ -195,11 +185,17 @@ that platform.
     - Click **Build and Run**.
   - See the **Using the Sample** section below.
 
+## Notes
+
+### Usage on tvOS
+
+This testapp was designed for use on iOS and Android targets, and when
+running in the Unity editor. While the code will also execute on tvOS,
+the buttons will be unresponsive as there isn't an easy way to provide
+the app with the click / touch events to orchestrate the UI elements on
+that platform.
 
 ## Using the Sample
-
-**Note:** the UI elements of the quickstart app respond only to mouse clicks,
-and so will not be responsive on tvOS.
 
 The app provides email and password text input fields which control the
 user associated with the action performed by each of the following buttons:
