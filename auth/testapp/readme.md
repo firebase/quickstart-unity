@@ -101,9 +101,11 @@ with the
 ### Android
 
   - Register your Android app with Firebase.
-    - Create a project in the
-      [Firebase console](https://firebase.google.com/console/),
-      and attach your Android app to it.
+    - Create an Unity project in the
+      [Firebase console](https://firebase.google.com/console/).
+    - Associate your project to an app by clicking the `Add app` button,
+      and selecting the **Unity** icon.
+      - Check the box labeled `Register as Android app`.
       - You should use `com.google.FirebaseUnityAuthTestApp.dev` as the
         `Android package name` while you're testing.
         - If you do not use the prescribed package name, you will need to update
@@ -113,7 +115,8 @@ with the
         be registered to your project in the Firebase Console. To
         [generate a SHA1](https://developers.google.com/android/guides/client-auth),
         first you will need to set the keystore in the Unity project.
-        - Locate the `Publishing Settings` under `Player Settings`.
+        - Locate the **Publishing Settings** under **Player Settings** in the
+          Unity editor.
         - Select an existing keystore, or create a new keystore using the
           toggle.
         - Select an existing key, or create a new key using "Create a new key".

@@ -121,7 +121,8 @@ Once you have done this, you can run the Unity Editor and test the application.
         be registered to your project in the Firebase Console. To
         [generate a SHA1](https://developers.google.com/android/guides/client-auth),
         first you will need to set the keystore in the Unity project.
-        - Locate the `Publishing Settings` under `Player Settings`.
+        - Locate the **Publishing Settings** under **Player Settings** in the
+          Unity editor.
         - Select an existing keystore, or create a new keystore using the
           toggle.
         - Select an existing key, or create a new key using "Create a new key".
@@ -172,7 +173,7 @@ Once you have done this, you can run the Unity Editor and test the application.
       Setup Crashlytics -> Select that the app is new.
       (You do not need to download the SDK again as you have already downloaded 
       the Unity plugin)
-  - Optional: Update the Project Bundle Identifier
+  - Optional: Update the Project Bundle Identifier.
     - If you did not use `com.google.firebase.unity.crashlytics.testapp`
       as the `Android package name` when you created your app in the Firebase
       Console, you will need to update the sample's Bundle Identifier.
@@ -182,7 +183,7 @@ Once you have done this, you can run the Unity Editor and test the application.
       - In the `Settings for Android` panel scroll down to `Bundle Identifier`
         and update the value to the Android package name you provided when you
         registered your app with Firebase.
-  - Build for Android
+  - Build for Android.
     - Select the `File > Build Settings` menu option.
     - Select `Android` in the `Platform` list.
     - Click `Switch Platform` to select `Android` as the target platform.
@@ -217,7 +218,6 @@ and so will not be responsive on tvOS.
     Settings**.  Select your **Custom Keystore** from the dropdown list and
     enter its password.  Then, select your **Project Key** alias and enter
     your key's password.
-    enabled in your project, you'll see compile errors from some types in the
   - Please see the
     [Known Issues](https://firebase.google.com/docs/unity/setup#known-issues)
     section of the

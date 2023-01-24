@@ -130,9 +130,10 @@ download that same text.
 ### Android
 
   - Register your Android app with Firebase.
-    - Create a project in the
-      [Firebase console](https://firebase.google.com/console/),
-      and attach your Android app to it.
+    - Create an Unity project in the
+      [Firebase console](https://firebase.google.com/console/).
+    - Associate your project to an app by clicking the `Add app` button,
+      and selecting the **Unity** icon.
       - You should use `com.google.firebase.unity.storage.testapp` as the
         Android package name while you're testing.
         - If you do not use the prescribed package name, you will need to update
@@ -142,7 +143,8 @@ download that same text.
         be registered to your project in the Firebase Console. To
         [generate a SHA1](https://developers.google.com/android/guides/client-auth),
         first you will need to set the keystore in the Unity project.
-        - Locate the `Publishing Settings` under `Player Settings`.
+        - Locate the **Publishing Settings** under **Player Settings** in the
+          Unity editor.
         - Select an existing keystore, or create a new keystore using the
           toggle.
         - Select an existing key, or create a new key using "Create a new key".
@@ -194,7 +196,7 @@ download that same text.
       into the folder.
       - NOTE: `google-services.json` can be placed anywhere under the `Assets`
         folder.
-  - Optional: Update the Project Bundle Identifier
+  - Optional: Update the Project Bundle Identifier.
     - If you did not use `com.google.firebase.unity.storage.testapp`
             as the `Android package name` when you created your app in the Firebase
       Console, you will need to update the sample's Bundle Identifier.
@@ -224,12 +226,14 @@ download that same text.
     Settings**.  Select your **Custom Keystore** from the dropdown list and
     enter its password.  Then, select your **Project Key** alias and enter
     your key's password.
-    enabled in your project, you'll see compile errors from some types in the
   - Please see the
     [Known Issues](https://firebase.google.com/docs/unity/setup#known-issues)
     section of the
     Unity Setup Guide](https://firebase.google.com/docs/unity/setup) for other
     troubleshooting topics.
+  - If when running the app all that you see is a blue horizon then please
+    ensure that you followed the steps to **Open the scene `MainScene`**
+    above.
 
 
 ## Support

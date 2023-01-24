@@ -96,25 +96,38 @@ UI elements on that platform.
 ### Android
 
   - Register your Android app with Firebase.
-    - Create a project in the
-      [Firebase console](https://firebase.google.com/console/),
-      and attach your Android app to it.
+    - Create an Unity project in the
+      [Firebase console](https://firebase.google.com/console/).
+    - Associate your project to an app by clicking the `Add app` button,
+      and selecting the **Unity** icon.
       - You should use `com.google.firebase.unity.installations.testapp` as the
         package name while you're testing.
         - If you do not use the prescribed package name you will need to update
           the bundle identifier as described in the
           `Optional: Update the Project Bundle Identifier` below.
-
-      - To [generate a SHA1](https://developers.google.com/android/guides/client-auth),
+      - Android apps must be signed by a key, and the key's signature must
+        be registered to your project in the Firebase Console. To
+        [generate a SHA1](https://developers.google.com/android/guides/client-auth),
         first you will need to set the keystore in the Unity project.
-        - Locate the `Publishing Settings` under `Player Settings`.
-        - Select an existing keystore, or create a new keystore using the toggle.
+        - Locate the **Publishing Settings** under **Player Settings** in the
+          Unity editor.
+        - Select an existing keystore, or create a new keystore using the
+          toggle.    
         - Select an existing key, or create a new key using "Create a new key".
       - After setting the keystore and key, you can generate a SHA1 by
-        running this command:
-        ```
-        keytool -exportcert -list -v -alias <key_name> -keystore <path_to_keystore>
-        ```
+          running this command:
+          ```
+          keytool -list -v -keystore <path_to_keystore> -alias <key_name>
+          ```
+        - Copy the SHA1 digest string into your clipboard.
+        - Navigate to your Android App in your firebase console.
+        - From the main console view, click on your Android App at the top, then
+          click the gear to open the settings page.
+        - Scroll down to your apps at the bottom of the page and click on
+          `Add Fingerprint`.
+        - Paste the SHA1 digest of your key into the form.  The SHA1 box
+          will illuminate if the string is valid. If it's not valid, check
+          that you have copied the entire SHA1 digest string.
     - Download the `google-services.json` file associated with your
         Firebase project from the console.
         This file identifies your Android app to the Firebase backend, and will

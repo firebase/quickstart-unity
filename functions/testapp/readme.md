@@ -153,9 +153,10 @@ Once you have done this, you can run the Unity Editor and test the application.
 ### Android
 
   - Register your Android app with Firebase.
-    - Create a project in the
-      [Firebase console](https://firebase.google.com/console/),
-      and attach your Android app to it.
+    - Create an Unity project in the
+      [Firebase console](https://firebase.google.com/console/).
+    - Associate your project to an app by clicking the `Add app` button,
+      and selecting the **Unity** icon.
       - You should use `com.google.firebase.unity.functions.testapp` as the
         `Android package name` when you created your app in the Firebase
         Console, you will need to update the sample's Bundle Identifier.
@@ -169,7 +170,8 @@ Once you have done this, you can run the Unity Editor and test the application.
         be registered to your project in the Firebase Console. To
         [generate a SHA1](https://developers.google.com/android/guides/client-auth),
         first you will need to set the keystore in the Unity project.
-        - Locate the `Publishing Settings` under `Player Settings`.
+        - Locate the **Publishing Settings** under **Player Settings** in the
+          Unity editor.
         - Select an existing keystore, or create a new keystore using the
           toggle.
         - After setting the keystore and key, you can generate a SHA1 by
@@ -254,7 +256,6 @@ Once you have done this, you can run the Unity Editor and test the application.
     Settings**.  Select your **Custom Keystore** from the dropdown list and
     enter its password.  Then, select your **Project Key** alias and enter
     your key's password.
-    enabled in your project, you'll see compile errors from some types in the
   - Please see the
     [Known Issues](https://firebase.google.com/docs/unity/setup#known-issues)
     section of the

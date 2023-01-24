@@ -99,9 +99,10 @@ UI elements on that platform.
 ### Android
 
   - Register your Android app with Firebase.
-    - Create a project in the
-      [Firebase console](https://firebase.google.com/console/),
-      and attach your Android app to it.
+    - Create an Unity project in the
+      [Firebase console](https://firebase.google.com/console/).
+    - Associate your project to an app by clicking the `Add app` button,
+      and selecting the **Unity** icon.
       - You should use `com.google.firebase.unity.remoteconfig.testapp` as the
         Android package name while you're testing.
         - If you do not use the prescribed package name, you will need to update
@@ -111,7 +112,8 @@ UI elements on that platform.
         be registered to your project in the Firebase Console. To
         [generate a SHA1](https://developers.google.com/android/guides/client-auth),
         first you will need to set the keystore in the Unity project.
-        - Locate the `Publishing Settings` under `Player Settings`.
+        - Locate the **Publishing Settings** under **Player Settings** in the
+          Unity editor.
         - Select an existing keystore, or create a new keystore using the 
           toggle.
         - Select an existing key, or create a new key using "Create a new key".
@@ -229,7 +231,6 @@ Firebase Console and it will be reflected in your app.
     Settings**.  Select your **Custom Keystore** from the dropdown list and
     enter its password.  Then, select your **Project Key** alias and enter
     your key's password.
-    enabled in your project, you'll see compile errors from some types in the
   - Please see the
     [Known Issues](https://firebase.google.com/docs/unity/setup#known-issues)
     section of the
