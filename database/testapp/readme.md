@@ -157,7 +157,8 @@ documentation.
           Unity editor.
         - Select an existing keystore, or create a new keystore using the
           toggle.
-        - Select an existing key, or create a new key using "Create a new key".
+        - Select an existing key, or create a new key using **Create a new
+          key**.
         - After setting the keystore and key, you can generate a SHA1 by
           running this command:
           ```
@@ -223,7 +224,6 @@ documentation.
       of the Unity status bar.
     - Click **Build and Run**.
 
-
 ## Troubleshooting
 
   - When upgrading to a new Firebase release: import the new firebase
@@ -239,8 +239,11 @@ documentation.
   - Please see the
     [Known Issues](https://firebase.google.com/docs/unity/setup#known-issues)
     section of the
-    Unity Setup Guide](https://firebase.google.com/docs/unity/setup) for other
+    [Unity Setup Guide](https://firebase.google.com/docs/unity/setup) for other
     troubleshooting topics.
+  - When running the app, if all that you see is a blue horizon, then please
+    ensure that you followed the steps to **Open the scene `MainScene`**
+    above.
 
 
 ## Support

@@ -41,10 +41,10 @@ that platform.
           update the bundle identifier in Unity as described in the
           **Optional: Update the Project Bundle Identifier** below.
     - Enable Authentication in the project.
-      - Go to the [Firebase console](https://firebase.google.com/console/),
-      - Select the *Auth* tab in the sidebar.
-      - Select the *Sign-In Method* tab
-      - Enable *Email/Password* and *Anonymous* sign-in providers.
+      - Go to the [Firebase console](https://firebase.google.com/console/).
+      - Select the **Auth**tab in the sidebar.
+      - Select the **Sign-In Method** tab
+      - Enable **Email/Password** and **Anonymous** sign-in providers.
     - Download the `GoogleService-Info.plist` file associated with your
       Firebase project from the console. This file identifies your iOS+ app
       to the Firebase backend, and will need to be included in the sample
@@ -142,7 +142,7 @@ that platform.
     - Enable Authentication in the project.
       - Go to the [Firebase console](https://firebase.google.com/console/),
       - Select the **Auth** tab in the sidebar.
-      - Select the **Sign-In Method** tab
+      - Select the **Sign-In Method** tab.
       - Enable **Email/Password** and **Anonymous** sign-in providers.
     - Download the `google-services.json` file associated with your
         Firebase project from the console.
@@ -216,7 +216,7 @@ user associated with the action performed by each of the following buttons:
     specified email address.
 
 The user database can be viewed in the
-[Firebase console.](https://firebase.google.com/console/) by:
+[Firebase console](https://firebase.google.com/console/) by:
   - Selecting the **Auth** sidebar.
   - Selecting the **Users** tab.
 
@@ -245,9 +245,11 @@ If any of these options fail please ensure that you have:
   - Please see the
     [Known Issues](https://firebase.google.com/docs/unity/setup#known-issues)
     section of the
-    Unity Setup Guide](https://firebase.google.com/docs/unity/setup) for other
+    [Unity Setup Guide](https://firebase.google.com/docs/unity/setup) for other
     troubleshooting topics.
-
+  - When running the app, if all that you see is a blue horizon, then please
+    ensure that you followed the steps to **Open the scene `MainScene`**
+    above.
 
 ## Support
 

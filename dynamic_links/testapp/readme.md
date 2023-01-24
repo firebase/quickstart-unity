@@ -81,11 +81,11 @@ using the
         provided when you registered your app with Firebase.
   - Copy the dynamic links domain URI prefix for your project under the Dynamic
     Links tab of the [Firebase console](https://firebase.google.com/console/)
-    e.g xyz.app.goo.gl and assign it to the string DomainUriPrefix on the
-    UIHandler object in the MainScene.
+    e.g. `xyz.app.goo.gl` and assign it to the string **DomainUriPrefix** on
+      the `UIHandler` object in the `MainScene`.
     - Optional: If you want to use a custom Dynamic Links domain, follow
       [these instructions](https://firebase.google.com/docs/dynamic-links/custom-domains)
-      to set up the domain in Firebase console and in your project's Info.plist.
+      to set up the domain in Firebase console and in your project's `Info.plist`.
   - Build for iOS.
     - Select the **File > Build Settings** menu option.
     - Select **iOS** in the **Platform** list.
@@ -98,12 +98,12 @@ using the
       Google Sign-In to send invites).
       You can enable this capability on your project in Xcode 8 by going to
       your project's settings, Capabilities, and turning on Keychain Sharing.
-    - Copy the domain URI prefix for your project under the Dynamic Links tab of
+    - Copy the domain URI prefix for your project under the **Dynamic Links** tab of
       the [Firebase console](https://firebase.google.com/console/) Then, in your
       project's Capabilities tab:
       - Enable the Associated Domains capability.
       - Add applinks:YOUR_DYNAMIC_LINKS_DOMAIN
-        For example `applinks:xyz.app.goo.gl`.
+        For example: `applinks:xyz.app.goo.gl`.
   - See the **Using the Sample** section below.
 
 
@@ -188,10 +188,11 @@ using the
         **Bundle Identifier** and update the value to the
         **Android package name** you provided when you registered your app with
         Firebase.
-  - Copy the dynamic links domain URI prefix for your project under the Dynamic
-    Links tab of the [Firebase console](https://firebase.google.com/console/)
-    e.g xyz.app.goo.gl and assign it to the string DomainUriPrefix on the
-    UIHandler object in the MainScene.
+  - Copy the dynamic links domain URI prefix for your project under the
+    **Dynamic Links** tab of the
+    [Firebase console](https://firebase.google.com/console/)
+    e.g. `xyz.app.goo.gl` and assign it to the string **DomainUriPrefix** on the
+    `UIHandler` object in the `MainScene`.
     - Optional: If you want to use a custom Dynamic Links domain, follow
       [these instructions](https://firebase.google.com/docs/dynamic-links/custom-domains)
       to set up the domain in Firebase console.
@@ -245,8 +246,11 @@ and so will not be responsive on tvOS.
   - Please see the
     [Known Issues](https://firebase.google.com/docs/unity/setup#known-issues)
     section of the
-    Unity Setup Guide](https://firebase.google.com/docs/unity/setup) for other
+    [Unity Setup Guide](https://firebase.google.com/docs/unity/setup) for other
     troubleshooting topics.
+  - When running the app, if all that you see is a blue horizon, then please
+    ensure that you followed the steps to **Open the scene `MainScene`**
+    above.
 
 
 ## Support

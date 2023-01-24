@@ -19,9 +19,10 @@ inside the Unity Editor.
 ### Usage on tvOS
 
 This testapp was designed for use on iOS and Android targets, and when
-running in the Unity editor. While the code will also execute on tvOS, there
-isn't an easy way for users to provide the click events required to use the
-UI elements on that platform.
+running in the Unity editor. While the code will also execute on tvOS,
+the buttons will be unresponsive as there isn't an easy way to provide
+the app with the click / touch events to orchestrate the UI elements on
+that platform.
 
 ## Running the Sample inside the Editor
 
@@ -110,7 +111,7 @@ Once you have done this, you can run the Unity Editor and test the application.
         build target.
       - Click **Player Settings**.
       - In the **Settings for iOS** or **Settings for tvOS** panel, scroll down to
-        **Bundle Identifier** and update the value to the **Apple bundle ID**` you
+        **Bundle Identifier** and update the value to the **Apple bundle ID** you
         provided when you registered your app with Firebase.
   - Build for iOS or tvOS.
     - Select the **File > Build Settings** menu option.
@@ -141,7 +142,8 @@ Once you have done this, you can run the Unity Editor and test the application.
           Unity editor.
         - Select an existing keystore, or create a new keystore using the
           toggle.
-        - Select an existing key, or create a new key using "Create a new key".
+        - Select an existing key, or create a new key using **Create a new
+          key**.
         - After setting the keystore and key, you can generate a SHA1 by
           running this command:
           ```
@@ -238,8 +240,11 @@ and so will not be responsive on tvOS.
   - Please see the
     [Known Issues](https://firebase.google.com/docs/unity/setup#known-issues)
     section of the
-    Unity Setup Guide](https://firebase.google.com/docs/unity/setup) for other
+    [Unity Setup Guide](https://firebase.google.com/docs/unity/setup) for other
     troubleshooting topics.
+  - When running the app, if all that you see is a blue horizon, then please
+    ensure that you followed the steps to **Open the scene `MainScene`**
+    above.
 
 
 ## Support

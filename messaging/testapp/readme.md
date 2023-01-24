@@ -111,8 +111,7 @@ that platform.
       - Scroll down to **Linked Frameworks and Libraries** and click the **+**
         button to add a framework.
         - In the window that appears, scroll to **UserNotifications.framework**
-          and click on that entry, then click on **Add**. This framework will
-          only appear in Xcode version 8 and higher, required by this library.
+          and click on that entry, then click on **Add**.
       - Select the **Capabilities** tab from the **Editor area**.
       - Switch **Push Notifications** to **On**.
       - Scroll down to **Background Modes** and switch it to **On**.
@@ -299,8 +298,11 @@ curl --header "Authorization: key=<Server Key>" --header "Content-Type: applicat
   - Please see the
     [Known Issues](https://firebase.google.com/docs/unity/setup#known-issues)
     section of the
-    Unity Setup Guide](https://firebase.google.com/docs/unity/setup) for other
+    [Unity Setup Guide](https://firebase.google.com/docs/unity/setup) for other
     troubleshooting topics.
+  - When running the app, if all that you see is a blue horizon, then please
+    ensure that you followed the steps to **Open the scene `MainScene`**
+    above.
 
 
 ## Support

@@ -231,9 +231,9 @@ download that same text.
   - Please see the
     [Known Issues](https://firebase.google.com/docs/unity/setup#known-issues)
     section of the
-    Unity Setup Guide](https://firebase.google.com/docs/unity/setup) for other
+    [Unity Setup Guide](https://firebase.google.com/docs/unity/setup) for other
     troubleshooting topics.
-  - If when running the app all that you see is a blue horizon then please
+  - When running the app, if all that you see is a blue horizon, then please
     ensure that you followed the steps to **Open the scene `MainScene`**
     above.
 
