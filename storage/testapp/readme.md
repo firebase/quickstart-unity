@@ -8,9 +8,9 @@ inside the Unity Editor.
 
 ## Requirements
 
-* [Unity](http://unity3d.com/) The quickstart project requires 2017.4 or higher.
-* [Xcode](https://developer.apple.com/xcode/) 10.3 or higher
-  (when developing for iOS).
+* [Unity](http://unity3d.com/) The quickstart project requires 2019 or higher.
+* [Xcode](https://developer.apple.com/xcode/) 13.3.1 or higher
+  (when developing for iOS or tvOS).
 * [Android SDK](https://developer.android.com/studio/index.html#downloads)
   (when developing for Android).
 
@@ -64,14 +64,14 @@ download that same text.
   - Register your iOS+ (iOS or tvOS) app with Firebase.
     - Create a project in the
       [Firebase console](https://firebase.google.com/console/).
-    - Associate your project to an app by clicking the `Add app` button,
+    - Associate your project to an app by clicking the **Add app** button,
       and selecting the **Unity** icon.
-      - Check the box labeled `Register as Apple app`.
+      - Check the box labeled **Register as Apple app**.
       - You should use `com.google.firebase.unity.storage.testapp` as the
-        `Apple bundle ID` when creating the Unity app in the console.
+        **Apple bundle ID** when creating the Unity app in the console.
         - If you do not use the prescribed Bundle ID, you will later need to
           update the bundle identifier in Unity as described in
-          `Optional: Update the Project Bundle Identifier` below.
+          **Optional: Update the Project Bundle Identifier** below.
     - Download the `GoogleService-Info.plist` file associated with your
       Firebase project from the console. This file identifies your iOS+
       app to the Firebase backend, and will need to be included in the sample
@@ -93,7 +93,7 @@ download that same text.
   - Open the scene `MainScene`.
     - Navigate to `Assets/Firebase/Sample/Storage` in the **Project** window.
     - Double click on the `MainScene` file to open it.
-  - Import the `Firebase Storage` plugin.
+  - Import the Firebase Storage plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
       downloaded previously, import `FirebaseStorage.unitypackage`.
@@ -108,7 +108,7 @@ download that same text.
         `Assets` folder.
   - Optional: Update the Project Bundle Identifier.
     - If you did not use `com.google.firebase.unity.storage.testapp`
-      as the `Apple bundle ID` when creating your app in the Firebase
+      as the **Apple bundle ID** when creating your app in the Firebase
       Console, you will need to update the sample's Bundle Identifier.
       - Select the **File > Build Settings** menu option.
       - Select **iOS** or **tvOS** in the **Platform** list, depending on your
@@ -116,7 +116,7 @@ download that same text.
       - Click **Player Settings**.
       - In the **Settings for iOS** or **Settings for tvOS** panel, scroll
         down to **Bundle Identifier** and update the value to the
-        `Apple bundle ID` you provided when you registered your app with
+        **Apple bundle ID** you provided when you registered your app with
         Firebase.
   - Build for iOS or tvOS.
     - Select the **File > Build Settings** menu option.
@@ -125,20 +125,20 @@ download that same text.
     - Wait for the spinner (compiling) icon to stop in the bottom right corner
       of the Unity status bar.
     - Click **Build and Run**.
-  - See the *Using the Sample* section below.
+  - See the **Using the Sample** section below.
 
 ### Android
 
   - Register your Android app with Firebase.
     - Create an Unity project in the
       [Firebase console](https://firebase.google.com/console/).
-    - Associate your project to an app by clicking the `Add app` button,
+    - Associate your project to an app by clicking the **Add app** button,
       and selecting the **Unity** icon.
       - You should use `com.google.firebase.unity.storage.testapp` as the
         Android package name while you're testing.
         - If you do not use the prescribed package name, you will need to update
           the bundle identifier as described in the
-          `Optional: Update the Project Bundle Identifier` below.
+          **Optional: Update the Project Bundle Identifier** below.
       - Android apps must be signed by a key, and the key's signature must
         be registered to your project in the Firebase Console. To
         [generate a SHA1](https://developers.google.com/android/guides/client-auth),
@@ -147,7 +147,8 @@ download that same text.
           Unity editor.
         - Select an existing keystore, or create a new keystore using the
           toggle.
-        - Select an existing key, or create a new key using "Create a new key".
+        - Select an existing key, or create a new key using **Create a new
+          key**.
         - After setting the keystore and key, you can generate a SHA1 by
           running this command:
           ```
@@ -158,9 +159,9 @@ download that same text.
           - From the main console view, click on your Android App at the top and
             click the gear to open the settings page.
         - Scroll down to your apps at the bottom of the page and click on
-          `Add Fingerprint`.
-        - Paste the SHA1 digest of your key into the form.  The SHA1 box
-          will illuminate if the string is valid.  If it's not valid, check
+          **Add Fingerprint**.
+        - Paste the SHA1 digest of your key into the form. The SHA1 box
+          will illuminate if the string is valid. If it's not valid, check
           that you have copied the entire SHA1 digest string.
     - Download the `google-services.json` file associated with your
         Firebase project from the console.
@@ -183,29 +184,29 @@ download that same text.
   - Open the scene `MainScene`.
     - Navigate to `Assets/Firebase/Sample/Storage` in the **Project** window.
     - Double click on the `MainScene` file to open it.
-  - Import the `Firebase Storage` plugin.
+  - Import the **Firebase Storage plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
       downloaded previously, import `FirebaseStorage.unitypackage`.
     - When the **Import Unity Package** window appears, click the **Import**
       button.
   - Add the `google-services.json` file to the project.
-    - Navigate to the `Assets/Firebase/Sample/Storage` folder in the `Project`
-      window.
+    - Navigate to the `Assets/Firebase/Sample/Storage` folder in the
+      **Project** window.
     - Drag the `google-services.json` downloaded from the Firebase console
       into the folder.
       - NOTE: `google-services.json` can be placed anywhere under the `Assets`
         folder.
   - Optional: Update the Project Bundle Identifier.
     - If you did not use `com.google.firebase.unity.storage.testapp`
-            as the `Android package name` when you created your app in the Firebase
+      as the **Android package name** when you created your app in the Firebase
       Console, you will need to update the sample's Bundle Identifier.
-      - Select the `File > Build Settings` menu option.
-      - Select `Android` in the `Platform` list.
-      - Click `Player Settings`
-      - In the `Settings for Android` panel scroll down to `Bundle Identifier`
-        and update the value to the package name you provided when you
-        registered your app with Firebase.
+      - Select the **File > Build Settings** menu option.
+      - Select **Android** in the **Platform** list.
+      - Click **Player Settings**.
+      - In the **Settings for Android** panel scroll down to **Bundle
+        Identifier** and update the value to the package name you provided when
+        you registered your app with Firebase.
   - Build for Android.
     - Select the **File > Build Settings** menu option.
     - Select **Android** in the **Platform** list.

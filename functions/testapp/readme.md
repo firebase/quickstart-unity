@@ -8,9 +8,9 @@ inside the Unity Editor.
 
 ## Requirements
 
-* [Unity](http://unity3d.com/) The quickstart project requires 2017.4 or higher.
-* [Xcode](https://developer.apple.com/xcode/) 10.3 or higher
-  (when developing for iOS).
+* [Unity](http://unity3d.com/) The quickstart project requires 2019 or higher.
+* [Xcode](https://developer.apple.com/xcode/) 13.3.1 or higher
+  (when developing for iOS or tvOS).
 * [Android SDK](https://developer.android.com/studio/index.html#downloads)
   (when developing for Android).
 
@@ -51,22 +51,22 @@ UI elements on that platform.
     [Firebase Unity SDK](https://firebase.google.com/download/unity)
     and unzip it somewhere convenient.
   - Open the sample project in the Unity editor.
-    - Select the `File > Open Project` menu item.
-    - Click `Open`.
+    - Select the **File > Open Project** menu item.
+    - Click **Open**.
     - Navigate to the sample directory `testapp` in the file dialog and click
-      `Open`.
+      **Open**.
        - You might be prompted to upgrade the project to your version of Unity.
-         Click `Confirm` to upgrade the project and continue.
+         Click **Confirm** to upgrade the project and continue.
   - Open the scene `MainScene`.
-    - Navigate to `Assets/Firebase/Sample/Functions` in the `Project` window.
+    - Navigate to `Assets/Firebase/Sample/Functions` in the **Project** window.
     - Double click on `MainScene` file to open it.
-  - Import the `Firebase Auth` plugin.
+  - Import the Firebase Auth plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
       downloaded previously, import `FirebaseAuth.unitypackage`.
     - When the **Import Unity Package** window appears, click the **Import**
       button.
-  - Import the `Firebase Functions` plugin.
+  - Import the Firebase Functions plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
       downloaded previously, import `FirebaseFunctions.unitypackage`
@@ -84,12 +84,12 @@ Once you have done this, you can run the Unity Editor and test the application.
       [Firebase console](https://firebase.google.com/console/).
     - Associate your project to an app by clicking the `Add app` button,
       and selecting the **Unity** icon.
-      - Check the box labeled `Register as Apple app`.
+      - Check the box labeled **Register as Apple app**.
       - You should use `com.google.firebase.unity.functions.testapp` as the
-        `Apple bundle ID` when creating the Unity app in the console.
+        **Apple bundle ID** when creating the Unity app in the console.
         - If you do not use the prescribed Bundle ID, you will later need to
           update the bundle identifier in Unity as described in
-          `Optional: Update the Project Bundle Identifier` below.
+          **Optional: Update the Project Bundle Identifier** below.
     - Download the `GoogleService-Info.plist` file associated with your
       Firebase project from the console. This file identifies your iOS+
       app to the Firebase backend, and will need to be included in the sample
@@ -107,24 +107,24 @@ Once you have done this, you can run the Unity Editor and test the application.
     - Navigate to the sample directory `testapp` in the file dialog and click
       **Open**.
       - You might be prompted to upgrade the project to your version of Unity.
-        Click *Confirm** to upgrade the project and continue.
+        Click **Confirm** to upgrade the project and continue.
   - Open the scene `MainScene`.
     - Navigate to `Assets/Firebase/Sample/Functions` in the **Project** window.
     - Double click on `MainScene` file to open it.
   - Add the `GoogleService-Info.plist` file to the project.
-    - Navigate to the `Assets/Firebase/Sample/Functions` folder in the `Project`
-      window.
+    - Navigate to the `Assets/Firebase/Sample/Functions` folder in the
+      **Project** window.
     - Drag the `GoogleService-Info.plist` downloaded from the Firebase console
       into the folder.
       - NOTE: `GoogleService-Info.plist` can be placed anywhere under the
-        `Assets` folder.
-  - Import the `Firebase Auth` plugin.
+        **Assets** folder.
+  - Import the Firebase Auth plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
       downloaded previously, import `FirebaseAuth.unitypackage`.
     - When the **Import Unity Package** window appears, click the **Import**
       button.
-  - Import the `Firebase Functions` plugin.
+  - Import the Firebase Functions plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
       downloaded previously, import `FirebaseFunctions.unitypackage`
@@ -132,15 +132,16 @@ Once you have done this, you can run the Unity Editor and test the application.
       button.
   - Optional: Update the Project Bundle Identifier.
     - If you did not use `com.google.firebase.unity.functions.testapp`
-      as the `Apple bundle ID` when creating your app in the Firebase
+      as the **Apple bundle ID** when creating your app in the Firebase
       Console, you will need to update the sample's Bundle Identifier.
       - Select the **File > Build Settings** menu option.
       - Select **iOS** or **tvOS** in the **Platform** list, depending on your
         build target.
       - Click **Player Settings**.
       - In the **Settings for iOS** or **Settings for tvOS** panel, scroll down
-        to **Bundle Identifier** and update the value to the `Apple bundle ID`
-        you provided when you registered your app with Firebase.
+        to **Bundle Identifier** and update the value to the
+        **Apple bundle ID** you provided when you registered your app with
+        Firebase.
   - Build for iOS or tvOS.
     - Select the  **File > Build Settings** menu option.
     - Select either **iOS** or **tvOS** in the **Platform** list.
@@ -155,17 +156,17 @@ Once you have done this, you can run the Unity Editor and test the application.
   - Register your Android app with Firebase.
     - Create an Unity project in the
       [Firebase console](https://firebase.google.com/console/).
-    - Associate your project to an app by clicking the `Add app` button,
+    - Associate your project to an app by clicking the **Add app** button,
       and selecting the **Unity** icon.
       - You should use `com.google.firebase.unity.functions.testapp` as the
-        `Android package name` when you created your app in the Firebase
+        **Android package name** when you created your app in the Firebase
         Console, you will need to update the sample's Bundle Identifier.
-        - Select the `File > Build Settings` menu option.
-        - Select `Android` in the `Platform` list.
-        - Click `Player Settings`
-        - In the `Settings for Android` panel scroll down to `Bundle Identifier`
-          and update the value to the Android package name you provided when you
-          registered your app with Firebase.
+        - Select the **File > Build Settings** menu option.
+        - Select **Android** in the **Platform** list.
+        - Click **Player Settings**.
+        - In the **Settings for Android** panel scroll down to **Bundle
+          Identifier** and update the value to the Android package name you
+          provided when you registered your app with Firebase.
       - Android apps must be signed by a key, and the key's signature must
         be registered to your project in the Firebase Console. To
         [generate a SHA1](https://developers.google.com/android/guides/client-auth),
@@ -184,8 +185,8 @@ Once you have done this, you can run the Unity Editor and test the application.
         - From the main console view, click on your Android App at the top, then
           click the gear to open the settings page.
         - Scroll down to your apps at the bottom of the page and click on
-          `Add Fingerprint`.
-        - Paste the SHA1 digest of your key into the form.  The SHA1 box
+          **Add Fingerprint**.
+        - Paste the SHA1 digest of your key into the form. The SHA1 box
           will illuminate if the string is valid. If it's not valid, check
           that you have copied the entire SHA1 digest string.
     - Download the `google-services.json` file associated with your
@@ -213,13 +214,13 @@ Once you have done this, you can run the Unity Editor and test the application.
       into the folder.
       - NOTE: `google-services.json` can be placed anywhere under the `Assets`
         folder.
-  - Import the `Firebase Auth` plugin.
+  - Import the Firebase Auth plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
       downloaded previously, import `FirebaseAuth.unitypackage`.
     - When the **Import Unity Package** window appears, click the **Import**
       button.
-  - Import the `Firebase Functions` plugin.
+  - Import the Firebase Functions plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
       downloaded previously, import `FirebaseFunctions.unitypackage`
@@ -227,7 +228,7 @@ Once you have done this, you can run the Unity Editor and test the application.
       button.
   - Optional: Update the Project Bundle Identifier.
     - If you did not use `com.google.firebase.unity.functions.testapp`
-      as the `Android package name` when you created your app in the Firebase
+      as the **Android package name** when you created your app in the Firebase
       Console, you will need to update the sample's Bundle Identifier.
       - Select the **File > Build Settings** menu option.
       - Select **Android** in the **Platform** list.
