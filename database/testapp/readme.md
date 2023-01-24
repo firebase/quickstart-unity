@@ -19,9 +19,10 @@ inside the Unity Editor.
 ### Usage on tvOS
 
 This testapp was designed for use on iOS and Android targets, and when
-running in the Unity editor. While the code will also execute on tvOS, there
-isn't an easy way for users to provide the click events required to use the
-UI elements on that platform.
+running in the Unity editor. While the code will also execute on tvOS,
+the buttons will be unresponsive as there isn't an easy way to provide
+the app with the click / touch events to orchestrate the UI elements on
+that platform.
 
 ## Running the Sample inside the Editor
 

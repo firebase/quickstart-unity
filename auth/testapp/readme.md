@@ -17,10 +17,13 @@ with the
 
 ## Notes
 
-* This testapp was designed for use on iOS and Android targets, and when
-  running in the Unity editor. While the code will also execute on tvOS, there
-  isn't an easy way for users to provide the click events required to use the
-  UI elements on that platform.
+### Usage on tvOS
+
+This testapp was designed for use on iOS and Android targets, and when
+running in the Unity editor. While the code will also execute on tvOS,
+the buttons will be unresponsive as there isn't an easy way to provide
+the app with the click / touch events to orchestrate the UI elements on
+that platform.
 
 ## Building the Sample
 
