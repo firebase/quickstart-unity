@@ -8,9 +8,9 @@ inside the Unity Editor.
 
 ## Requirements
 
-* [Unity](http://unity3d.com/) The quickstart project requires 2017.4 or higher.
-* [Xcode](https://developer.apple.com/xcode/) 10.3 or higher
-  (when developing for iOS).
+* [Unity](http://unity3d.com/) The quickstart project requires 2019 or higher.
+* [Xcode](https://developer.apple.com/xcode/) 13.3.1 or higher
+  (when developing for iOS or tvOS).
 * [Android SDK](https://developer.android.com/studio/index.html#downloads)
   (when developing for Android).
 
@@ -20,24 +20,20 @@ inside the Unity Editor.
     [Firebase Unity SDK](https://firebase.google.com/download/unity)
     and unzip it somewhere convenient.
   - Open this sample project in the Unity editor.
-    - Select `File > Open Project` menu item.
-    - If Unity Hub appears, click `Add`.  Otherwise click `Open`.
-    - Navigate to this sample project directory `testapp` in the file dialog and
-      click `Open`.
+    - Select **File > Open Project** menu item.
+    - If Unity Hub appears, click **Add**.  Otherwise click **Open**.
+    - Navigate to this sample project directory `testapp` in the file dialog
+      and click **Open**.
       - You might be prompted to upgrade the project to your version of Unity.
-        Click `Confirm` to upgrade the project and continue.
+        Click **Confirm** to upgrade the project and continue.
   - Open the scene `MainScene`.
-    - Navigate to `Assets/Firebase/Sample/Crashlytics` in the `Project` window.
+    - Navigate to `Assets/Firebase/Sample/Crashlytics` in the **Project**
+      window.
     - Double click on the `MainScene` file to open it.
-  - Import the `Firebase Crashlytics` plugin.
+  - Import the Firebase Crashlytics plugin.
     - Select the **Assets > Import Package > Custom Package** menu item.
     - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
-      downloaded previously, import `FirebaseCrashlytics.unitypackage` from the
-      directory that matches the version of Unity you use:
-       - If your project is configured to use .NET 3.x, import the
-         `dotnet3/FirebaseCrashlytics.unitypackage` package.
-       - If your project is configured to use .NET 4.x, import the
-         `dotnet4/FirebaseCrashlytics.unitypackage` package.
+      downloaded previously, import `FirebaseCrashlytics.unitypackage`.
     - When the **Import Unity Package** window appears, click the **Import**
       button.
 
@@ -45,65 +41,99 @@ Once you have done this, you can run the Unity Editor and test the application.
 
 ## Building the Sample for Devices
 
-### iOS
+### iOS or tvOS
 
-  - [Create a new Firebase project and Unity iOS app](https://firebase.google.com/docs/unity/setup).
-    - You should use `com.google.firebase.unity.crashlytics.testapp` as the
-      iOS bundle ID when creating the Firebase iOS app in the console.
+  - Register your iOS+ (iOS or tvOS) app with Firebase.
+    - Create a project in the
+      [Firebase console](https://firebase.google.com/console/).
+    - Associate your project to an app by clicking the `Add app` button,
+      and selecting the **Unity** icon.
+      - Check the box labeled **Register as Apple app**.
+      - You should use `com.google.firebase.unity.crashlytics.testapp` as the
+        **Apple bundle ID** when creating the Unity app in the console.
         - If you do not use the prescribed Bundle ID, you will later need to
           update the bundle identifier in Unity as described in the
-          `Optional: Update the Project Bundle Identifier` below.
+          **Optional: Update the Project Bundle Identifier** below.
     - Download the `GoogleService-Info.plist` file associated with your
       Firebase project from the console.
-      - For further details please refer to the
-        [general instructions](https://firebase.google.com/docs/ios/setup)
-        which describes how to configure a Firebase application for iOS.
+    - For further details please refer to the
+      [general instructions](https://firebase.google.com/docs/ios/setup)
+      page which describes how to configure a Firebase application for iOS
+      and tvOS.
+  - Download the
+    [Firebase Unity SDK](https://firebase.google.com/download/unity)
+    and unzip it somewhere convenient.
+  - Open the sample project in the Unity editor.
+    - Select the **File > Open Project** menu item.
+    - If Unity Hub appears, click **Add**.  Otherwise click **Open**.
+    - Navigate to the sample directory `testapp` in the file dialog and click
+      **Open**.
+      - You might be prompted to upgrade the project to your version of Unity.
+        Click **Confirm** to upgrade the project and continue.
+  - Open the scene `MainScene`.
+    - Navigate to `Assets/Firebase/Sample/Crashlytics` in the **Project**
+      window.
+    - Double click on the `MainScene` file to open it.
+  - Import the Firebase Crashlytics plugin.
+    - Select the **Assets > Import Package > Custom Package** menu item.
+    - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
+      downloaded previously, import `FirebaseCrashlytics.unitypackage`.
+    - When the **Import Unity Package** window appears, click the **Import**
+      button.
   - Add the `GoogleService-Info.plist` file to the project.
     - Navigate to the `Assets/Firebase/Sample/Crashlytics` folder in the 
-      `Project` window.
+      **Project** window.
     - Drag the `GoogleService-Info.plist` downloaded from the Firebase console
       into the folder.
       - NOTE: `GoogleService-Info.plist` can be placed anywhere under the
-        `Assets` folder.
-  - Set up Crashlytics
+        **Assets** folder.
+  - Set up Crashlytics.
     - In the Firebase console -> Select your project -> Select Crashlytics ->
       Setup Crashlytics -> Select that the app is new.
       (You do not need to download the SDK again as you have already downloaded
       the Unity plugin)
-  - Optional: Update the Project Bundle Identifier
+  - Optional: Update the Project Bundle Identifier.
     - If you did not use `com.google.firebase.unity.crashlytics.testapp`
-      as the iOS bundle ID when creating your app in the Firebase
+      as the **Apple bundle ID** when creating your app in the Firebase
       Console, you will need to update the sample's Bundle Identifier.
-      - Select the `File > Build Settings` menu option.
-      - Select `iOS` in the `Platform` list.
-      - Click `Player Settings`.
-      - In the `Settings for iOS` panel scroll down to `Bundle Identifier`
-        and update the value to the `iOS bundle ID` you provided when you
-        registered your app with Firebase.
-  - Build for iOS
-    - Select the `File > Build Settings` menu option.
-    - Select `iOS` in the `Platform` list.
-    - Click `Switch Platform` to select `iOS` as the target platform.
+      - Select the **File > Build Settings** menu option.
+      - Select **iOS** or **tvOS** in the **Platform** list, depending on your
+        build target.
+      - Click **Player Settings**.
+      - In the **Settings for iOS** or **Settings for tvOS** panel, scroll down to
+        **Bundle Identifier** and update the value to the **Apple bundle ID** you
+        provided when you registered your app with Firebase.
+  - Build for iOS or tvOS.
+    - Select the **File > Build Settings** menu option.
+    - Select either **iOS** or **tvOS** in the **Platform** list.
+    - Click **Switch Platform** to enable your selection as the target platform.
     - Wait for the spinner (compiling) icon to stop in the bottom right corner
       of the Unity status bar.
-    - Click `Build and Run`.
+    - Click **Build and Run**.
 
 ### Android
 
-  - [Create a new Firebase project and Unity Android app](https://firebase.google.com/docs/unity/setup).
-    - You should use `com.google.firebase.unity.crashlytics.testapp` as the
-        `Android package name` while you're testing.
+  - Register your Android app with Firebase.
+    - Create a Unity project in the
+      [Firebase console](https://firebase.google.com/console/).
+    - Associate your project to an app by clicking the **Add app** button,
+      and selecting the **Unity** icon.
+      - Check the box labeled **Register as Android app**.
+      - You should use `com.google.firebase.unity.crashlytics.testapp` as the
+        **Android package name** while you're testing.
         - If you do not use the prescribed package name, you will need to update
           the bundle identifier as described in
-          `Optional: Update the Project Bundle Identifier` below.
+          **Optional: Update the Project Bundle Identifier** below.
     - Android apps must be signed by a key, and the key's signature must
         be registered to your project in the Firebase Console. To
         [generate a SHA1](https://developers.google.com/android/guides/client-auth),
         first you will need to set the keystore in the Unity project.
-        - Locate the `Publishing Settings` under `Player Settings`.
+        - Locate the **Publishing Settings** under **Player Settings** in the
+          Unity editor.
         - Select an existing keystore, or create a new keystore using the
           toggle.
-        - Select an existing key, or create a new key using "Create a new key".
+        - Select an existing key, or create a new key using **Create a new
+          key**.
         - After setting the keystore and key, you can generate a SHA1 by
           running this command:
           ```
@@ -114,7 +144,7 @@ Once you have done this, you can run the Unity Editor and test the application.
           - From the main console view, click on your Android App at the top and
             click the gear to open the settings page.
           - Scroll down to your apps at the bottom of the page and click on
-            `Add Fingerprint`.
+            **Add Fingerprint**.
         - Paste the SHA1 digest of your key into the form.  The SHA1 box
           will illuminate if the string is valid.  If it's not valid, check
           that you have copied the entire SHA1 digest string.
@@ -122,39 +152,68 @@ Once you have done this, you can run the Unity Editor and test the application.
         Firebase project from the console.
       - For further details please refer to the
         [general instructions](https://firebase.google.com/docs/android/setup)
-        which describes how to configure a Firebase application for Android.
+        page which describes how to configure a Firebase application for
+        Android.
+  - Select **File > Open Project** menu item.
+    - If Unity Hub appears, click **Add**.  Otherwise click **Open**.
+    - Navigate to this sample project directory `testapp` in the file dialog and
+      click **Open**.
+      - You might be prompted to upgrade the project to your version of Unity.
+        Click **Confirm** to upgrade the project and continue.
+  - Open the scene `MainScene`.
+    - Navigate to `Assets/Firebase/Sample/Crashlytics` in the **Project**
+      window.
+    - Double click on the `MainScene` file to open it.
+  - Import the Firebase Crashlytics plugin.
+    - Select the **Assets > Import Package > Custom Package** menu item.
+    - From the [Firebase Unity SDK](https://firebase.google.com/download/unity)
+      downloaded previously, import `FirebaseCrashlytics.unitypackage`.
+    - When the **Import Unity Package** window appears, click the **Import**
+      button.
   - Add the `google-services.json` file to the project.
     - Navigate to the `Assets/Firebase/Sample/Crashlytics` folder in the
-      `Project` window.
+      **Project** window.
     - Drag the `google-services.json` downloaded from the Firebase console
       into the folder.
       - NOTE: `google-services.json` can be placed anywhere under the `Assets`
         folder.
-  - Set up Crashlytics
+  - Set up Crashlytics.
     - In the Firebase console -> Select your project -> Select Crashlytics ->
       Setup Crashlytics -> Select that the app is new.
       (You do not need to download the SDK again as you have already downloaded 
       the Unity plugin)
-  - Optional: Update the Project Bundle Identifier
+  - Optional: Update the Project Bundle Identifier.
     - If you did not use `com.google.firebase.unity.crashlytics.testapp`
-      as the `Android package name` when you created your app in the Firebase
+      as the **Android package name** when you created your app in the Firebase
       Console, you will need to update the sample's Bundle Identifier.
-      - Select the `File > Build Settings` menu option.
-      - Select `Android` in the `Platform` list.
-      - Click `Player Settings`
-      - In the `Settings for Android` panel scroll down to `Bundle Identifier`
-        and update the value to the Android package name you provided when you
-        registered your app with Firebase.
-  - Build for Android
-    - Select the `File > Build Settings` menu option.
-    - Select `Android` in the `Platform` list.
-    - Click `Switch Platform` to select `Android` as the target platform.
+      - Select the **File > Build Settings** menu option.
+      - Select **Android** in the **Platform** list.
+      - Click **Player Settings**.
+      - In the **Settings for Android** panel scroll down to **Bundle
+        Identifier** and update the value to the **Android package name** you
+        provided when you registered your app with Firebase.
+  - Build for Android.
+    - Select the **File > Build Settings** menu option.
+    - Select **Android** in the **Platform** list.
+    - Click **Switch Platform** to select **Android** as the target platform.
     - Wait for the spinner (compiling) icon to stop in the bottom right corner
       of the Unity status bar.
-    - Click `Build and Run`.
+    - Click **Build and Run**.
 
+## Notes
+
+### Usage on tvOS
+
+This testapp was designed for use on iOS and Android targets, and when
+running in the Unity editor. While the code will also execute on tvOS,
+the buttons will be unresponsive as there isn't an easy way to provide
+the app with the click / touch events to orchestrate the UI elements on
+that platform.
 
 ## Testing and Validation
+
+**Note:** the UI elements of the quickstart app respond only to mouse clicks,
+and so will not be responsive on tvOS.
 
   - Once the Unity test app is running (detach debugger if attached), click the
     `Perform All Actions` button.
@@ -177,12 +236,14 @@ Once you have done this, you can run the Unity Editor and test the application.
     Settings**.  Select your **Custom Keystore** from the dropdown list and
     enter its password.  Then, select your **Project Key** alias and enter
     your key's password.
-    enabled in your project, you'll see compile errors from some types in the
   - Please see the
     [Known Issues](https://firebase.google.com/docs/unity/setup#known-issues)
     section of the
-    Unity Setup Guide](https://firebase.google.com/docs/unity/setup) for other
+    [Unity Setup Guide](https://firebase.google.com/docs/unity/setup) for other
     troubleshooting topics.
+  - When running the app, if all that you see is a blue horizon, then please
+    ensure that you followed the steps to **Open the scene `MainScene`**
+    above.
 
 
 ## Support
