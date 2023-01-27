@@ -90,7 +90,7 @@ using the
 ### Android
 
   - Register your Android app with Firebase.
-    - Create an Unity project in the
+    - Create a Unity project in the
       [Firebase console](https://firebase.google.com/console/).
     - Associate your project to an app by clicking the **Add app** button,
       and selecting the **Unity** icon.
