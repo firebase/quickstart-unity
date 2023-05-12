@@ -1,3 +1,17 @@
+// Copyright 2021 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -184,7 +198,7 @@ namespace Tests {
       // we can apply a new FirebaseFirestoreSettings.
       yield return AwaitSuccess(db.TerminateAsync());
       db = FirebaseFirestore.DefaultInstance;
-      db.Settings = new FirebaseFirestoreSettings { PersistenceEnabled = false };
+      db.Settings.PersistenceEnabled = false;
 
       doc = db.Collection("coll").Document();
       yield return AwaitSuccess(doc.SetAsync(data));
@@ -219,7 +233,7 @@ namespace Tests {
       // There is no way to actually verify the cache size is applied, we simply
       // verify the size is set properly in the settings object.
       long fiveMb = 5 * 1024 * 1024;
-      db.Settings = new FirebaseFirestoreSettings { CacheSizeBytes = fiveMb };
+      db.Settings.CacheSizeBytes = fiveMb;
       Assert.That(db.Settings.CacheSizeBytes, Is.EqualTo(fiveMb));
     }
   }
