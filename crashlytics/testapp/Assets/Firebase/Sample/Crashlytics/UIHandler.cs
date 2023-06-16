@@ -18,6 +18,7 @@ namespace Firebase.Sample.Crashlytics {
   using Firebase.Extensions;
   using System;
   using UnityEngine;
+  using UnityEngine.Diagnostics;
 
   // Handler for UI buttons on the scene.  Also performs some
   // necessary setup (initializing the firebase app, etc) on
@@ -166,6 +167,10 @@ namespace Firebase.Sample.Crashlytics {
           SetUserID("SomeUserId");
           LogCaughtException();
           ThrowUncaughtException();
+        }
+
+        if (GUILayout.Button("Fatal Crash")) {
+          Utils.ForceCrash(ForcedCrashCategory.FatalError);
         }
 
         GUILayout.EndVertical();
