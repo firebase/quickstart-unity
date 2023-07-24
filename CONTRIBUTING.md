@@ -182,7 +182,7 @@ the changes from the main (upstream) repository:
 
 ## <a name="rules"></a> Coding Rules
 
-We generally follow the [TODO style guide][unity-style-guide].
+We generally follow the [Unity Style Guide][unity-style-guide].
 
 ## <a name="cla"></a> Signing the CLA
 
@@ -194,6 +194,6 @@ signed.  It's a quick process, we promise!
 
 [github]: https://github.com/firebase/quickstart-unity
 [google-cla]: https://cla.developers.google.com
-[unity-style-guide]: https://example.com
+[unity-style-guide]: https://docs-style-guide.unity.com/
 [stackoverflow]: http://stackoverflow.com/questions/tagged/firebase
 [global-gitignore]: https://help.github.com/articles/ignoring-files/#create-a-global-gitignore
