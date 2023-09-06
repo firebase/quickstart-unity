@@ -82,10 +82,12 @@ namespace Firebase.Sample.Messaging {
       });
       DebugLog("Firebase Messaging Initialized");
 
-      // This will display the prompt to request permission to receive
+      // On iOS, this will display the prompt to request permission to receive
       // notifications if the prompt has not already been displayed before. (If
       // the user already responded to the prompt, thier decision is cached by
       // the OS and can be changed in the OS settings).
+      // On Android, this will return successfully immediately, as there is no
+      // equivalent system logic to run.
       Firebase.Messaging.FirebaseMessaging.RequestPermissionAsync().ContinueWithOnMainThread(
         task => {
           LogTaskCompletion(task, "RequestPermissionAsync");
