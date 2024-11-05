@@ -15,12 +15,12 @@
  */
 'use strict';
 
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+const functions = require('firebase-functions/v1');
+const admin = require("firebase-admin");
+admin.initializeApp();
 
 // Adds two numbers to each other.
-exports.addNumbers = functions.https.onCall((data) => {
+exports.addNumbers = functions.https.onCall((data, context) => {
   // Numbers passed from the client.
   const firstNumber = data.firstNumber;
   const secondNumber = data.secondNumber;
