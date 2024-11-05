@@ -20,7 +20,7 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 
 // Adds two numbers to each other.
-exports.addNumbers = functions.https.onCall((data, context) => {
+exports.addNumbers = functions.https.onCall((data) => {
   // Numbers passed from the client.
   const firstNumber = data.firstNumber;
   const secondNumber = data.secondNumber;
