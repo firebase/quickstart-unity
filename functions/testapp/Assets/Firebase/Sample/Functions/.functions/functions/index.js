@@ -15,9 +15,9 @@
  */
 'use strict';
 
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 
 // Adds two numbers to each other.
 exports.addNumbers = functions.https.onCall((data) => {
