@@ -14,6 +14,7 @@
 
 namespace Firebase.Sample.FirebaseAI {
   using Firebase;
+  using Firebase.AI;
   using Firebase.Extensions;
   using System;
   using System.Collections;
@@ -43,10 +44,6 @@ namespace Firebase.Sample.FirebaseAI {
       UIEnabled = true;
     }
 
-    void PlaceholderFunction() {
-      DebugLog("Placeholder Function called");
-    }
-
     protected void InitializeFirebase() {
       FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
         dependencyStatus = task.Result;
@@ -57,6 +54,47 @@ namespace Firebase.Sample.FirebaseAI {
             "Could not resolve all Firebase dependencies: " + dependencyStatus);
         }
       });
+    }
+
+    public string ModelName = "gemini-2.0-flash";
+
+    private int backendSelection = 0;
+    private string[] backendChoices = new string[] { "Google AI Backend", "Vertex AI Backend" };
+    private GenerativeModel GetModel() {
+      var backend = backendSelection == 0
+          ? FirebaseAI.Backend.GoogleAI()
+          : FirebaseAI.Backend.VertexAI();
+
+      return FirebaseAI.GetInstance(backend).GetGenerativeModel(ModelName);
+    }
+
+    // Send a single message to the Generative Model, without any history.
+    async Task SendSingleMessage(string message) {
+      DebugLog("Sending message to model: " + message);
+      var response = await GetModel().GenerateContentAsync(message);
+      DebugLog("Response: " + response.Text);
+    }
+
+    private Chat chatSession = null;
+    void StartChatSession() {
+      chatSession = GetModel().StartChat();
+    }
+
+    void CloseChatSession() {
+      chatSession = null;
+    }
+
+    // Send a message to the ongoing Chat with the Generative Model, which
+    // will preserve the history.
+    async Task SendChatMessage(string message) {
+      if (chatSession == null) {
+        DebugLog("Missing Chat Session");
+        return;
+      }
+
+      DebugLog("Sending chat message: " + message);
+      var response = await chatSession.SendMessageAsync(message);
+      DebugLog("Chat response: " + response.Text);
     }
 
     // Exit if escape (or back, on mobile) is pressed.
@@ -86,6 +124,8 @@ namespace Firebase.Sample.FirebaseAI {
       GUILayout.EndScrollView();
     }
 
+    private string textfieldString = "Hello";
+
     // Render the buttons and other controls.
     void GUIDisplayControls() {
       if (UIEnabled) {
@@ -93,8 +133,28 @@ namespace Firebase.Sample.FirebaseAI {
 
         GUILayout.BeginVertical();
 
-        if (GUILayout.Button("Placeholder Button")) {
-          PlaceholderFunction();
+        if (chatSession == null) {
+          backendSelection = GUILayout.SelectionGrid(backendSelection, backendChoices, backendChoices.Length);
+
+          textfieldString = GUILayout.TextField(textfieldString);
+
+          if (GUILayout.Button("Send Single Message")) {
+            _ = SendSingleMessage(textfieldString);
+          }
+
+          if (GUILayout.Button("Start Chat Session")) {
+            StartChatSession();
+          }
+        } else {
+          textfieldString = GUILayout.TextField(textfieldString);
+
+          if (GUILayout.Button("Send Chat Message")) {
+            _ = SendChatMessage(textfieldString);
+          }
+
+          if (GUILayout.Button("Close Chat Session")) {
+            CloseChatSession();
+          }
         }
 
         GUILayout.EndVertical();
