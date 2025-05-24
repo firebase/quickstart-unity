@@ -23,7 +23,7 @@ the app.
 
 ## Running unit tests from Command Line
 
-One big benefit of using test framework is we are not able to run all the tests
+One big benefit of using test framework is we are now able to run all the tests
 from command line, with a headless Unity editor.
 
 Example command line:
