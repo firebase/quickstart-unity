@@ -21,7 +21,7 @@ using the
     - Click **Open**.
     - Navigate to the sample directory `testapp` in the file dialog and click
       **Open**.
-        - You might be prompted to upgrade the project to your version of Unity.
+      - You might be prompted to upgrade the project to your version of Unity.
         Click **Confirm** to upgrade the project and continue.
     - Open the scene `MainScene`.
       - Navigate to `Assets/Firebase/Sample/Messaging` in the **Project** window.
@@ -45,7 +45,7 @@ using the
 
 ### Send a message from your server environment
 
-> **_NOTE:_** Dispatching messages from your server is a more extensible way of sending notifications or data messages to clients. The following is an easy way to demo this functionality. If you are interested in learning more about how to send messages in production from the command line or an Admin SDK read more about it starting with [Your server environment and FCM](https://firebase.google.com/docs/cloud-messaging/server).
+> **_NOTE:_** Dispatching messages from your server is a more extensible way of sending notifications or data messages to clients. The following is an easy way to demo this functionality. If you are interested in learning more about how to send messages in production from the command line or the Firebase Admin SDK, read more about it starting with [Your server environment and FCM](https://firebase.google.com/docs/cloud-messaging/server).
 
 1. Navigate to the FCM REST API Docs for [Method: projects.messages.send](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages/send)
 1. Look for the "Try this method" panel
@@ -74,8 +74,11 @@ Reminder, while this process is currently done from our website, it uses the FCM
   (e.g "TestTopic") which notifies all devices subscribed to the topic.
   - Using the [Firebase Console](https://firebase.google.com/console/):
     - Select **Notifications** in the left menu.
-    - Change **Target** to **Topic** and select the topic (this can take a
-      few hours to appear after devices have subscribed).
+    - Change **Target** to **Topic** and either:
+      - Select the topic from the list.
+        - This can take a few hours to appear after devices have subscribed.
+      - Type the topic in manually.
+        - Do this if the device has subscribed but the topic has not yet appeared in the list of options.
     - Fill out the rest of the field and press **Send Message** to send a
       notification.
 
