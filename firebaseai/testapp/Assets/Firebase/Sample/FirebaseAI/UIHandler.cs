@@ -56,7 +56,7 @@ namespace Firebase.Sample.FirebaseAI {
       });
     }
 
-    public string ModelName = "gemini-2.0-flash";
+    public string ModelName = "gemini-2.5-flash-lite";
 
     private int backendSelection = 0;
     private string[] backendChoices = new string[] { "Google AI Backend", "Vertex AI Backend" };
