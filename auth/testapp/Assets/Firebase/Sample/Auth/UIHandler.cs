@@ -898,6 +898,19 @@ namespace Firebase.Sample.Auth {
           UnlinkUser(Firebase.Auth.MicrosoftAuthProvider.ProviderId);
         }
 
+        if (GUILayout.Button("SignInWith | Apple")) {
+          SignInWithProvider(Firebase.Auth.AppleAuthProvider.ProviderId);
+        }
+        if (GUILayout.Button("ReauthWith | Apple")) {
+          ReauthenticateWithProvider(Firebase.Auth.AppleAuthProvider.ProviderId);
+        }
+        if (GUILayout.Button("LinkWith | Apple")) {
+          LinkWithProvider(Firebase.Auth.AppleAuthProvider.ProviderId);
+        }
+        if (GUILayout.Button("Unlink User | Apple")) {
+          UnlinkUser(Firebase.Auth.AppleAuthProvider.ProviderId);
+        }
+
         GUIDisplayCustomControls();
         GUILayout.EndVertical();
         GUILayout.EndScrollView();
