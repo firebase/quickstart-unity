@@ -96,13 +96,6 @@ namespace Firebase.Sample.Analytics {
         42);
     }
 
-    public void AnalyticsGroupJoin() {
-      // Log an event with a string parameter.
-      DebugLog("Logging a group join event.");
-      FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventJoinGroup, FirebaseAnalytics.ParameterGroupId,
-        "spoon_welders");
-    }
-
     public void AnalyticsLevelUp() {
       // Log an event with multiple parameters.
       DebugLog("Logging a level up event.");
@@ -177,9 +170,6 @@ namespace Firebase.Sample.Analytics {
         }
         if (GUILayout.Button("Log Score")) {
           AnalyticsScore();
-        }
-        if (GUILayout.Button("Log Group Join")) {
-          AnalyticsGroupJoin();
         }
         if (GUILayout.Button("Log Level Up")) {
           AnalyticsLevelUp();
