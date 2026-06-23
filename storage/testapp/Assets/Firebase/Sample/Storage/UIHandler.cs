@@ -96,11 +96,7 @@ namespace Firebase.Sample.Storage {
     }
 
     protected virtual void InitializeFirebase() {
-      var appBucket = FirebaseApp.DefaultInstance.Options.StorageBucket;
       storage = FirebaseStorage.DefaultInstance;
-      if (!String.IsNullOrEmpty(appBucket)) {
-        MyStorageBucket = "REPLACE_WITH_YOUR_STORAGE_BUCKET";
-      }
       storage.LogLevel = logLevel;
       UIEnabled = true;
       isFirebaseInitialized = true;

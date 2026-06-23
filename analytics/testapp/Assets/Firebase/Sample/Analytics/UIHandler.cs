@@ -168,7 +168,7 @@ namespace Firebase.Sample.Analytics {
         if (task.IsCanceled) {
           DebugLog("App instance ID fetch was canceled.");
         } else if (task.IsFaulted) {
-          DebugLog(String.Format("Encounted an error fetching app instance ID {0}",
+          DebugLog(String.Format("Encountered an error fetching app instance ID {0}",
                                   task.Exception.ToString()));
         } else if (task.IsCompleted) {
           DebugLog(String.Format("App instance ID: {0}", task.Result));
@@ -183,7 +183,7 @@ namespace Firebase.Sample.Analytics {
         if (task.IsCanceled) {
           DebugLog("Session ID fetch was canceled.");
         } else if (task.IsFaulted) {
-          DebugLog(String.Format("Encounted an error fetching session ID {0}",
+          DebugLog(String.Format("Encountered an error fetching session ID {0}",
                                   task.Exception.ToString()));
         } else if (task.IsCompleted) {
           DebugLog(String.Format("Session ID: {0}", task.Result));

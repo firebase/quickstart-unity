@@ -95,8 +95,8 @@ namespace Firebase.Sample.Messaging {
           LogTaskCompletion(task, "RequestPermissionAsync");
 
           if (SubscribeToTopicOnStart) {
-            Firebase.Messaging.FirebaseMessaging.SubscribeAsync(topic).ContinueWithOnMainThread(task => {
-              LogTaskCompletion(task, "SubscribeAsync");
+            Firebase.Messaging.FirebaseMessaging.SubscribeAsync(topic).ContinueWithOnMainThread(subTask => {
+              LogTaskCompletion(subTask, "SubscribeAsync");
             });
           }
         }
