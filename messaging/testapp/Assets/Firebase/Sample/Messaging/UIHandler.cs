@@ -33,6 +33,13 @@ namespace Firebase.Sample.Messaging {
     private string topic = "TestTopic";
     private bool UIEnabled = true;
 
+    // Should this Subscribe to the topic on startup.
+    protected virtual bool SubscribeToTopicOnStart {
+      get {
+        return true;
+      }
+    }
+
     // Log the result of the specified task, returning true if the task
     // completed successfully, false otherwise.
     protected bool LogTaskCompletion(Task task, string operation) {
@@ -77,20 +84,21 @@ namespace Firebase.Sample.Messaging {
     void InitializeFirebase() {
       Firebase.Messaging.FirebaseMessaging.MessageReceived += OnMessageReceived;
       Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
-      Firebase.Messaging.FirebaseMessaging.SubscribeAsync(topic).ContinueWithOnMainThread(task => {
-        LogTaskCompletion(task, "SubscribeAsync");
-      });
       DebugLog("Firebase Messaging Initialized");
 
-      // On iOS, this will display the prompt to request permission to receive
+      // This will display the prompt to request permission to receive
       // notifications if the prompt has not already been displayed before. (If
       // the user already responded to the prompt, thier decision is cached by
       // the OS and can be changed in the OS settings).
-      // On Android, this will return successfully immediately, as there is no
-      // equivalent system logic to run.
       Firebase.Messaging.FirebaseMessaging.RequestPermissionAsync().ContinueWithOnMainThread(
         task => {
           LogTaskCompletion(task, "RequestPermissionAsync");
+
+          if (SubscribeToTopicOnStart) {
+            Firebase.Messaging.FirebaseMessaging.SubscribeAsync(topic).ContinueWithOnMainThread(task => {
+              LogTaskCompletion(task, "SubscribeAsync");
+            });
+          }
         }
       );
       isFirebaseInitialized = true;
@@ -201,9 +209,10 @@ namespace Firebase.Sample.Messaging {
             task => {
               token = task.Result;
               LogTaskCompletion(task, "GetTokenAsync");
+              DebugLog("GetTokenAsync result: " + token);
             }
           );
-          DebugLog("GetTokenAsync " + token);
+          DebugLog("GetTokenAsync called");
         }
 
         if (GUILayout.Button("DeleteToken")) {

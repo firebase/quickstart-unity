@@ -29,7 +29,7 @@ namespace Firebase.Sample.Storage {
   // necessary setup (initializing the firebase app, etc) on
   // startup.
   public class UIHandler : MonoBehaviour {
-    protected string MyStorageBucket = "gs://YOUR-FIREBASE-BUCKET/";
+    protected string MyStorageBucket = "REPLACE_WITH_YOUR_STORAGE_BUCKET";
     private const int kMaxLogSize = 16382;
     protected static string UriFileScheme = Uri.UriSchemeFile + "://";
 
@@ -79,7 +79,11 @@ namespace Firebase.Sample.Storage {
     // the required dependencies to use Firebase, and if not,
     // add them if possible.
     protected virtual void Start() {
-      persistentDataPath = Application.persistentDataPath;
+#if (UNITY_TVOS)
+       persistentDataPath = Application.temporaryCachePath;
+#else
+       persistentDataPath = Application.persistentDataPath;
+#endif
       FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
         dependencyStatus = task.Result;
         if (dependencyStatus == DependencyStatus.Available) {
@@ -95,7 +99,7 @@ namespace Firebase.Sample.Storage {
       var appBucket = FirebaseApp.DefaultInstance.Options.StorageBucket;
       storage = FirebaseStorage.DefaultInstance;
       if (!String.IsNullOrEmpty(appBucket)) {
-        MyStorageBucket = String.Format("gs://{0}/", appBucket);
+        MyStorageBucket = "REPLACE_WITH_YOUR_STORAGE_BUCKET";
       }
       storage.LogLevel = logLevel;
       UIEnabled = true;
@@ -231,56 +235,81 @@ namespace Firebase.Sample.Storage {
       }
     }
 
-    // Upload file text to Cloud Storage using a byte array.
-    protected IEnumerator UploadBytes() {
+    protected Task<StorageMetadata> UploadBytesAsync() {
       var storageReference = GetStorageReference();
       DebugLog(String.Format("Uploading to {0} ...", storageReference.Path));
-      var task = storageReference.PutBytesAsync(
+      return storageReference.PutBytesAsync(
         Encoding.UTF8.GetBytes(fileContents), StringToMetadataChange(fileMetadataChangeString),
         new StorageProgress<UploadState>(DisplayUploadState),
-        cancellationTokenSource.Token, null);
-      yield return new WaitForTaskCompletion(this, task);
-      DisplayUploadComplete(task);
+        cancellationTokenSource.Token, null).ContinueWithOnMainThread(task => {
+          DisplayUploadComplete(task);
+          return task;
+        }).Unwrap();
     }
 
-    // Upload file to Cloud Storage using a stream.
-    protected IEnumerator UploadStream() {
+    // Upload file text to Cloud Storage using a byte array.
+    protected IEnumerator UploadBytes() {
+      var task = UploadBytesAsync();
+      yield return new WaitForTaskCompletion(this, task);
+    }
+
+    protected Task<StorageMetadata> UploadStreamAsync() {
       var storageReference = GetStorageReference();
       DebugLog(String.Format("Uploading to {0} using stream...", storageReference.Path));
-      var task = storageReference.PutStreamAsync(
+      return storageReference.PutStreamAsync(
         new MemoryStream(System.Text.Encoding.ASCII.GetBytes(fileContents)),
         StringToMetadataChange(fileMetadataChangeString),
         new StorageProgress<UploadState>(DisplayUploadState),
-        cancellationTokenSource.Token, null);
-      yield return new WaitForTaskCompletion(this, task);
-      DisplayUploadComplete(task);
+        cancellationTokenSource.Token, null).ContinueWithOnMainThread(task => {
+          DisplayUploadComplete(task);
+          return task;
+        }).Unwrap();
     }
 
-    // Upload a file from the local filesystem to Cloud Storage.
-    protected IEnumerator UploadFromFile() {
+
+    // Upload file to Cloud Storage using a stream.
+    protected IEnumerator UploadStream() {
+      var task = UploadStreamAsync();
+      yield return new WaitForTaskCompletion(this, task);
+    }
+
+    protected Task<StorageMetadata> UploadFromFileAsync() {
       var localFilenameUriString = PathToPersistentDataPathUriString(localFilename);
       var storageReference = GetStorageReference();
       DebugLog(String.Format("Uploading '{0}' to '{1}'...", localFilenameUriString,
                              storageReference.Path));
-      var task = storageReference.PutFileAsync(
+      return storageReference.PutFileAsync(
         localFilenameUriString, StringToMetadataChange(fileMetadataChangeString),
         new StorageProgress<UploadState>(DisplayUploadState),
-        cancellationTokenSource.Token, null);
+        cancellationTokenSource.Token, null).ContinueWithOnMainThread(task => {
+          DisplayUploadComplete(task);
+          return task;
+        }).Unwrap();
+    }
+
+    // Upload a file from the local filesystem to Cloud Storage.
+    protected IEnumerator UploadFromFile() {
+      var task = UploadFromFileAsync();
       yield return new WaitForTaskCompletion(this, task);
-      DisplayUploadComplete(task);
+    }
+
+    protected Task<StorageMetadata> UpdateMetadataAsync() {
+      var storageReference = GetStorageReference();
+      DebugLog(String.Format("Updating metadata of {0} ...", storageReference.Path));
+      return storageReference.UpdateMetadataAsync(StringToMetadataChange(
+        fileMetadataChangeString)).ContinueWithOnMainThread(task => {
+          if (!(task.IsFaulted || task.IsCanceled)) {
+            DebugLog("Updated metadata");
+            DebugLog(MetadataToString(task.Result, false) + "\n");
+          }
+          return task;
+        }).Unwrap();
     }
 
     // Update the metadata on the file in Cloud Storage.
     protected IEnumerator UpdateMetadata() {
-      var storageReference = GetStorageReference();
-      DebugLog(String.Format("Updating metadata of {0} ...", storageReference.Path));
-      var task = storageReference.UpdateMetadataAsync(StringToMetadataChange(
-        fileMetadataChangeString));
+      var task = UpdateMetadataAsync();
       yield return new WaitForTaskCompletion(this, task);
-      if (!(task.IsFaulted || task.IsCanceled)) {
-        DebugLog("Updated metadata");
-        DebugLog(MetadataToString(task.Result, false) + "\n");
-      }
     }
 
     // Write download state to the log.
@@ -291,28 +320,33 @@ namespace Firebase.Sample.Storage {
       }
     }
 
-    // Download from Cloud Storage into a byte array.
-    protected IEnumerator DownloadBytes() {
+    protected Task<byte[]> DownloadBytesAsync() {
       var storageReference = GetStorageReference();
       DebugLog(String.Format("Downloading {0} ...", storageReference.Path));
-      var task = storageReference.GetBytesAsync(
+      return storageReference.GetBytesAsync(
         0, new StorageProgress<DownloadState>(DisplayDownloadState),
-        cancellationTokenSource.Token);
-      yield return new WaitForTaskCompletion(this, task);
-      if (!(task.IsFaulted || task.IsCanceled)) {
-        DebugLog("Finished downloading bytes");
-        fileContents = System.Text.Encoding.Default.GetString(task.Result);
-        DebugLog(String.Format("File Size {0} bytes\n", fileContents.Length));
-      }
+        cancellationTokenSource.Token).ContinueWithOnMainThread(task => {
+          if (!(task.IsFaulted || task.IsCanceled)) {
+            DebugLog("Finished downloading bytes");
+            fileContents = System.Text.Encoding.Default.GetString(task.Result);
+            DebugLog(String.Format("File Size {0} bytes\n", fileContents.Length));
+          }
+          return task;
+        }).Unwrap();
     }
 
-    // Download from Cloud Storage using a stream.
-    protected IEnumerator DownloadStream() {
+    // Download from Cloud Storage into a byte array.
+    protected IEnumerator DownloadBytes() {
+      var task = DownloadBytesAsync();
+      yield return new WaitForTaskCompletion(this, task);
+    }
+
+    protected Task DownloadStreamAsync() {
       // Download the file using a stream.
       fileContents = "";
       var storageReference = GetStorageReference();
       DebugLog(String.Format("Downloading {0} with stream ...", storageReference.Path));
-      var task = storageReference.GetStreamAsync((stream) => {
+      return storageReference.GetStreamAsync((stream) => {
         var buffer = new byte[1024];
         int read;
         // Read data to render in the text view.
@@ -321,12 +355,19 @@ namespace Firebase.Sample.Storage {
         }
       },
         new StorageProgress<DownloadState>(DisplayDownloadState),
-        cancellationTokenSource.Token);
+        cancellationTokenSource.Token).ContinueWithOnMainThread(task => {
+          if (!(task.IsFaulted || task.IsCanceled)) {
+            DebugLog("Finished downloading stream\n");
+          }
+          return task;
+        }).Unwrap();
+    }
 
+    // Download from Cloud Storage using a stream.
+    protected IEnumerator DownloadStream() {
+      var task = DownloadStreamAsync();
       yield return new WaitForTaskCompletion(this, task);
-      if (!(task.IsFaulted || task.IsCanceled)) {
-        DebugLog("Finished downloading stream\n");
-      }
+      
     }
 
     // Get a local filesystem path from a file:// URI.
@@ -334,39 +375,50 @@ namespace Firebase.Sample.Storage {
       return Uri.UnescapeDataString((new Uri(fileUriString)).PathAndQuery);
     }
 
-    // Download from Cloud Storage to a local file.
-    protected IEnumerator DownloadToFile() {
+    protected Task DownloadToFileAsync() {
       var storageReference = GetStorageReference();
       var localFilenameUriString = PathToPersistentDataPathUriString(localFilename);
       DebugLog(String.Format("Downloading {0} to {1}...", storageReference.Path,
                              localFilenameUriString));
-      var task = storageReference.GetFileAsync(
+      return storageReference.GetFileAsync(
         localFilenameUriString,
         new StorageProgress<DownloadState>(DisplayDownloadState),
-        cancellationTokenSource.Token);
-      yield return new WaitForTaskCompletion(this, task);
-      if (!(task.IsFaulted || task.IsCanceled)) {
-        var filename = FileUriStringToPath(localFilenameUriString);
-        DebugLog(String.Format("Finished downloading file {0} ({1})", localFilenameUriString,
-                               filename));
-        DebugLog(String.Format("File Size {0} bytes\n", (new FileInfo(filename)).Length));
-        fileContents = File.ReadAllText(filename);
-      }
+        cancellationTokenSource.Token).ContinueWithOnMainThread(task => {
+          if (!(task.IsFaulted || task.IsCanceled)) {
+            var filename = FileUriStringToPath(localFilenameUriString);
+            DebugLog(String.Format("Finished downloading file {0} ({1})", localFilenameUriString,
+                                  filename));
+            DebugLog(String.Format("File Size {0} bytes\n", (new FileInfo(filename)).Length));
+            fileContents = File.ReadAllText(filename);
+          }
+          return task;
+        }).Unwrap();
+    }
+
+    // Download from Cloud Storage to a local file.
+    protected IEnumerator DownloadToFile() {
+      var task = DownloadToFileAsync();
+      yield return new WaitForTaskCompletion(this, task); 
+    }
+
+    protected Task DeleteAsync() {
+      var storageReference = GetStorageReference();
+      DebugLog(String.Format("Deleting {0}...", storageReference.Path));
+      return storageReference.DeleteAsync().ContinueWithOnMainThread(task => {
+        if (!(task.IsFaulted || task.IsCanceled)) {
+          DebugLog(String.Format("{0} deleted", storageReference.Path));
+        }
+        return task;
+      }).Unwrap();
     }
 
     // Delete a remote file.
     protected IEnumerator Delete() {
-      var storageReference = GetStorageReference();
-      DebugLog(String.Format("Deleting {0}...", storageReference.Path));
-      var task = storageReference.DeleteAsync();
+      var task = DeleteAsync();
       yield return new WaitForTaskCompletion(this, task);
-      if (!(task.IsFaulted || task.IsCanceled)) {
-        DebugLog(String.Format("{0} deleted", storageReference.Path));
-      }
     }
 
-    // Download and display Metadata for the storage reference.
-    protected IEnumerator GetMetadata() {
+    protected Task<StorageMetadata> GetMetadataAsync() {
       var storageReference = GetStorageReference();
       DebugLog(String.Format("Bucket: {0}", storageReference.Bucket));
       DebugLog(String.Format("Path: {0}", storageReference.Path));
@@ -375,10 +427,17 @@ namespace Firebase.Sample.Storage {
                                                      storageReference.Parent.Path : "(root)"));
       DebugLog(String.Format("Root Path: {0}", storageReference.Root.Path));
       DebugLog(String.Format("App: {0}", storageReference.Storage.App.Name));
-      var task = storageReference.GetMetadataAsync();
+      return storageReference.GetMetadataAsync().ContinueWithOnMainThread(task => {
+        if (!(task.IsFaulted || task.IsCanceled))
+          DebugLog(MetadataToString(task.Result, false) + "\n");
+        return task;
+      }).Unwrap();
+    }
+
+    // Download and display Metadata for the storage reference.
+    protected IEnumerator GetMetadata() {
+      var task = GetMetadataAsync();
       yield return new WaitForTaskCompletion(this, task);
-      if (!(task.IsFaulted || task.IsCanceled))
-        DebugLog(MetadataToString(task.Result, false) + "\n");
     }
 
     // Display the download URL for a storage reference.

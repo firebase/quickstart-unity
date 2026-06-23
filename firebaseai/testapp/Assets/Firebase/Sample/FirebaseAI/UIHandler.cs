@@ -16,6 +16,7 @@ namespace Firebase.Sample.FirebaseAI {
   using Firebase;
   using Firebase.AI;
   using Firebase.Extensions;
+  using Firebase.AppCheck;
   using System;
   using System.Collections;
   using System.Collections.Generic;
@@ -39,24 +40,40 @@ namespace Firebase.Sample.FirebaseAI {
     private float textAreaLineHeight;
 
     private DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
+    protected bool isFirebaseInitializationComplete = false;
+
+    private string appCheckDebugToken = "REPLACE_WITH_APP_CHECK_TOKEN";
+
+    protected void InitializeAppCheck() {
+      DebugLog("Initializing App Check directly in manual UIHandler");
+      DebugAppCheckProviderFactory.Instance.SetDebugToken(appCheckDebugToken);
+      FirebaseAppCheck.SetAppCheckProviderFactory(DebugAppCheckProviderFactory.Instance);
+    }
 
     protected virtual void Start() {
-      UIEnabled = true;
+      InitializeAppCheck();
+      InitializeFirebase();
     }
 
     protected void InitializeFirebase() {
-      FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
+      FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
+      {
         dependencyStatus = task.Result;
-        if (dependencyStatus == DependencyStatus.Available) {
+        if (dependencyStatus == DependencyStatus.Available)
+        {
           DebugLog("Firebase Ready: " + FirebaseApp.DefaultInstance);
-        } else {
+          UIEnabled = true;
+        }
+        else
+        {
           Debug.LogError(
             "Could not resolve all Firebase dependencies: " + dependencyStatus);
         }
+        isFirebaseInitializationComplete = true;
       });
     }
 
-    public string ModelName = "gemini-2.0-flash";
+    public string ModelName = "gemini-3.5-flash";
 
     private int backendSelection = 0;
     private string[] backendChoices = new string[] { "Google AI Backend", "Vertex AI Backend" };
@@ -65,14 +82,22 @@ namespace Firebase.Sample.FirebaseAI {
           ? FirebaseAI.Backend.GoogleAI()
           : FirebaseAI.Backend.VertexAI();
 
-      return FirebaseAI.GetInstance(backend).GetGenerativeModel(ModelName);
+      return FirebaseAI.GetInstance(backend, useLimitedUseAppCheckTokens: true).GetGenerativeModel(ModelName);
     }
 
     // Send a single message to the Generative Model, without any history.
     async Task SendSingleMessage(string message) {
-      DebugLog("Sending message to model: " + message);
-      var response = await GetModel().GenerateContentAsync(message);
-      DebugLog("Response: " + response.Text);
+      try
+      {
+        DebugLog("Sending message to model: " + message);
+        var response = await GetModel().GenerateContentAsync(message);
+        DebugLog("Response: " + response.Text);
+        LogUsageMetadata(response.UsageMetadata);
+      }
+      catch (Exception e)
+      {
+        DebugLog("Error while generating content:\n" + e);
+      }
     }
 
     private Chat chatSession = null;
@@ -92,9 +117,27 @@ namespace Firebase.Sample.FirebaseAI {
         return;
       }
 
-      DebugLog("Sending chat message: " + message);
-      var response = await chatSession.SendMessageAsync(message);
-      DebugLog("Chat response: " + response.Text);
+      try
+      {
+        DebugLog("Sending chat message: " + message);
+        var response = await chatSession.SendMessageAsync(message);
+        DebugLog("Chat response: " + response.Text);
+        LogUsageMetadata(response.UsageMetadata);
+      }
+      catch (Exception e)
+      {
+        DebugLog("Error while generating content:\n" + e);
+      }
+    }
+
+    private void LogUsageMetadata(UsageMetadata? metadata) {
+      if (metadata == null) return;
+
+      var m = metadata.Value;
+      DebugLog($"UsageMetadata: Prompt: {m.PromptTokenCount}, Candidates: {m.CandidatesTokenCount}, Total: {m.TotalTokenCount}, Cached: {m.CachedContentTokenCount}");
+      foreach (var detail in m.CacheTokensDetails) {
+          DebugLog($"    {detail.Modality}: {detail.TokenCount}");
+      }
     }
 
     // Exit if escape (or back, on mobile) is pressed.

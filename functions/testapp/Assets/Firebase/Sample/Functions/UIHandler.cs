@@ -16,6 +16,7 @@ namespace Firebase.Sample.Functions {
   using Firebase;
   using Firebase.Extensions;
   using Firebase.Functions;
+
   using System;
   using System.Collections;
   using System.Collections.Generic;
@@ -35,10 +36,12 @@ namespace Firebase.Sample.Functions {
     private DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
     protected FirebaseFunctions functions;
 
+
     // When the app starts, check to make sure that we have
     // the required dependencies to use Firebase, and if not,
     // add them if possible.
     protected virtual void Start() {
+
       FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
         dependencyStatus = task.Result;
         if (dependencyStatus == DependencyStatus.Available) {
@@ -49,6 +52,8 @@ namespace Firebase.Sample.Functions {
         }
       });
     }
+
+
 
     protected virtual void InitializeFirebase() {
       functions = FirebaseFunctions.DefaultInstance;
@@ -93,6 +98,7 @@ namespace Firebase.Sample.Functions {
       if (GUILayout.Button("addNumbers")) {
         StartCoroutine(AddNumbers(5, 7));
       }
+
       GUILayout.EndVertical();
     }
 
@@ -116,6 +122,8 @@ namespace Firebase.Sample.Functions {
       });
       yield return new WaitUntil(() => task.IsCompleted);
     }
+
+
 
     // Render the buttons and other controls.
     void GUIDisplayControls() {
