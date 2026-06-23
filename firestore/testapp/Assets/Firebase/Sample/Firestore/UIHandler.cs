@@ -94,7 +94,7 @@ namespace Firebase.Sample.Firestore {
     private bool ObjectDeepEquals(object left, object right) {
       if (left == right) {
         return true;
-      if (left == null || right == null) {
+      } else if (left == null || right == null) {
         return false;
       } else if (left is IEnumerable && right is IEnumerable) {
         if (left is IDictionary && right is IDictionary) {
