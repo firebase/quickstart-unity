@@ -17,6 +17,7 @@ namespace Firebase.Sample.Analytics {
   using Firebase.Analytics;
   using Firebase.Extensions;
   using System;
+  using System.Collections.Generic;
   using System.Threading.Tasks;
   using UnityEngine;
 
@@ -59,6 +60,10 @@ namespace Firebase.Sample.Analytics {
     void InitializeFirebase() {
       DebugLog("Enabling data collection.");
       FirebaseAnalytics.SetAnalyticsCollectionEnabled(true);
+      DebugLog("Initiate on-device conversion measurement.");
+      FirebaseAnalytics.InitiateOnDeviceConversionMeasurementWithEmailAddress("test@testemail.com");
+      DebugLog("Initiate on-device conversion measurement (phone number).");
+      FirebaseAnalytics.InitiateOnDeviceConversionMeasurementWithPhoneNumber("+15551234567");
 
       DebugLog("Set user properties.");
       // Set the user's sign up method.
@@ -99,7 +104,7 @@ namespace Firebase.Sample.Analytics {
     public void AnalyticsGroupJoin() {
       // Log an event with a string parameter.
       DebugLog("Logging a group join event.");
-      FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventJoinGroup, FirebaseAnalytics.ParameterGroupId,
+      FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventJoinGroup, FirebaseAnalytics.ParameterGroupID,
         "spoon_welders");
     }
 
@@ -113,10 +118,48 @@ namespace Firebase.Sample.Analytics {
         new Parameter("hit_accuracy", 3.14f));
     }
 
+    public void AnalyticsViewCart() {
+      // Log an event that includes a parameter with a list
+      DebugLog("Logging a view cart event.");
+      FirebaseAnalytics.LogEvent(
+        FirebaseAnalytics.EventViewCart,
+        new Parameter(FirebaseAnalytics.ParameterCurrency, "USD"),
+        new Parameter(FirebaseAnalytics.ParameterValue, 30.03),
+        new Parameter(FirebaseAnalytics.ParameterItems, new [] {
+          new Dictionary<string, object> {
+            { FirebaseAnalytics.ParameterItemID, "SKU_12345" },
+            { FirebaseAnalytics.ParameterItemName, "Horse Armor DLC" },
+          },
+          new Dictionary<string, object> {
+            { FirebaseAnalytics.ParameterItemID, "SKU_67890" },
+            { FirebaseAnalytics.ParameterItemName, "Gold Horse Armor DLC" },
+          }
+        })
+      );
+    }
+
     // Reset analytics data for this app instance.
     public void ResetAnalyticsData() {
       DebugLog("Reset analytics data.");
       FirebaseAnalytics.ResetAnalyticsData();
+    }
+
+    public void AnalyticsSetConsent() {
+      FirebaseAnalytics.SetConsent(new Dictionary<ConsentType, ConsentStatus>()
+      {
+         { ConsentType.AnalyticsStorage, ConsentStatus.Denied },
+         { ConsentType.AdStorage, ConsentStatus.Denied },
+         { ConsentType.AdUserData, ConsentStatus.Denied },
+         { ConsentType.AdPersonalization, ConsentStatus.Denied }
+      });
+      FirebaseAnalytics.SetConsent(new Dictionary<ConsentType, ConsentStatus>());
+      FirebaseAnalytics.SetConsent(new Dictionary<ConsentType, ConsentStatus>()
+      {
+         { ConsentType.AnalyticsStorage, ConsentStatus.Granted },
+         { ConsentType.AdStorage, ConsentStatus.Granted },
+         { ConsentType.AdUserData, ConsentStatus.Granted },
+         { ConsentType.AdPersonalization, ConsentStatus.Granted }
+      });
     }
 
     // Get the current app instance ID.
@@ -125,10 +168,40 @@ namespace Firebase.Sample.Analytics {
         if (task.IsCanceled) {
           DebugLog("App instance ID fetch was canceled.");
         } else if (task.IsFaulted) {
-          DebugLog(String.Format("Encounted an error fetching app instance ID {0}",
+          DebugLog(String.Format("Encountered an error fetching app instance ID {0}",
                                   task.Exception.ToString()));
         } else if (task.IsCompleted) {
           DebugLog(String.Format("App instance ID: {0}", task.Result));
+        }
+        return task;
+      }).Unwrap();
+    }
+
+    // Get the current app session ID
+    public Task<long> DisplaySessionId() {
+      return FirebaseAnalytics.GetSessionIdAsync().ContinueWithOnMainThread(task => {
+        if (task.IsCanceled) {
+          DebugLog("Session ID fetch was canceled.");
+        } else if (task.IsFaulted) {
+          DebugLog(String.Format("Encountered an error fetching session ID {0}",
+                                  task.Exception.ToString()));
+        } else if (task.IsCompleted) {
+          DebugLog(String.Format("Session ID: {0}", task.Result));
+        }
+        return task;
+      }).Unwrap();
+    }
+
+    // Log a dummy Apple transaction
+    public Task DisplayLogAppleTransaction() {
+      return FirebaseAnalytics.LogAppleTransactionAsync("dummy_transaction_id").ContinueWithOnMainThread(task => {
+        if (task.IsCanceled) {
+          DebugLog("LogAppleTransaction was canceled.");
+        } else if (task.IsFaulted) {
+          DebugLog(String.Format("Encountered an error logging Apple transaction: {0}",
+                                  task.Exception.ToString()));
+        } else if (task.IsCompleted) {
+          DebugLog("LogAppleTransaction completed successfully.");
         }
         return task;
       }).Unwrap();
@@ -184,11 +257,23 @@ namespace Firebase.Sample.Analytics {
         if (GUILayout.Button("Log Level Up")) {
           AnalyticsLevelUp();
         }
+        if (GUILayout.Button("Log View Cart")) {
+          AnalyticsViewCart();
+        }
         if (GUILayout.Button("Reset Analytics Data")) {
           ResetAnalyticsData();
         }
         if (GUILayout.Button("Show Analytics Instance ID")) {
           DisplayAnalyticsInstanceId();
+        }
+        if (GUILayout.Button("Show Session ID")) {
+          DisplaySessionId();
+	}
+        if (GUILayout.Button("Test SetConsent")) {
+          AnalyticsSetConsent();
+        }
+        if (GUILayout.Button("Test LogAppleTransaction")) {
+          DisplayLogAppleTransaction();
         }
         GUILayout.EndVertical();
         GUILayout.EndScrollView();

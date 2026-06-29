@@ -18,7 +18,6 @@ namespace Firebase.Sample.Crashlytics {
   using Firebase.Extensions;
   using System;
   using UnityEngine;
-  using UnityEngine.Diagnostics;
 
   // Handler for UI buttons on the scene.  Also performs some
   // necessary setup (initializing the firebase app, etc) on
@@ -64,7 +63,8 @@ namespace Firebase.Sample.Crashlytics {
     // End our session when the program exits.
     void OnDestroy() { }
 
-    // Causes an error that will crash the app at the platform level (Android or iOS)
+    // Causes an error that will crash the app at the platform level (Android,
+    // iOS or tvOS)
     public void ThrowUncaughtException() {
       DebugLog("Causing a platform crash.");
       throw new InvalidOperationException("Uncaught exception created from UI.");
@@ -167,10 +167,6 @@ namespace Firebase.Sample.Crashlytics {
           SetUserID("SomeUserId");
           LogCaughtException();
           ThrowUncaughtException();
-        }
-
-        if (GUILayout.Button("Fatal Crash")) {
-          Utils.ForceCrash(ForcedCrashCategory.FatalError);
         }
 
         GUILayout.EndVertical();

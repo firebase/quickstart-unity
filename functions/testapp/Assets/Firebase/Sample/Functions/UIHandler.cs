@@ -16,6 +16,7 @@ namespace Firebase.Sample.Functions {
   using Firebase;
   using Firebase.Extensions;
   using Firebase.Functions;
+
   using System;
   using System.Collections;
   using System.Collections.Generic;
@@ -49,6 +50,7 @@ namespace Firebase.Sample.Functions {
         }
       });
     }
+
 
     protected virtual void InitializeFirebase() {
       functions = FirebaseFunctions.DefaultInstance;
@@ -93,6 +95,7 @@ namespace Firebase.Sample.Functions {
       if (GUILayout.Button("addNumbers")) {
         StartCoroutine(AddNumbers(5, 7));
       }
+
       GUILayout.EndVertical();
     }
 
@@ -116,6 +119,7 @@ namespace Firebase.Sample.Functions {
       });
       yield return new WaitUntil(() => task.IsCompleted);
     }
+
 
     // Render the buttons and other controls.
     void GUIDisplayControls() {
