@@ -121,7 +121,6 @@ namespace Firebase.Sample.Functions {
     }
 
 
-
     // Render the buttons and other controls.
     void GUIDisplayControls() {
       if (UIEnabled) {
