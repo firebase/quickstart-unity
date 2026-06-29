@@ -40,7 +40,6 @@ namespace Firebase.Sample.Functions {
     // the required dependencies to use Firebase, and if not,
     // add them if possible.
     protected virtual void Start() {
-
       FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
         dependencyStatus = task.Result;
         if (dependencyStatus == DependencyStatus.Available) {
