@@ -53,7 +53,6 @@ namespace Firebase.Sample.Functions {
     }
 
 
-
     protected virtual void InitializeFirebase() {
       functions = FirebaseFunctions.DefaultInstance;
       UIEnabled = true;
