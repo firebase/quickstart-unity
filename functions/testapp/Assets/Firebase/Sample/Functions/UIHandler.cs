@@ -36,7 +36,6 @@ namespace Firebase.Sample.Functions {
     private DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
     protected FirebaseFunctions functions;
 
-
     // When the app starts, check to make sure that we have
     // the required dependencies to use Firebase, and if not,
     // add them if possible.
