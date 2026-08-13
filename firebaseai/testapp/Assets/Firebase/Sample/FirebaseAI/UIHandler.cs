@@ -44,7 +44,7 @@ namespace Firebase.Sample.FirebaseAI {
 
     private string appCheckDebugToken = "REPLACE_WITH_APP_CHECK_TOKEN";
 
-    protected void InitializeAppCheck() {
+    protected virtual void InitializeAppCheck() {
       DebugLog("Initializing App Check directly in manual UIHandler");
       DebugAppCheckProviderFactory.Instance.SetDebugToken(appCheckDebugToken);
       FirebaseAppCheck.SetAppCheckProviderFactory(DebugAppCheckProviderFactory.Instance);
@@ -76,11 +76,11 @@ namespace Firebase.Sample.FirebaseAI {
     public string ModelName = "gemini-3.1-flash-lite";
 
     private int backendSelection = 0;
-    private string[] backendChoices = new string[] { "Google AI Backend", "Vertex AI Backend" };
+    private string[] backendChoices = new string[] { "Google AI Backend", "Agent Platform Backend" };
     private GenerativeModel GetModel() {
       var backend = backendSelection == 0
           ? FirebaseAI.Backend.GoogleAI()
-          : FirebaseAI.Backend.VertexAI();
+          : FirebaseAI.Backend.AgentPlatform();
 
       return FirebaseAI.GetInstance(backend, useLimitedUseAppCheckTokens: true).GetGenerativeModel(ModelName);
     }
